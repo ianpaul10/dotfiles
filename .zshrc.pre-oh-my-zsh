@@ -1,0 +1,10 @@
+eval "$(oh-my-posh init zsh)"
+
+plugins=( 
+    # other plugins...
+    dotenv
+    macos
+)
+
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
