@@ -64,7 +64,7 @@ def main():
 
         # Make a request to OpenAI's GPT-4 model in chat mode
         cheap_model = "gpt-3.5-turbo"
-        default_model = "gpt-4o"
+        # default_model = "gpt-4o"
         response = client.chat.completions.create(model=cheap_model, messages=messages)
 
         response_text = response.choices[0].message.content.strip()
