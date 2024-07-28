@@ -21,9 +21,11 @@ Inspired by and heavily referencing (Both courtesy of this tweet https://twitter
 
 1. Download Chrome https://www.google.com/chrome/
    1. Update your `chrome://flags/` to have [all websites dark-mode](https://www.howtogeek.com/446198/how-to-force-dark-mode-on-every-website-in-google-chrome/)
-2. Download Brave https://brave.com/
-3. Install [LibreWolf](https://librewolf.net/), a security-focused fork of Firefox 
-   1. Run `brew install --cask librewolf --no-quarantine`
+2. Install [FireFox](https://www.mozilla.org/en-US/firefox/new/)
+3. Privacy focused:
+   1. Download [Brave](https://brave.com/)
+   2. Install [LibreWolf](https://librewolf.net/), a security-focused fork of Firefox 
+      1. Run `brew install --cask librewolf --no-quarantine`
 
 ### Terminal setup
 
@@ -44,12 +46,25 @@ Inspired by and heavily referencing (Both courtesy of this tweet https://twitter
 
 ### Text editor setup
 
+#### VSCode
+
 1. Install vscode
    1. Run `brew install --cask visual-studio-code`
 2. Nano should come pre-installed
    1. [Nano text editor shortcuts](https://www.nano-editor.org/dist/latest/cheatsheet.html)
 3. To ensure debugging works on vscode:
    1. System Preferences -> Desktop & Dock -> Keyboard & Mouse Shortcuts -> Show Desktop -> Keyboard Shortcut -> toggle off F11 key. (`F11` should be reserved for step through debugging)
+
+#### Nano
+
+Should already come pre-installed. Simply run `nano` in the terminal to open a new file.
+
+#### Neovim
+
+1. Based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) and [this guide](https://www.youtube.com/watch?v=m8C0Cq9Uv9o)
+2. Follow the installation instructions in the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim#installation) repo
+   1. Install these pre-requisites: `brew install neovim ripgrep xclip`
+   2. Run: `git clone https://github.com/ianpaul10/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim` 
 
 ### Python setup
 
