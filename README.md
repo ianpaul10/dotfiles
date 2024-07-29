@@ -63,7 +63,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 
 1. Based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) and [this guide](https://www.youtube.com/watch?v=m8C0Cq9Uv9o)
 2. Follow the installation instructions in the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim#installation) repo
-   1. Install these pre-requisites: `brew install neovim ripgrep xclip`
+   1. Install these pre-requisites: `brew install neovim ripgrep xclip luajit`
    2. Run: `git clone https://github.com/ianpaul10/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim` 
 
 ### Python setup
