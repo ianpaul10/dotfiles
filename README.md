@@ -35,7 +35,8 @@ Inspired by and heavily referencing (Both courtesy of this tweet https://twitter
 3. Set `~/.zprofile` and `~/.zshrc` to the files in this folder
 4. Download nerd fonts and set iTerm2's font to it
    1. `brew tap homebrew/cask-fonts && brew install --cask font-source-code-pro && brew install --cask font-jetbrains-mono`
-   2. iTerm2 settings -> Profile -> Text -> Font -> set to source code pro
+   2. If you want jetbrains mono nerd-font, install with `curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz`
+   3. iTerm2 settings -> Profile -> Text -> Font -> set to source code pro
 5. Shortcuts -- get better default shortcuts by setting the preset keys to `Natural Text Editing` (e.g. `CMD + Backspace` & `Option + Backspace`)
    1. iTerm2 Settings -> Profile -> Keys -> Presets -> Natural Text Editing
 6. Install github CLI `brew install gh`
@@ -63,7 +64,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 
 1. Based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) and [this guide](https://www.youtube.com/watch?v=m8C0Cq9Uv9o)
 2. Follow the installation instructions in the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim#installation) repo
-   1. Install these pre-requisites: `brew install neovim ripgrep xclip luajit`
+   1. Install these pre-requisites: `brew install neovim ripgrep xclip luajit luarocks`
    2. Run: `git clone https://github.com/ianpaul10/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim` 
 
 ### Python setup
