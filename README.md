@@ -55,6 +55,7 @@ Inspired by and heavily referencing (Both courtesy of this tweet https://twitter
    1. [Nano text editor shortcuts](https://www.nano-editor.org/dist/latest/cheatsheet.html)
 3. To ensure debugging works on vscode:
    1. System Preferences -> Desktop & Dock -> Keyboard & Mouse Shortcuts -> Show Desktop -> Keyboard Shortcut -> toggle off F11 key. (`F11` should be reserved for step through debugging)
+4. Run `code .` to open a new file/folder in vscode
 
 #### Nano
 
@@ -66,6 +67,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 2. Follow the installation instructions in the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim#installation) repo
    1. Install these pre-requisites: `brew install neovim ripgrep xclip luajit luarocks`
    2. Run: `git clone https://github.com/ianpaul10/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim` 
+3. You're off to the races! Run `nvim .` to open a new file/folder in neovim
 
 ### Python setup
 
