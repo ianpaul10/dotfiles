@@ -126,3 +126,4 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
    1. Run `brew install --cask logitech-options`
 7. Install [protonVPN](https://protonvpn.com/download/macos)
    1.  Run `brew install --cask protonvpn`
+8. [Desktop background](https://apod.nasa.gov/apod/ap210129.html)
