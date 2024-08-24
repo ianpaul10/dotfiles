@@ -23,3 +23,5 @@ node_modules
 .sass-cache
 dotfile_scripts
 scripts/local
+
+.zshenv
