@@ -8,8 +8,8 @@ Instructions for setting up your new Mac (as of Feb 2024).
 
 Inspired by and heavily referencing (Both courtesy of this tweet https://twitter.com/karpathy/status/1762648404029759758):
 
-* https://www.swyx.io/new-mac-setup
-* https://sourabhbajaj.com/mac-setup
+- https://www.swyx.io/new-mac-setup
+- https://sourabhbajaj.com/mac-setup
 
 ### Install Homebrew
 
@@ -19,12 +19,15 @@ Inspired by and heavily referencing (Both courtesy of this tweet https://twitter
 
 ### Browser
 
+I'm using zen as my default browser for now.
+
 1. Download Chrome https://www.google.com/chrome/
    1. Update your `chrome://flags/` to have [all websites dark-mode](https://www.howtogeek.com/446198/how-to-force-dark-mode-on-every-website-in-google-chrome/)
 2. Install [FireFox](https://www.mozilla.org/en-US/firefox/new/)
-3. Privacy focused:
+3. Install [zen](https://github.com/zen-browser/desktop)
+4. Privacy focused:
    1. Download [Brave](https://brave.com/)
-   2. Install [LibreWolf](https://librewolf.net/), a security-focused fork of Firefox 
+   2. Install [LibreWolf](https://librewolf.net/), a security-focused fork of Firefox
       1. Run `brew install --cask librewolf --no-quarantine`
 
 ### Terminal setup
@@ -66,7 +69,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 1. Based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) and [this guide](https://www.youtube.com/watch?v=m8C0Cq9Uv9o)
 2. Follow the installation instructions in the [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim#installation) repo
    1. Install these pre-requisites: `brew install neovim ripgrep xclip luajit luarocks`
-   2. Run: `git clone https://github.com/ianpaul10/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim` 
+   2. Run: `git clone https://github.com/ianpaul10/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim`
 3. You're off to the races! Run `nvim .` to open a new file/folder in neovim
 
 ### Python setup
@@ -89,11 +92,11 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 ### Node.js setup
 
 1. Install node version manager
-  1. `brew install nvm`
-  2. Ensure you update your `.zshrc` with the appropriate info to load node properly.
-2. Install node.js
-  1. `nvm install node # install most recent Node stable version`
-3. Node.js and nvm config included in `.zshrc`
+1. `brew install nvm`
+1. Ensure you update your `.zshrc` with the appropriate info to load node properly.
+1. Install node.js
+1. `nvm install node # install most recent Node stable version`
+1. Node.js and nvm config included in `.zshrc`
 
 ### Local scripts setup
 
@@ -125,5 +128,5 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 6. Install logitech mouse settings app
    1. Run `brew install --cask logitech-options`
 7. Install [protonVPN](https://protonvpn.com/download/macos)
-   1.  Run `brew install --cask protonvpn`
+   1. Run `brew install --cask protonvpn`
 8. [Desktop background](https://apod.nasa.gov/apod/ap210129.html)
