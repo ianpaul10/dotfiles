@@ -122,3 +122,6 @@ export NVM_DIR="$HOME/.nvm"
 # local scripts setup
 export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
 alias ask="python $LOCAL_SCRIPTS_DIR/ask_llm/ask_llm.py"
+
+# Aider config
+export AIDER_DARK_MODE=true
