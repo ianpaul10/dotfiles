@@ -1,6 +1,6 @@
 # dotfiles
 
-Collection of config files and scripts for my personal Mac setup.
+Collection of config files and scripts for my personal Mac setup. To setup this config for a new mac, simply run `bash install.sh` from the root of this repo
 
 ## Neovim files
 
