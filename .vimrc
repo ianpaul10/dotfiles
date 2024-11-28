@@ -11,6 +11,11 @@ colorscheme wildcharm
 " Enable syntax highlighting
 syntax enable
 
+" Disable all bells/beeps
+set belloff=all
+set visualbell
+set t_vb=
+
 " Status line configuration
 set laststatus=2  " Always show status line
 
