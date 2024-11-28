@@ -6,6 +6,7 @@ set relativenumber
 set t_Co=256
 
 " Set colorscheme
+" colorscheme sorbet
 colorscheme wildcharm
 
 " Enable syntax highlighting
