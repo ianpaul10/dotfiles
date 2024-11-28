@@ -23,5 +23,3 @@ set laststatus=2  " Always show status line
 set statusline=%f\ %m%r%h%w%=%y[%{&ff}][%l,%v][%p%%]
 hi StatusLine   ctermfg=darkgray ctermbg=white guibg=#FFFFFF guifg=#303030
 hi StatusLineNC ctermfg=darkgray ctermbg=gray  guibg=#BBBBBB guifg=#303030
-
-
