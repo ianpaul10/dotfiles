@@ -20,10 +20,6 @@ set t_vb=
 " Status line configuration
 set laststatus=2  " Always show status line
 
-" Set cursor shape for different modes
-let &t_SI = "\e[6 q"  " Insert mode - vertical line
-let &t_EI = "\e[2 q"  " Normal mode - block
-
 " Basic status line with white text on dark grey
 set statusline=%f\ %m%r%h%w%=%y[%{&ff}][%l,%v][%p%%]
 hi StatusLine   ctermfg=darkgray ctermbg=white guibg=#FFFFFF guifg=#303030
