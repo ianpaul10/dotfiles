@@ -25,3 +25,4 @@ dotfile_scripts
 scripts/local
 
 .zshenv
+.aider*
