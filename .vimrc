@@ -6,8 +6,10 @@ set relativenumber
 set laststatus=2  " Always show status line
 
 " Define colors for status line - themed for sorbet
-hi StatusLine   cterm=bold ctermfg=252 ctermbg=89 gui=bold guifg=#d0d0d0 guibg=#87005f
-hi StatusLineNC cterm=none ctermfg=248 ctermbg=53 gui=none guifg=#a8a8a8 guibg=#5f005f
+hi Normal guibg=NONE ctermbg=NONE
+hi StatusLine ctermfg=245 ctermbg=235 cterm=none
+hi StatusLineNC ctermfg=245 ctermbg=none cterm=none
+hi CursorLine cterm=none ctermbg=233 ctermfg=none
 
 " Configure status line contents
 set statusline=
