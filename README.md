@@ -2,6 +2,11 @@
 
 Collection of config files and scripts for my personal Mac setup.
 
+## Neovim files
+
+- `neovim/init.lua` is the main Neovim config file
+- all files in the `/neovim` folder can be copied into the `~/.config/nvim` folder to setup your Neovim config
+
 ## New Mac Setup Instructions
 
 Instructions for setting up your new Mac (as of Feb 2024).
