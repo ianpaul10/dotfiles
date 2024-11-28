@@ -14,6 +14,11 @@ ln -sf "$PWD/.zshrc" ~/.zshrc
 ln -sf "$PWD/.zprofile" ~/.zprofile
 ln -sf "$PWD/.zshenv" ~/.zshenv
 
+# Sync vim files
+echo -e "${GREEN}Syncing vim files...${NC}"
+ln -sf "$PWD/.vimrc" ~/.vimrc
+
+
 # Sync neovim files
 echo -e "${GREEN}Syncing neovim configuration...${NC}"
 rm -rf ~/.config/nvim

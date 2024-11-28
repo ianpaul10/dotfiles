@@ -15,7 +15,7 @@ syntax enable
 " - slate
 " - murphy
 " - pablo
-colorscheme desert
+colorscheme sorbet
 
 " Enable true colors if your terminal supports it
 if exists('+termguicolors')
