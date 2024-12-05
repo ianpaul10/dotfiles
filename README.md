@@ -92,7 +92,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 3. Run `pip install virtualenv` to install virtualenv locally
 4. Run `git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv` and `pyenv global 3` to activate what you just installed.
 5. When starting/loading a new python repo:
-   1. Start a new python virtual environment `virtualenv venv`
+   1. Start a new python virtual environment `python3 -m venv venv`
    2. Activate the python virtual environment `source venv/bin/activate`
    3. When done work in that repo, run `deactivate`
    4. This will help keep dependencies for a given repo local to that `/venv` folder inside the root repo dir
