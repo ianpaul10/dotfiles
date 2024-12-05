@@ -10,9 +10,9 @@ mkdir -p ~/.config/nvim
 
 # Sync zsh files
 echo -e "${GREEN}Syncing zsh files...${NC}"
-ln -sf "$PWD/.zshrc" ~/.zshrc
-ln -sf "$PWD/.zprofile" ~/.zprofile
-ln -sf "$PWD/.zshenv" ~/.zshenv
+ln -sf "$PWD/zsh/.zshrc" ~/.zshrc
+ln -sf "$PWD/zsh/.zprofile" ~/.zprofile
+ln -sf "$PWD/zsh/.zshenv" ~/.zshenv
 
 # Sync vim files
 echo -e "${GREEN}Syncing vim files...${NC}"
