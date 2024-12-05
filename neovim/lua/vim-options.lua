@@ -21,7 +21,7 @@ vim.opt.showmode = false
 --  See `:help 'clipboard'`
 vim.opt.clipboard = 'unnamedplus'
 
--- Enable break indent
+-- Enable break indent (i.e. wrapped lines will show up at same indentation level as original line)
 vim.opt.breakindent = true
 
 -- Indentation
