@@ -31,7 +31,7 @@ require('lazy').setup({
   require 'kickstart.plugins.telescope',
   require 'kickstart.plugins.tree-sitter',
 
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically (aka spacing/tabs/indentation)
+  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically (aka spacing/tabs/indentation). Reads from `.editorconfig`
   'ryanoasis/vim-devicons',
 
   -- NOTE: Custom plugins
