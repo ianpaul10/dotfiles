@@ -1,6 +1,16 @@
 # dotfiles
 
-Collection of config files and scripts for my personal Mac setup. To setup this config for a new mac, simply run `bash install.sh` from the root of this repo
+Collection of config files and scripts for my personal Mac setup.
+
+To setup this config for a new mac, simply run:
+
+```
+git clone git@github.com:ianpaul10/dotfiles.git
+cd dotfiles
+bash install.sh
+```
+
+Or to reinstall just run `bash install.sh` from the root of this repo.
 
 ## What does it look like?
 
