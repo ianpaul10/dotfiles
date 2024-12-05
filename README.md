@@ -2,6 +2,14 @@
 
 Collection of config files and scripts for my personal Mac setup. To setup this config for a new mac, simply run `bash install.sh` from the root of this repo
 
+## What does it look like?
+
+[terminal](./imgs/terminal.png)
+
+[neovim starter page](./imgs/nvim_starter_page.png)
+
+[neovim example lua file](./imgs/nvim_lua_file.png)
+
 ## Neovim files
 
 - `neovim/init.lua` is the main Neovim config file
