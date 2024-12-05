@@ -111,6 +111,10 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 1. `nvm install node # install most recent Node stable version`
 1. Node.js and nvm config included in `.zshrc`
 
+### .NET/C# setup
+
+1. `brew install dotnet`
+
 ### Local scripts setup
 
 1. `ask` command to ask GPT-4 a question from the command line
