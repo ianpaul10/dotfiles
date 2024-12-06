@@ -4,6 +4,8 @@ Collection of config files and scripts for my personal Mac setup.
 
 To setup this config for a new mac, simply clone this repo, follow the below steps, and then run `bash install.sh` from the root of this repo.
 
+If you just want the zsh and nvim setup, simply clone this repo and run `bash install.sh`
+
 ## What does it look like?
 
 ![terminal](./imgs/terminal.png)
