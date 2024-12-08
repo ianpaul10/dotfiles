@@ -114,6 +114,12 @@ source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+
+# # Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
+# fuzzy cd
+alias sd="cd ~ && cd \$(find . -type d | fzf)"
+
 # node.js & nvm config
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
