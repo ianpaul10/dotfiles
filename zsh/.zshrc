@@ -118,7 +118,7 @@ source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
 # fuzzy cd
-alias sd="cd ~/code && cd \$(find . -type d | fzf)"
+alias sd="cd ~/code && cd \$(find . -type d -maxdepth 2 | fzf)"
 alias sf="cd ~/code && nvim \$(find . -type f | fzf)"
 
 # node.js & nvm config
