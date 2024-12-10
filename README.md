@@ -152,3 +152,4 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
    1. Run `brew install --cask protonvpn`
 8. [Desktop background](https://apod.nasa.gov/apod/ap210129.html)
 9. Private env vars that you want access to in your terminal can be put into `.zshenv`
+10. If you see a blue arrow at the beginning of your terminal prompt, it's likely a iTerm2 issue. See [here](https://github.com/ohmyzsh/ohmyzsh/issues/5088#issuecomment-221139633) to fix it.
