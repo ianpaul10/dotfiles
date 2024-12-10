@@ -83,14 +83,16 @@ return { -- Fuzzy Finder (files, lsp, etc)
     -- TODO: Doesn't work exaclty how I want. I'd like it to include hidden files
     -- vim.keymap.set('n', '<leader>sG', function()
     --   builtin.live_grep {
-    --     hidden = true,
+    --     find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
     --   }
     -- end, { desc = '[S]earch [G]rep in hidden files' })
-    -- vim.keymap.set('n', '<leader>sF', function()
-    --   builtin.live_grep {
-    --     hidden = true,
-    --   }
-    -- end, { desc = '[S]earch [F]ile names (ignore case)' })
+    vim.keymap.set('n', '<leader>sF', function()
+      builtin.find_files {
+        -- source: https://github.com/nvim-telescope/telescope.nvim/wiki/Configuration-Recipes#file-and-text-search-in-hidden-files-and-directories
+        -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
+        find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
+      }
+    end, { desc = '[S]earch [F]iles (including hidden files)' })
 
     -- NOTE: grep in the current buffer's directory
     vim.keymap.set('n', '<leader>sG', function()
