@@ -20,6 +20,62 @@
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 
+local live_multi_grep = function(opts)
+  local pickers = require 'telescope.pickers'
+  local finders = require 'telescope.finders'
+  local make_entry = require 'telescope.make_entry'
+  local conf = require('telescope.config').values
+
+  opts = opts or {}
+  opts.cwd = opts.cwd or vim.uv.cwd()
+
+  local finder = finders.new_async_job {
+    command_generator = function(prompt)
+      if not prompt or prompt == '' then
+        return nil
+      end
+
+      -- NOTE: TWO spaces to split the first and second piece of the command
+      local pieces = vim.split(prompt, '  ')
+      local args = { 'rg' }
+
+      if pieces[1] then
+        table.insert(args, '-e') -- regex
+        table.insert(args, pieces[1])
+      end
+
+      if pieces[2] then
+        table.insert(args, '-g') -- glob
+        table.insert(args, pieces[2])
+      end
+
+      return vim.tbl_flatten {
+        args,
+        {
+          '--color=never',
+          '--no-heading',
+          '--with-filename',
+          '--line-number',
+          '--column',
+          '--smart-case',
+        },
+      }
+    end,
+    entry_maker = make_entry.gen_from_vimgrep(opts),
+    cwd = opts.cwd,
+  }
+
+  pickers
+    .new(opts, {
+      debounce = 100,
+      prompt_title = 'Multi Grep (filter by file after two spaces)',
+      finder = finder,
+      previewer = conf.grep_previewer(opts),
+      sorter = require('telescope.sorters').empty(),
+    })
+    :find()
+end
+
 return { -- Fuzzy Finder (files, lsp, etc)
   'nvim-telescope/telescope.nvim',
   event = 'VimEnter',
@@ -60,6 +116,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
+        fzf = {},
       },
     }
 
@@ -74,32 +131,25 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     -- vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-    vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+    vim.keymap.set('n', '<leader>slg', builtin.live_grep, { desc = '[S]earch by default [L]ive [G]rep (default telescope imp.)' })
     vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-    -- TODO: Doesn't work exaclty how I want. I'd like it to include hidden files
-    -- vim.keymap.set('n', '<leader>sG', function()
-    --   builtin.live_grep {
-    --     find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
-    --   }
-    -- end, { desc = '[S]earch [G]rep in hidden files' })
     vim.keymap.set('n', '<leader>sF', function()
       builtin.find_files {
         -- source: https://github.com/nvim-telescope/telescope.nvim/wiki/Configuration-Recipes#file-and-text-search-in-hidden-files-and-directories
-        -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d.
+        -- `hidden = true` will still show the inside of `.git/` as it's not `.gitignore`d, so we're using `--glob` to exclude it.
         find_command = { 'rg', '--files', '--hidden', '--glob', '!**/.git/*' },
       }
     end, { desc = '[S]earch [F]iles (including hidden files)' })
 
-    -- NOTE: grep in the current buffer's directory
-    vim.keymap.set('n', '<leader>sG', function()
-      builtin.live_grep {
-        cwd = require('telescope.utils').buffer_dir(),
-      }
-    end, { desc = '[S]earch [G]rep in current directory' })
+    -- NOTE: multigrep across all files in the current directory.
+    -- First part of the prompt is the search term, second part is the file glob, separated by two spaces.
+    vim.keymap.set('n', '<leader>sg', function(opts)
+      live_multi_grep(opts)
+    end, { desc = '[S]earch by [G]rep (multigrep)' })
 
     -- Slightly advanced example of overriding default behavior and theme
     vim.keymap.set('n', '<leader>/', function()
