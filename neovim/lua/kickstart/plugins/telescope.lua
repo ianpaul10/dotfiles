@@ -45,6 +45,7 @@ local live_multi_grep = function(opts)
       end
 
       if pieces[2] then
+        table.insert(args, '--hidden')
         table.insert(args, '-g') -- glob
         table.insert(args, pieces[2])
       end
