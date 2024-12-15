@@ -42,6 +42,7 @@ require('lazy').setup({
   -- require 'custom.plugins.groq-and-roll', -- haven't used this in a while, using avante and aider instead
   require 'custom.plugins.avante',
   require 'custom.plugins.comments', -- specifically for ts/tsx comments
+  require 'custom.plugins.autoimport',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
