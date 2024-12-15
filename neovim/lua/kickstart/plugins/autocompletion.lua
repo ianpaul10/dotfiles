@@ -35,13 +35,15 @@ return { -- Autocompletion
     'hrsh7th/cmp-path',
     'hrsh7th/cmp-buffer',
     'hrsh7th/cmp-cmdline',
-    'hrsh7th/nvim-cmp',
   },
   config = function()
     -- See `:help cmp`
     local cmp = require 'cmp'
     local luasnip = require 'luasnip'
+
     luasnip.config.setup {}
+
+    -- basic cmp setup
     cmp.setup {
       snippet = {
         expand = function(args)
@@ -119,5 +121,31 @@ return { -- Autocompletion
         -- { name = 'supermaven' }, -- Let's remove it from the cmp list, and just have it inline for now.
       },
     }
+
+    -- `/` cmdline setup.
+    cmp.setup.cmdline('/', {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = {
+        { name = 'buffer' },
+      },
+    })
+
+    -- `:` cmdline setup.
+    cmp.setup.cmdline(':', {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = cmp.config.sources({
+        { name = 'path' },
+      }, {
+        { name = 'cmdline' },
+      }),
+      matching = {
+        disallow_symbol_nonprefix_matching = false,
+        disallow_fuzzy_matching = false,
+        disallow_partial_matching = false,
+        disallow_prefix_unmatching = false,
+        disallow_fullfuzzy_matching = false,
+        disallow_partial_fuzzy_matching = false,
+      },
+    })
   end,
 }
