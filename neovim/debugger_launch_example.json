@@ -1,10 +1,11 @@
 {
+  // NOTE: MAKE SURE THIS IS PROPERLY FORMATTED JSON WITHOUT COMMENTS AFTER ADDING
   // Only setup with python for now
   // Copy into `${workspaceFolder}/.vscode/launch.json`
   // Install debugpy and update program to point to your test file
   "configurations": [
     {
-      "name": "nvim single test debug",
+      "name": "_nvim single test debug",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/test/test_uops.py", // path to program

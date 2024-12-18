@@ -52,7 +52,10 @@ return {
       },
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
       { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
-      { '<leader>ds', dap.continue, desc = '[D]ebug: [S]tart' },
+      { '<leader>dd', dap.continue, desc = '[D]ebug: start [D]ebugging' },
+      { '<leader>dc', require('dap-python').test_class, desc = '[D]ebug: Debug current test [C]lass' },
+      { '<leader>dm', require('dap-python').test_method, desc = '[D]ebug: Debug current test [M]ethod' },
+      { '<leader>ds', require('dap-python').debug_selection, desc = '[D]ebug: Debug current [S]election' },
       unpack(keys),
     }
   end,
