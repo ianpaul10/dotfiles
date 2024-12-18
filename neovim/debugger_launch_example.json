@@ -1,0 +1,20 @@
+{
+  // Only setup with python for now
+  // Copy into `${workspaceFolder}/.vscode/launch.json`
+  // Install debugpy and update program to point to your test file
+  "configurations": [
+    {
+      "name": "nvim single test debug",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/test/test_uops.py", // path to program
+      "args": ["TestGatedStoreRewrite.test_tiny_gate_store"], // args passed into debugpy cmd, i.e. "class.method"
+      "console": "integratedTerminal",
+      "env": {
+        // Add any environment variables here
+        "DEBUG": "7",
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    }
+  ]
+}

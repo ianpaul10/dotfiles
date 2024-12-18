@@ -22,7 +22,7 @@ return {
     'jay-babu/mason-nvim-dap.nvim',
 
     -- Add your own debuggers here
-    'leoluz/nvim-dap-go',
+    -- 'leoluz/nvim-dap-go',
     'mfussenegger/nvim-dap-python',
   },
   keys = function(_, keys)
@@ -52,6 +52,7 @@ return {
       },
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
       { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
+      { '<leader>ds', dap.continue, desc = '[D]ebug: [S]tart' },
       unpack(keys),
     }
   end,
