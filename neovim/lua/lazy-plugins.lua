@@ -16,7 +16,7 @@ require('lazy').setup({
 
   require 'kickstart.plugins.neovim-lsp',
   require 'kickstart.plugins.autoformat',
-  require 'kickstart.plugins.autocompletion',
+  -- require 'kickstart.plugins.autocompletion', -- switching to blink.cmp in autocmp
   require 'kickstart.plugins.colorscheme',
   require 'kickstart.plugins.color-comments',
   require 'kickstart.plugins.mini-vim',
@@ -43,6 +43,7 @@ require('lazy').setup({
   -- require 'custom.plugins.avante', -- haven't used this in a while, using aider from the command line for now
   require 'custom.plugins.comments', -- specifically for ts/tsx comments
   require 'custom.plugins.autoimport',
+  require 'custom.plugins.autocmp',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
