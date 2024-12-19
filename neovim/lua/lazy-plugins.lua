@@ -43,6 +43,7 @@ require('lazy').setup({
   -- require 'custom.plugins.avante', -- haven't used this in a while, using aider from the command line for now
   require 'custom.plugins.comments', -- specifically for ts/tsx comments
   require 'custom.plugins.autoimport',
+  require 'custom.plugins.lsp-signature',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
