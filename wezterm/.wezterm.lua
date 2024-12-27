@@ -4,13 +4,12 @@ local wezterm = require("wezterm")
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
--- This is where you actually apply your config choices
-
 -- For example, changing the color scheme:
 -- config.color_scheme = "Batman"
 
+-- FONTS AND COLOURS
 config.font = wezterm.font("JetBrains Mono")
-config.font_size = 13 -- default is 12
+config.font_size = 13.5 -- default is 12
 
 config.use_fancy_tab_bar = false
 
@@ -53,6 +52,7 @@ config.colors = {
     },
 }
 
+-- HYPERLINKS
 -- Use the defaults as a base
 config.hyperlink_rules = wezterm.default_hyperlink_rules()
 -- make task numbers clickable
@@ -69,5 +69,15 @@ table.insert(config.hyperlink_rules, {
     regex = [[["]?([\w\d]{1}[-\w\d]+)(/){1}([-\w\d\.]+)["]?]],
     format = "https://www.github.com/$1/$3",
 })
+
+-- KEYBINDINGS FOR NATURAL KEY MOTIONS
+local action = wezterm.action
+config.keys = {
+    { mods = "OPT", key = "LeftArrow", action = action.SendKey({ mods = "ALT", key = "b" }) },
+    { mods = "OPT", key = "RightArrow", action = action.SendKey({ mods = "ALT", key = "f" }) },
+    { mods = "CMD", key = "LeftArrow", action = action.SendKey({ mods = "CTRL", key = "a" }) },
+    { mods = "CMD", key = "RightArrow", action = action.SendKey({ mods = "CTRL", key = "e" }) },
+    { mods = "CMD", key = "Backspace", action = action.SendKey({ mods = "CTRL", key = "u" }) },
+}
 
 return config
