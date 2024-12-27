@@ -7,6 +7,14 @@ local config = wezterm.config_builder()
 -- For example, changing the color scheme:
 -- config.color_scheme = "Batman"
 
+-- PADDING FOR NVIM
+config.window_padding = {
+    left = 1,
+    right = 1,
+    top = 1,
+    bottom = 1,
+}
+
 -- FONTS AND COLOURS
 config.font = wezterm.font("JetBrains Mono")
 config.font_size = 13.5 -- default is 12
