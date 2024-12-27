@@ -35,7 +35,7 @@ config.colors = {
             -- Specify whether you want "None", "Single" or "Double" underline for
             -- label shown for this tab.
             -- The default is "None"
-            underline = "None",
+            underline = "Single",
 
             -- Specify whether you want the text to be italic (true) or not (false)
             -- for this tab.  The default is false.
