@@ -10,7 +10,7 @@ local config = wezterm.config_builder()
 -- config.color_scheme = "Batman"
 
 config.font = wezterm.font("JetBrains Mono")
-config.font_size = 12
+config.font_size = 13 -- default is 12
 
 config.use_fancy_tab_bar = false
 
