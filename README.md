@@ -49,6 +49,12 @@ I'm using zen as my default browser for now.
 
 ### Terminal setup
 
+#### WezTerm
+
+1. Install wezterm `brew install --cask wezterm`
+
+#### iTerm2
+
 1. Download iTerm2 `brew install --cask iterm2`
    1. Update the blue colour in `iTerm -> Settings -> Profiles -> [ choose needed profile ] -> Colors` for a better exp with agnoster's theme
 2. Install oh-my-zsh `sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`

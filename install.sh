@@ -18,10 +18,15 @@ ln -sf "$PWD/zsh/.zshenv" ~/.zshenv
 echo -e "${GREEN}Syncing vim files...${NC}"
 ln -sf "$PWD/.vimrc" ~/.vimrc
 
-
 # Sync neovim files
 echo -e "${GREEN}Syncing neovim configuration...${NC}"
 rm -rf ~/.config/nvim
 ln -sf "$PWD/neovim" ~/.config/nvim
+
+# Sync wezterm files
+echo -e "${GREEN}Syncing wezterm configuration...${NC}"
+rm -rf ~/.wezterm.lua
+ln -sf "$PWD/wezterm/.wezterm.lua" ~/.wezterm.lua
+
 
 echo -e "${GREEN}Done! Configuration files have been linked.${NC}"
