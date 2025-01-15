@@ -85,11 +85,10 @@ def _handle_llm_query(args, ask_app_dir):
             messages.append({"role": "user", "content": user_prompt})
 
         cheap_model = "gpt-4-turbo"
-        # Enable streaming
         response = client.chat.completions.create(
-            model=cheap_model, 
+            model=cheap_model,
             messages=messages,
-            stream=True  # Enable streaming
+            stream=True,  # Enable streaming
         )
 
         # Collect the full response while streaming
@@ -97,20 +96,17 @@ def _handle_llm_query(args, ask_app_dir):
         for chunk in response:
             if chunk.choices[0].delta.content:
                 content = chunk.choices[0].delta.content
-                print(content, end='', flush=True)
+                print(content, end="", flush=True)
                 collected_response.append(content)
-        
+
         # Add a newline after streaming completes
         print()
-        
-        # Join the collected response
-        full_response = ''.join(collected_response)
-        
-        # Update history
+
+        full_response = "".join(collected_response)
+
         if user_prompt:
             history["messages"].append({"role": "user", "content": user_prompt})
         history["messages"].append({"role": "assistant", "content": full_response})
-
         if args.cmd:
             history["last_command"] = full_response.strip()
 
@@ -138,6 +134,9 @@ def main():
     parser.add_argument("--cmd", action="store_true", help="Get a command to execute")
     parser.add_argument(
         "--run", action="store_true", help="Run the last generated command"
+    )
+    parser.add_argument(
+        "--chat", action="store_true", help="Pass in the chat history to the LLM"
     )
     args = parser.parse_args()
 
