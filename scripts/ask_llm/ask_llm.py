@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
 
-def load_conversation_history(ask_app_dir):
+def _load_conversation_history(ask_app_dir):
     history_file = os.path.join(ask_app_dir, "conversation_history.json")
     if os.path.exists(history_file):
         with open(history_file, "r") as f:
@@ -17,10 +17,28 @@ def load_conversation_history(ask_app_dir):
     return []
 
 
-def save_conversation_history(ask_app_dir, history):
+def _save_conversation_history(ask_app_dir, history):
     history_file = os.path.join(ask_app_dir, "conversation_history.json")
     with open(history_file, "w") as f:
         json.dump(history, f)
+
+
+def _get_system_prompt(mode="general"):
+    default = """
+        You are J.A.R.V.I.S. (Just a Rather Very Intelligent System), aka Jarvis. You previously only worked for Tony Stark, aka Iron Man, but you now also help software engineers. You are a helpful AI assitant with a depth of software engineering knowledge, and always respond with canoncial and idomatic code when appropriate.
+        """
+    prompts = {
+        "general": """
+        Provide clear, concise answers.
+        You can use markdown formatting when appropriate.
+        """,
+        "cmd": """
+        Return only the command to be executed as a raw string.
+        Do not include any formatting tokens such as ` or ```. No yapping. No markdown. No fenced code blocks. Do not hallucinate.
+        What you return will be passed to subprocess.check_output() directly.
+        """,
+    }
+    return default + prompts.get(mode, prompts["general"])
 
 
 def main():
@@ -34,11 +52,7 @@ def main():
         action="store_true",
         help="Respond to the previous conversation",
     )
-    parser.add_argument(
-        "--cmd",
-        action="store_true", 
-        help="Get a command to execute"
-    )
+    parser.add_argument("--cmd", action="store_true", help="Get a command to execute")
     args = parser.parse_args()
 
     # Check if a prompt argument is provided
@@ -52,23 +66,8 @@ def main():
         sys.exit(1)
     client = OpenAI(api_key=oai_api_key)
 
-    def get_system_prompt(mode="general"):
-        prompts = {
-            "general": """
-            Act as a helpful AI assistant. Provide clear, concise answers.
-            You can use markdown formatting when appropriate.
-            """,
-            
-            "cmd": """
-            Return only the command to be executed as a raw string.
-            Do not include any formatting tokens such as ` or ```. No yapping. No markdown. No fenced code blocks. Do not hallucinate.
-            What you return will be passed to subprocess.check_output() directly.
-            """
-        }
-        return prompts.get(mode, prompts["general"])
-
     user_prompt = " ".join(args.prompt)
-    system_prompt = get_system_prompt("cmd" if args.cmd else "general")
+    system_prompt = _get_system_prompt("cmd" if args.cmd else "general")
 
     try:
         # Prepare messages for the API call
@@ -78,7 +77,8 @@ def main():
             messages.append({"role": "user", "content": user_prompt})
 
         # Make a request to OpenAI's GPT-4 model in chat mode
-        cheap_model = "gpt-3.5-turbo"
+        # cheap_model = "gpt-3.5-turbo"
+        cheap_model = "gpt-4-turbo"
         # default_model = "gpt-4o"
         response = client.chat.completions.create(model=cheap_model, messages=messages)
 
