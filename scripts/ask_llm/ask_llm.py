@@ -47,12 +47,15 @@ def main():
         sys.exit(1)
     client = OpenAI(api_key=oai_api_key)
 
-    # conversation_history = (
-    #     load_conversation_history(ask_app_dir) if args.respond else []
-    # )
-
     # Combine the system prompt with the user prompt
-    system_prompt = "Answer in as few characters as possible. Do not include any formatting tokens such as ` or ```"
+    system_prompt = """
+    Return only the command to be executed as a raw string.
+
+    Do not include any formatting tokens such as ` or ```. No yapping. No markdown. No fenced code blocks. Do not halucinate.
+
+    What you return will be passed to subprocess.check_output() directly.
+    """
+
     user_prompt = " ".join(args.prompt)
 
     try:
