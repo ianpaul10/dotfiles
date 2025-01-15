@@ -15,13 +15,13 @@ def _load_conversation_history(ask_app_dir):
     if os.path.exists(history_file):
         with open(history_file, "r") as f:
             return json.load(f)
-    return []
+    return {"messages": [], "last_command": ""}
 
 
 def _save_conversation_history(ask_app_dir, history):
     history_file = os.path.join(ask_app_dir, "conversation_history.json")
     with open(history_file, "w") as f:
-        json.dump(history, f)
+        json.dump(history, f, indent=2)
 
 
 def _get_system_prompt(mode="general"):
@@ -46,11 +46,11 @@ def _handle_run_command(ask_app_dir):
     """Execute the last saved command from conversation history."""
     history = _load_conversation_history(ask_app_dir)
     last_cmd = history.get("last_command")
-    
+
     if not last_cmd:
         print("No previous command found")
         sys.exit(1)
-        
+
     print(f"Executing: {last_cmd}")
     try:
         result = subprocess.run(last_cmd, shell=True, text=True, capture_output=True)
@@ -62,15 +62,16 @@ def _handle_run_command(ask_app_dir):
         print(f"Error executing command: {e}", file=sys.stderr)
         sys.exit(1)
 
+
 def _handle_llm_query(args, ask_app_dir):
     """Handle queries to the LLM."""
     history = _load_conversation_history(ask_app_dir)
-    
+
     oai_api_key = os.getenv("OAI_API_KEY")
     if not oai_api_key:
         print("Error: The OAI_API_KEY environment variable is not set.")
         sys.exit(1)
-    
+
     client = OpenAI(api_key=oai_api_key)
     user_prompt = " ".join(args.prompt)
     system_prompt = _get_system_prompt("cmd" if args.cmd else "general")
@@ -85,26 +86,27 @@ def _handle_llm_query(args, ask_app_dir):
         response = client.chat.completions.create(model=cheap_model, messages=messages)
         response_text = response.choices[0].message.content.strip()
         print(response_text)
-        
+
         # Update history
         if user_prompt:
             history["messages"].append({"role": "user", "content": user_prompt})
         history["messages"].append({"role": "assistant", "content": response_text})
-        
+
         # Save the command if in cmd mode
         if args.cmd:
             history["last_command"] = response_text
-        
+
         _save_conversation_history(ask_app_dir, history)
         return 0
-        
+
     except Exception as e:
         print(f"Error: {e}")
         return 1
 
+
 def main():
     # Create app directory in user's home
-    ask_app_dir = os.path.expanduser("~/.ask_llm")
+    ask_app_dir = os.path.expanduser("~/.jarvis")
     os.makedirs(ask_app_dir, exist_ok=True)
 
     parser = argparse.ArgumentParser(description="Ask GPT-4 a question.")
@@ -116,18 +118,20 @@ def main():
         help="Respond to the previous conversation",
     )
     parser.add_argument("--cmd", action="store_true", help="Get a command to execute")
-    parser.add_argument("--run", action="store_true", help="Run the last generated command")
+    parser.add_argument(
+        "--run", action="store_true", help="Run the last generated command"
+    )
     args = parser.parse_args()
 
     # Handle different modes
     if args.run:
         sys.exit(_handle_run_command(ask_app_dir))
-    
+
     # Check if a prompt argument is provided
     if not args.prompt and not args.respond:
         print("Usage: python ask.py [-c] <prompt>")
         sys.exit(1)
-        
+
     sys.exit(_handle_llm_query(args, ask_app_dir))
 
 
