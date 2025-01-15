@@ -34,6 +34,11 @@ def main():
         action="store_true",
         help="Respond to the previous conversation",
     )
+    parser.add_argument(
+        "--cmd",
+        action="store_true", 
+        help="Get a command to execute"
+    )
     args = parser.parse_args()
 
     # Check if a prompt argument is provided
@@ -47,16 +52,23 @@ def main():
         sys.exit(1)
     client = OpenAI(api_key=oai_api_key)
 
-    # Combine the system prompt with the user prompt
-    system_prompt = """
-    Return only the command to be executed as a raw string.
-
-    Do not include any formatting tokens such as ` or ```. No yapping. No markdown. No fenced code blocks. Do not halucinate.
-
-    What you return will be passed to subprocess.check_output() directly.
-    """
+    def get_system_prompt(mode="general"):
+        prompts = {
+            "general": """
+            Act as a helpful AI assistant. Provide clear, concise answers.
+            You can use markdown formatting when appropriate.
+            """,
+            
+            "cmd": """
+            Return only the command to be executed as a raw string.
+            Do not include any formatting tokens such as ` or ```. No yapping. No markdown. No fenced code blocks. Do not hallucinate.
+            What you return will be passed to subprocess.check_output() directly.
+            """
+        }
+        return prompts.get(mode, prompts["general"])
 
     user_prompt = " ".join(args.prompt)
+    system_prompt = get_system_prompt("cmd" if args.cmd else "general")
 
     try:
         # Prepare messages for the API call
