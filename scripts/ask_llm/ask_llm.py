@@ -85,17 +85,34 @@ def _handle_llm_query(args, ask_app_dir):
             messages.append({"role": "user", "content": user_prompt})
 
         cheap_model = "gpt-4-turbo"
-        response = client.chat.completions.create(model=cheap_model, messages=messages)
-        response_text = response.choices[0].message.content.strip()
-        print(response_text)
+        # Enable streaming
+        response = client.chat.completions.create(
+            model=cheap_model, 
+            messages=messages,
+            stream=True  # Enable streaming
+        )
 
+        # Collect the full response while streaming
+        collected_response = []
+        for chunk in response:
+            if chunk.choices[0].delta.content:
+                content = chunk.choices[0].delta.content
+                print(content, end='', flush=True)
+                collected_response.append(content)
+        
+        # Add a newline after streaming completes
+        print()
+        
+        # Join the collected response
+        full_response = ''.join(collected_response)
+        
         # Update history
         if user_prompt:
             history["messages"].append({"role": "user", "content": user_prompt})
-        history["messages"].append({"role": "assistant", "content": response_text})
+        history["messages"].append({"role": "assistant", "content": full_response})
 
         if args.cmd:
-            history["last_command"] = response_text
+            history["last_command"] = full_response.strip()
 
         _save_conversation_history(ask_app_dir, history)
         return 0
