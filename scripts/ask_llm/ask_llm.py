@@ -77,8 +77,10 @@ def _handle_llm_query(args, ask_app_dir):
     system_prompt = _get_system_prompt("cmd" if args.cmd else "general")
 
     try:
-        messages = [{"role": "system", "content": system_prompt}]
-        messages.extend(history.get("messages", []))
+        messages = []
+        if args.chat:
+            messages.append(history.get("messages", []))
+        messages.append({"role": "system", "content": system_prompt})
         if user_prompt:
             messages.append({"role": "user", "content": user_prompt})
 
@@ -92,7 +94,6 @@ def _handle_llm_query(args, ask_app_dir):
             history["messages"].append({"role": "user", "content": user_prompt})
         history["messages"].append({"role": "assistant", "content": response_text})
 
-        # Save the command if in cmd mode
         if args.cmd:
             history["last_command"] = response_text
 
