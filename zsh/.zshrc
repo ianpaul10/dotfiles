@@ -130,5 +130,10 @@ export NVM_DIR="$HOME/.nvm"
 export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
 alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_llm/ask_llm.py"
 
+export wut() {
+  echo "$@" > $HOME/.jarvis/command.log  # Log the command
+  "$@" > >(tee -a $HOME/.jarvis/command.log) 2> >(tee -a $HOME/.jarvis/command.log >&2)
+}
+
 # Aider config
 export AIDER_DARK_MODE=true
