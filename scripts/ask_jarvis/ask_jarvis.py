@@ -19,6 +19,10 @@ def _load_conversation_history(ask_app_dir):
     return {"messages": [], "last_command": ""}
 
 
+def _get_wut_cmd_and_resp(ask_app_dir):
+    wut_file = os.path.join(ask_app_dir, "command.log")
+
+
 def _save_conversation_history(ask_app_dir, history):
     history_file = os.path.join(ask_app_dir, "conversation_history.json")
     with open(history_file, "w") as f:
@@ -79,14 +83,19 @@ def _handle_llm_query(args, ask_app_dir):
     user_prompt = " ".join(args.prompt)
     system_prompt = _get_system_prompt("cmd" if args.cmd else "general")
 
-    try:
-        messages = []
-        if args.chat:
-            messages.append(history.get("messages", []))
-        messages.append({"role": "system", "content": system_prompt})
-        if user_prompt:
-            messages.append({"role": "user", "content": user_prompt})
+    messages = []
+    if args.chat:
+        hist = history.get("messages", [])
+        if len(hist) > args.chat:
+            hist = hist[-args.chat :]
+        messages.append(hist)
+    messages.append({"role": "system", "content": system_prompt})
+    if user_prompt:
+        messages.append({"role": "user", "content": user_prompt})
+    elif args.wut:
+        messages.append({"role": "user", "content": history.get("last_wut", "")})
 
+    try:
         # cheap_model = "gpt-4-turbo"
         cheap_model = "llama-3.3-70b-versatile"
         response = client.chat.completions.create(
@@ -127,31 +136,27 @@ def main():
     ask_app_dir = os.path.expanduser("~/.jarvis")
     os.makedirs(ask_app_dir, exist_ok=True)
 
-    parser = argparse.ArgumentParser(description="Ask GPT-4 a question.")
-    parser.add_argument("prompt", nargs="*", help="The prompt to send to GPT-4")
-    parser.add_argument(
-        "-c",
-        "--respond",
-        action="store_true",
-        help="Respond to the previous conversation",
+    parser = argparse.ArgumentParser(
+        description="I am J.A.R.V.I.S. (Just a Rather Very Intelligent System), aka Jarvis. Ask me a question."
     )
+    parser.add_argument("prompt", nargs="*", help="The prompt to send to the LLM")
     parser.add_argument("--cmd", action="store_true", help="Get a command to execute")
     parser.add_argument(
         "--run", action="store_true", help="Run the last generated command"
     )
     parser.add_argument(
-        "--chat", action="store_true", help="Pass in the chat history to the LLM"
+        "--chat", type=int, default=0, help="Pass in the last n messages to the LLM"
+    )
+    parser.add_argument(
+        "--wut",
+        action="store_true",
+        help="Pass in the last wut command and response to get help with an error message",
     )
     args = parser.parse_args()
 
     # Handle different modes
     if args.run:
         sys.exit(_handle_run_command(ask_app_dir))
-
-    # Check if a prompt argument is provided
-    if not args.prompt and not args.respond:
-        print("Usage: python ask.py [-c] <prompt>")
-        sys.exit(1)
 
     sys.exit(_handle_llm_query(args, ask_app_dir))
 

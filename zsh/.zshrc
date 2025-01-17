@@ -128,11 +128,11 @@ export NVM_DIR="$HOME/.nvm"
 
 # local scripts setup
 export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
-alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_llm/ask_llm.py"
+alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
 
 export wut() {
-  echo "$@" > $HOME/.jarvis/command.log  # Log the command
-  "$@" > >(tee -a $HOME/.jarvis/command.log) 2> >(tee -a $HOME/.jarvis/command.log >&2)
+  echo "$@" > $HOME/.jarvis/wut_command.log  # Log the command
+  "$@" > >(tee -a $HOME/.jarvis/wut_command.log) 2> >(tee -a $HOME/.jarvis/wut_command.log >&2)
 }
 
 # Aider config
