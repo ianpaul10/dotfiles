@@ -3,9 +3,9 @@ import sys
 import json
 import argparse
 import subprocess
-from openai import OpenAI
-from groq import Groq
 
+# from openai import OpenAI # lets use Groq fro now
+from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
@@ -68,12 +68,14 @@ def _handle_llm_query(args, ask_app_dir):
     """Handle queries to the LLM."""
     history = _load_conversation_history(ask_app_dir)
 
-    oai_api_key = os.getenv("OAI_API_KEY")
-    if not oai_api_key:
-        print("Error: The OAI_API_KEY environment variable is not set.")
+    # oai_api_key = os.getenv("OAI_API_KEY")
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
+        print("Error: The GROQ_API_KEY environment variable is not set.")
         sys.exit(1)
 
-    client = OpenAI(api_key=oai_api_key)
+    # client = OpenAI(api_key=oai_api_key)
+    client = Groq(api_key=groq_api_key)
     user_prompt = " ".join(args.prompt)
     system_prompt = _get_system_prompt("cmd" if args.cmd else "general")
 
@@ -85,7 +87,8 @@ def _handle_llm_query(args, ask_app_dir):
         if user_prompt:
             messages.append({"role": "user", "content": user_prompt})
 
-        cheap_model = "gpt-4-turbo"
+        # cheap_model = "gpt-4-turbo"
+        cheap_model = "llama-3.3-70b-versatile"
         response = client.chat.completions.create(
             model=cheap_model,
             messages=messages,
