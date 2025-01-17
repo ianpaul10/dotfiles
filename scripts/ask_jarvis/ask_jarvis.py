@@ -20,7 +20,24 @@ def _load_conversation_history(ask_app_dir):
 
 
 def _get_wut_cmd_and_resp(ask_app_dir):
-    wut_file = os.path.join(ask_app_dir, "command.log")
+    wut_file = os.path.join(ask_app_dir, "wut_command.log")
+    if os.path.exists(wut_file):
+        with open(wut_file, "r") as f:
+            return f.read()
+    return ""
+
+
+def _get_wut_message(ask_app_dir):
+    return f"""
+        <context>
+        The latest command that was run executed in the terminal is included in the below block.
+        The first line is the command that was executed. Any subsequent lines are the output of the command.
+        If the output appears to be an error message, please provide context around the error based on the command and output, and how to resolve or debug the error.
+        </context>
+        <command-and-output>
+        {_get_wut_cmd_and_resp(ask_app_dir)}
+        </command-and-output>
+    """
 
 
 def _save_conversation_history(ask_app_dir, history):
@@ -88,12 +105,17 @@ def _handle_llm_query(args, ask_app_dir):
         hist = history.get("messages", [])
         if len(hist) > args.chat:
             hist = hist[-args.chat :]
-        messages.append(hist)
+        messages.extend(hist)
     messages.append({"role": "system", "content": system_prompt})
     if user_prompt:
         messages.append({"role": "user", "content": user_prompt})
     elif args.wut:
-        messages.append({"role": "user", "content": history.get("last_wut", "")})
+        messages.append({"role": "user", "content": _get_wut_message(ask_app_dir)})
+
+    if args.debug:
+        print("-- DEBUG --")
+        print(json.dumps(messages, indent=2))
+        print("-- DEBUG --")
 
     try:
         # cheap_model = "gpt-4-turbo"
@@ -116,6 +138,12 @@ def _handle_llm_query(args, ask_app_dir):
         print()
 
         full_response = "".join(collected_response)
+
+        if args.debug:
+            print("-- DEBUG --")
+            print(f"{response.response.status_code=}")
+            print(f"{response.response.headers=}")
+            print("-- DEBUG --")
 
         if user_prompt:
             history["messages"].append({"role": "user", "content": user_prompt})
@@ -151,6 +179,11 @@ def main():
         "--wut",
         action="store_true",
         help="Pass in the last wut command and response to get help with an error message",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Print the full request and response from the LLM",
     )
     args = parser.parse_args()
 
