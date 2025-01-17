@@ -160,7 +160,6 @@ def _handle_llm_query(args, ask_app_dir):
 
 
 def main():
-    # Create app directory in user's home
     ask_app_dir = os.path.expanduser("~/.jarvis")
     os.makedirs(ask_app_dir, exist_ok=True)
 
@@ -187,7 +186,6 @@ def main():
     )
     args = parser.parse_args()
 
-    # Handle different modes
     if args.run:
         sys.exit(_handle_run_command(ask_app_dir))
 
