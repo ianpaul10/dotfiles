@@ -4,6 +4,7 @@ import json
 import argparse
 import subprocess
 from openai import OpenAI
+from groq import Groq
 
 from dotenv import load_dotenv
 
