@@ -4,7 +4,7 @@ import json
 import argparse
 import subprocess
 
-from datetime import datetime
+from datetime import datetime, time
 
 # from openai import OpenAI # lets use Groq fro now
 from groq import Groq
@@ -190,6 +190,11 @@ def main():
         "--debug",
         action="store_true",
         help="Print the full request and response from the LLM",
+    )
+    parser.add_argument(
+        "--time",
+        action="store_true",
+        help="Print the time it took to execute the command",
     )
     args = parser.parse_args()
 
