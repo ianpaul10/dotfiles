@@ -77,18 +77,18 @@ def _handle_run_command(ask_app_dir):
     last_cmd = history.get("last_command")
 
     if not last_cmd:
-        print("No previous command found")
+        print("WARN: No previous command found")
         sys.exit(1)
 
-    print(f"Executing: {last_cmd}")
+    print(f"INFO: Executing: {last_cmd}")
     try:
         result = subprocess.run(last_cmd, shell=True, text=True, capture_output=True)
         print(result.stdout)
         if result.stderr:
-            print("Errors:", result.stderr, file=sys.stderr)
+            print("ERROR: Errors:", result.stderr, file=sys.stderr)
         return result.returncode
     except Exception as e:
-        print(f"Error executing command: {e}", file=sys.stderr)
+        print(f"ERROR: Error executing command: {e}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -99,7 +99,7 @@ def _handle_llm_query(args, ask_app_dir):
     # oai_api_key = os.getenv("OAI_API_KEY")
     groq_api_key = os.getenv("GROQ_API_KEY")
     if not groq_api_key:
-        print("Error: The GROQ_API_KEY environment variable is not set.")
+        print("ERROR: The GROQ_API_KEY environment variable is not set.")
         sys.exit(1)
 
     # client = OpenAI(api_key=oai_api_key)
@@ -162,7 +162,7 @@ def _handle_llm_query(args, ask_app_dir):
         return 0
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"ERROR: {e}")
         return 1
 
 
