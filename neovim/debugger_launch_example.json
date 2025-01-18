@@ -13,6 +13,7 @@
         "pytest",
         "${workspaceFolder}/src/test_eg_main.py", // path to program
         "-k", // match keyword by test name
+        "-vv", // other helpful pytest args
         "test_parrot" // args passed into debugpy cmd, i.e. "class.method"
       ],
       "console": "integratedTerminal",
