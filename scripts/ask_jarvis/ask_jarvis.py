@@ -4,6 +4,8 @@ import json
 import argparse
 import subprocess
 
+from datetime import datetime
+
 # from openai import OpenAI # lets use Groq fro now
 from groq import Groq
 from dotenv import load_dotenv
@@ -11,8 +13,13 @@ from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
 
+def _get_history_file_name(ask_app_dir):
+    yyyymmdd = datetime.now().strftime("%Y%m%d")
+    return os.path.join(ask_app_dir, f"conversation_history_{yyyymmdd}.json")
+
+
 def _load_conversation_history(ask_app_dir):
-    history_file = os.path.join(ask_app_dir, "conversation_history.json")
+    history_file = _get_history_file_name(ask_app_dir)
     if os.path.exists(history_file):
         with open(history_file, "r") as f:
             return json.load(f)
@@ -41,7 +48,7 @@ def _get_wut_message(ask_app_dir):
 
 
 def _save_conversation_history(ask_app_dir, history):
-    history_file = os.path.join(ask_app_dir, "conversation_history.json")
+    history_file = _get_history_file_name(ask_app_dir)
     with open(history_file, "w") as f:
         json.dump(history, f, indent=2)
 
