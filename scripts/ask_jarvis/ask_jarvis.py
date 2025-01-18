@@ -4,7 +4,7 @@ import json
 import argparse
 import subprocess
 
-from datetime import datetime, time, timedelta
+from datetime import datetime
 
 # from openai import OpenAI # lets use Groq fro now
 from groq import Groq
@@ -13,29 +13,25 @@ from dotenv import load_dotenv
 load_dotenv()  # take environment variables from .env.
 
 
-def timing_decorator(func):
-    def wrapper(*args, **kwargs):
-        start_time = datetime.now()
-        result = func(*args, **kwargs)
-        end_time = datetime.now()
-        # Check if the first arg is args and has the time flag
-        if args and hasattr(args[0], 'time') and args[0].time:
-            print(f"⏱️  {func.__name__} took: {end_time - start_time}")
-        return result
-    return wrapper
-
-
 def _get_history_file_name(ask_app_dir):
     yyyymmdd = datetime.now().strftime("%Y%m%d")
     return os.path.join(ask_app_dir, f"conversation_history_{yyyymmdd}.json")
 
 
-def _load_conversation_history(ask_app_dir):
+def _load_conversation_history(args, ask_app_dir):
+    read_start_time = datetime.now()
     history_file = _get_history_file_name(ask_app_dir)
     if os.path.exists(history_file):
         with open(history_file, "r") as f:
-            return json.load(f)
-    return {"messages": [], "last_command": ""}
+            res = json.load(f)
+    else:
+        res = {"messages": [], "last_command": ""}
+
+    if args.time:
+        read_end_time = datetime.now()
+        print(f"INFO: ⏱️  History read took: {read_end_time - read_start_time}")
+
+    return res
 
 
 def _get_wut_cmd_and_resp(ask_app_dir):
@@ -83,10 +79,9 @@ def _get_system_prompt(mode="general"):
     return default + prompts.get(mode, prompts["general"])
 
 
-@timing_decorator
-def _handle_run_command(ask_app_dir):
+def _handle_run_command(args, ask_app_dir):
     """Execute the last saved command from conversation history."""
-    history = _load_conversation_history(ask_app_dir)
+    history = _load_conversation_history(args, ask_app_dir)
     last_cmd = history.get("last_command")
 
     if not last_cmd:
@@ -105,10 +100,9 @@ def _handle_run_command(ask_app_dir):
         sys.exit(1)
 
 
-@timing_decorator
 def _handle_llm_query(args, ask_app_dir):
     """Handle queries to the LLM."""
-    history = _load_conversation_history(ask_app_dir)
+    history = _load_conversation_history(args, ask_app_dir)
 
     # oai_api_key = os.getenv("OAI_API_KEY")
     groq_api_key = os.getenv("GROQ_API_KEY")
@@ -141,8 +135,9 @@ def _handle_llm_query(args, ask_app_dir):
     try:
         # cheap_model = "gpt-4-turbo"
         cheap_model = "llama-3.3-70b-versatile"
-        
+
         llm_start_time = datetime.now()
+
         response = client.chat.completions.create(
             model=cheap_model,
             messages=messages,
@@ -159,10 +154,10 @@ def _handle_llm_query(args, ask_app_dir):
 
         # Add a newline after streaming completes
         print()
-        
+
         if args.time:
             llm_end_time = datetime.now()
-            print(f"⏱️  LLM response took: {llm_end_time - llm_start_time}")
+            print(f"INFO: ⏱️  LLM response took: {llm_end_time - llm_start_time}")
 
         full_response = "".join(collected_response)
 
@@ -172,9 +167,8 @@ def _handle_llm_query(args, ask_app_dir):
             print(f"{response.response.headers=}")
             print("-- DEBUG --")
 
-        if args.time:
-            save_start_time = datetime.now()
-        
+        save_start_time = datetime.now()
+
         if user_prompt:
             history["messages"].append({"role": "user", "content": user_prompt})
         history["messages"].append({"role": "assistant", "content": full_response})
@@ -182,10 +176,10 @@ def _handle_llm_query(args, ask_app_dir):
             history["last_command"] = full_response.strip()
 
         _save_conversation_history(ask_app_dir, history)
-        
+
         if args.time:
             save_end_time = datetime.now()
-            print(f"⏱️  History save took: {save_end_time - save_start_time}")
+            print(f"INFO: ⏱️  History save took: {save_end_time - save_start_time}")
         return 0
 
     except Exception as e:
@@ -226,7 +220,7 @@ def main():
     args = parser.parse_args()
 
     if args.run:
-        sys.exit(_handle_run_command(ask_app_dir))
+        sys.exit(_handle_run_command(args, ask_app_dir))
 
     sys.exit(_handle_llm_query(args, ask_app_dir))
 
