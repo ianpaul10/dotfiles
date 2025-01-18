@@ -4,13 +4,25 @@ import json
 import argparse
 import subprocess
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 # from openai import OpenAI # lets use Groq fro now
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
+
+
+def timing_decorator(func):
+    def wrapper(*args, **kwargs):
+        start_time = datetime.now()
+        result = func(*args, **kwargs)
+        end_time = datetime.now()
+        # Check if the first arg is args and has the time flag
+        if args and hasattr(args[0], 'time') and args[0].time:
+            print(f"⏱️  {func.__name__} took: {end_time - start_time}")
+        return result
+    return wrapper
 
 
 def _get_history_file_name(ask_app_dir):
@@ -71,6 +83,7 @@ def _get_system_prompt(mode="general"):
     return default + prompts.get(mode, prompts["general"])
 
 
+@timing_decorator
 def _handle_run_command(ask_app_dir):
     """Execute the last saved command from conversation history."""
     history = _load_conversation_history(ask_app_dir)
@@ -92,6 +105,7 @@ def _handle_run_command(ask_app_dir):
         sys.exit(1)
 
 
+@timing_decorator
 def _handle_llm_query(args, ask_app_dir):
     """Handle queries to the LLM."""
     history = _load_conversation_history(ask_app_dir)
@@ -127,6 +141,8 @@ def _handle_llm_query(args, ask_app_dir):
     try:
         # cheap_model = "gpt-4-turbo"
         cheap_model = "llama-3.3-70b-versatile"
+        
+        llm_start_time = datetime.now()
         response = client.chat.completions.create(
             model=cheap_model,
             messages=messages,
@@ -143,6 +159,10 @@ def _handle_llm_query(args, ask_app_dir):
 
         # Add a newline after streaming completes
         print()
+        
+        if args.time:
+            llm_end_time = datetime.now()
+            print(f"⏱️  LLM response took: {llm_end_time - llm_start_time}")
 
         full_response = "".join(collected_response)
 
@@ -152,6 +172,9 @@ def _handle_llm_query(args, ask_app_dir):
             print(f"{response.response.headers=}")
             print("-- DEBUG --")
 
+        if args.time:
+            save_start_time = datetime.now()
+        
         if user_prompt:
             history["messages"].append({"role": "user", "content": user_prompt})
         history["messages"].append({"role": "assistant", "content": full_response})
@@ -159,6 +182,10 @@ def _handle_llm_query(args, ask_app_dir):
             history["last_command"] = full_response.strip()
 
         _save_conversation_history(ask_app_dir, history)
+        
+        if args.time:
+            save_end_time = datetime.now()
+            print(f"⏱️  History save took: {save_end_time - save_start_time}")
         return 0
 
     except Exception as e:
