@@ -67,6 +67,9 @@ vim.keymap.set('n', '|', ':Lexplore %:p:h <CR>', { desc = 'Toggle netrw / Explor
 -- - `:e#`: Opens the most recent buffer, which is the one you want to keep.
 vim.keymap.set('n', '<leader>wd', ':%bd | :e# <CR>', { desc = '[D]elete all buffers except currently opened one' })
 
+-- Copy the current line, paste it, and comment the first instance of it out
+vim.keymap.set('n', '<leader>cc', 'yypkI# <Esc>j', { desc = '[C]opy current line, paste it, and comment the first instance of it out' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
