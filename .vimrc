@@ -5,6 +5,7 @@ set relativenumber
 " Change cursor shape in different modes
 let &t_SI = "\e[6 q"  " Insert mode - vertical line
 let &t_EI = "\e[2 q"  " Normal mode - block
+set tm=10
 
 " Enable 256 color support
 set t_Co=256
