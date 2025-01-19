@@ -61,7 +61,7 @@ return { -- Collection of various small independent plugins/modules
 
     require('mini.starter').setup { header = header_art_2, footer = '' }
     require('mini.pairs').setup()
-    require('mini.jump').setup()
+    -- require('mini.jump').setup() -- NOTE: using eyeliner instead for now
 
     require('mini.files').setup()
     local minifiles_toggle = function(use_cur_buffer)

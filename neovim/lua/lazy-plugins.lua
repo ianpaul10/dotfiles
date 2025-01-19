@@ -44,6 +44,7 @@ require('lazy').setup({
   require 'custom.plugins.comments', -- specifically for ts/tsx comments
   require 'custom.plugins.autoimport',
   require 'custom.plugins.lsp-signature',
+  require 'custom.plugins.eyeliner',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
