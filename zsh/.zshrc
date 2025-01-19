@@ -128,7 +128,9 @@ export NVM_DIR="$HOME/.nvm"
 
 # local scripts setup
 export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
-alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
+# alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
+# NOTE using the global pyenv version which should have the required depenencies, instead of the possible virtual env version which might not
+alias jarvis="$HOME/.pyenv/shims/python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
 
 export wut() {
   echo "$@" > $HOME/.jarvis/wut_command.log  # Log the command
