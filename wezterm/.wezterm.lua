@@ -88,4 +88,6 @@ config.keys = {
     { mods = "CMD", key = "Backspace", action = action.SendKey({ mods = "CTRL", key = "u" }) },
 }
 
+config.audible_bell = "Disabled"
+
 return config
