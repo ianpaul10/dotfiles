@@ -46,6 +46,7 @@ require('lazy').setup({
   require 'custom.plugins.lsp-signature',
   require 'custom.plugins.eyeliner',
   require 'custom.plugins.timber',
+  require 'custom.plugins.git-diffview',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
