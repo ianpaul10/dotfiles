@@ -50,7 +50,7 @@ ZSH_THEME="agnoster"
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -77,11 +77,14 @@ plugins=(
 	colorize
 	python
 	dotenv
+	fzf-tab # custom (aka not included in oh-my-zsh's default list) plugin
 	)
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
+# ------------------------------------------------------------------------------
+# User configuration after sourcing oh-my-zsh
+# ------------------------------------------------------------------------------
 
 alias pip=pip3
 
@@ -119,7 +122,11 @@ fi
 # # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
 # fuzzy cd
-alias sd="cd ~/code && cd \$(find . -type d -maxdepth 2 | fzf)"
+
+# alias sd="cd ~/code && cd \$(find . -type d -maxdepth 3 | fzf)"
+# exclude Library folder & its sub folders
+alias sd="cd ~ && cd \$(find . -path ./Library -prune -o -path ./.Trash -prune -o -type d -maxdepth 3 -print | fzf)"
+
 alias sf="cd ~/code && nvim \$(find . -type f | fzf)"
 
 # node.js & nvm config
@@ -135,7 +142,7 @@ alias jarvis="$HOME/.pyenv/shims/python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis
 
 export wut() {
   echo "$@" > $HOME/.jarvis/wut_command.log  # Log the command
-  "$@" > >(tee -a $HOME/.jarvis/wut_command.log) 2> >(tee -a $HOME/.jarvis/wut_command.log >&2)
+  "$@" > >(tee -a $HOME/.jarvis/wut_command.log) 2> >(tee -a $HOME/.jarvis/wut_command.log >&2) # Log the output from the command
 }
 
 # Aider config

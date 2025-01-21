@@ -52,24 +52,31 @@ I'm using zen as my default browser for now.
 #### WezTerm
 
 1. Install wezterm `brew install --cask wezterm`
+2. Follow the below instructions to setup the shell
 
 #### iTerm2
 
 1. Download iTerm2 `brew install --cask iterm2`
    1. Update the blue colour in `iTerm -> Settings -> Profiles -> [ choose needed profile ] -> Colors` for a better exp with agnoster's theme
-2. Install oh-my-zsh `sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
-3. Set `~/.zprofile` and `~/.zshrc` to the files in this folder
-4. Download nerd fonts and set iTerm2's font to it
+2. Download nerd fonts and set iTerm2's font to it
    1. `brew tap homebrew/cask-fonts && brew install --cask font-source-code-pro && brew install --cask font-jetbrains-mono`
-   2. If you want jetbrains mono nerd-font, install with `curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz`
-   3. iTerm2 settings -> Profile -> Text -> Font -> set to source code pro
-5. Shortcuts -- get better default shortcuts by setting the preset keys to `Natural Text Editing` (e.g. `CMD + Backspace` & `Option + Backspace`)
+   2. iTerm2 settings -> Profile -> Text -> Font -> set to source code pro
+3. Shortcuts -- get better default shortcuts by setting the preset keys to `Natural Text Editing` (e.g. `CMD + Backspace` & `Option + Backspace`)
    1. iTerm2 Settings -> Profile -> Keys -> Presets -> Natural Text Editing
-6. Install github CLI `brew install gh`
+
+#### Zsh setup
+
+1. Install oh-my-zsh `sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
+2. If you want jetbrains mono nerd-font, install with `curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz`
+3. Set `~/.zprofile` and `~/.zshrc` to the files in this folder (running install shell script should do this for you)
+4. Install github CLI `brew install gh`
    1. Run `gh auth login`
    2. add GitHub SSH key (NOT optional)
-7. Add `[dotenv](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/dotenv)` into your list of zsh plugins in `.zshrc`
+5. Add `[dotenv](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/dotenv)` into your list of zsh plugins in `.zshrc`
    1. This helps with loading `.env` env vars automatically when you `cd` into a given folder
+6. Install [fzf](https://github.com/junegunn/fzf) `brew install fzf`
+7. Install [ripgrep](https://github.com/BurntSushi/ripgrep) `brew install ripgrep`
+8. Install [fzf-tab](https://github.com/Aloxaf/fzf-tab) `git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab`
 
 ### Text editor setup
 
