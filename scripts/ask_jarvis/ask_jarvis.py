@@ -102,6 +102,20 @@ def _handle_run_command(args, ask_app_dir):
         sys.exit(1)
 
 
+def _get_model(model, args):
+    models = {
+        "llama": "llama-3.3-70b-versatile",
+        "deepseek": "deepseek-r1-distill-llama-70b",
+    }
+
+    model = models.get(model, "llama-3.3-70b-versatile")
+
+    if args.debug:
+        print(f"Using {model=}")
+
+    return model
+
+
 def _handle_llm_query(args, ask_app_dir):
     """Handle queries to the LLM."""
     history = _load_conversation_history(args, ask_app_dir)
@@ -136,7 +150,7 @@ def _handle_llm_query(args, ask_app_dir):
 
     try:
         # cheap_model = "gpt-4-turbo"
-        cheap_model = "llama-3.3-70b-versatile"
+        cheap_model = _get_model(args.model, args)
 
         llm_start_time = datetime.now()
 
@@ -218,6 +232,12 @@ def main():
         "--time",
         action="store_true",
         help="Print the time it took to execute the command",
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="llama-3.3-70b-versatile",
+        help="The model to use for the LLM",
     )
     args = parser.parse_args()
 
