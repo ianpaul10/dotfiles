@@ -61,11 +61,18 @@ def _save_conversation_history(ask_app_dir, history):
         json.dump(history, f, indent=2)
 
 
-def _get_system_prompt(mode="general"):
+def _get_system_prompt(args: argparse.Namespace):
+    if args.model == "r1":
+        # Supposedly reasoning models work better without a system prompt
+        # https://console.groq.com/docs/reasoning
+        if args.debug:
+            print("INFO: No system prompt for r1 reasoning models")
+        return ""
+
     default = """
         You are J.A.R.V.I.S. (Just a Rather Very Intelligent System), aka Jarvis. You previously only worked for Tony Stark, aka Iron Man, but you now also help software engineers. You are a helpful AI assitant with a depth of software engineering knowledge. Always respond with canoncial, idomatic, and pragmatic code when appropriate.
 
-        The person you are speaking with is a software engineer. They are using a computer running MacOS. They run commands in a zsh shell. They use neovim as their main text editor. Use that information to help you respond.
+        The person you are speaking with is a software engineer. They are using a computer running MacOS. They run commands in a zsh shell. They use neovim as their main text editor. If it is important, use that information to help you respond.
         """
     prompts = {
         "general": """
@@ -78,6 +85,8 @@ def _get_system_prompt(mode="general"):
         What you return will be passed to subprocess.check_output() directly.
         """,
     }
+
+    mode = "cmd" if args.cmd else "general"
     return default + prompts.get(mode, prompts["general"])
 
 
@@ -105,7 +114,7 @@ def _handle_run_command(args, ask_app_dir):
 def _get_model(model, args):
     models = {
         "llama": "llama-3.3-70b-versatile",
-        "deepseek": "deepseek-r1-distill-llama-70b",
+        "r1": "deepseek-r1-distill-llama-70b",
     }
 
     model = models.get(model, "llama-3.3-70b-versatile")
@@ -129,7 +138,7 @@ def _handle_llm_query(args, ask_app_dir):
     # client = OpenAI(api_key=oai_api_key)
     client = Groq(api_key=groq_api_key)
     user_prompt = " ".join(args.prompt)
-    system_prompt = _get_system_prompt("cmd" if args.cmd else "general")
+    system_prompt = _get_system_prompt(args)
 
     messages = []
     if args.chat:
@@ -158,6 +167,8 @@ def _handle_llm_query(args, ask_app_dir):
             model=cheap_model,
             messages=messages,
             stream=True,  # Enable streaming
+            # Longer context window for deepseek reasoning model
+            max_completion_tokens=(8192 if args.model == "r1" else None),
         )
 
         # Collect the full response while streaming
@@ -236,8 +247,8 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        default="llama-3.3-70b-versatile",
-        help="The model to use for the LLM",
+        default="llama",
+        help="The model to use for the LLM. Currently supports llama and r1 (for deepseek reasoning model)",
     )
     args = parser.parse_args()
 
