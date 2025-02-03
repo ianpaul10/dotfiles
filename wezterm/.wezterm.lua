@@ -99,4 +99,23 @@ config.keys = {
 -- TAB BAR
 config.use_fancy_tab_bar = false
 
+-- Time and battery status in right status
+wezterm.on("update-right-status", function(window, pane)
+  -- Get current time
+  local time = wezterm.strftime("%H:%M")
+  
+  -- Get battery info
+  local battery = ""
+  for _, b in ipairs(wezterm.battery_info()) do
+    battery = string.format("%.0f%%", b.state_of_charge * 100)
+  end
+
+  -- Set the right status
+  window:set_right_status(wezterm.format({
+    { Background = { Color = "#0b0022" } },
+    { Foreground = { Color = "#c0c0c0" } },
+    { Text = string.format(" %s  %s ", battery, time) },
+  }))
+end)
+
 return config
