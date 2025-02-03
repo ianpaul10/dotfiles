@@ -99,51 +99,50 @@ config.keys = {
 -- TAB BAR
 config.use_fancy_tab_bar = false
 
--- Time and system status in right status
 wezterm.on("update-right-status", function(window, pane)
-  -- Get current time
-  local time = wezterm.strftime("%H:%M")
-  
-  -- Get battery info
-  local battery = ""
-  for _, b in ipairs(wezterm.battery_info()) do
-    battery = string.format("%.0f%%", b.state_of_charge * 100)
-  end
+    local time = wezterm.strftime("%H:%M")
 
-  -- Get system information using wezterm's built-in functions
-  local success, stdout, stderr = wezterm.run_child_process({"bash", "-c", [[
-    cpu_usage=$(top -l 2 | grep -E "^CPU" | tail -1 | awk '{print $3}' | sed 's/,//')
-    memory=$(vm_stat | awk '/free/ {free=$3} /active/ {active=$3} /inactive/ {inactive=$3} /speculative/ {speculative=$3} /wired/ {wired=$4} END {total=(free+active+inactive+speculative+wired)*4096/1024/1024/1024; printf "%.1f", total}')
-    echo "$cpu_usage|${memory}GB"
-  ]]})
-
-  local cpu_usage = "CPU: ?"
-  local mem_usage = "RAM: ?"
-  
-  -- Helper function to split string
-  local function split_string(str, sep)
-    local parts = {}
-    for part in string.gmatch(str, "([^" .. sep .. "]+)") do
-      table.insert(parts, part)
+    local battery = ""
+    for _, b in ipairs(wezterm.battery_info()) do
+        battery = string.format("%.0f%%", b.state_of_charge * 100)
     end
-    return parts
-  end
 
-  if success then
-    local cleaned = stdout:gsub("\n", "")
-    local parts = split_string(cleaned, "|")
-    if #parts == 2 then
-      cpu_usage = "CPU: " .. parts[1]
-      mem_usage = "RAM: " .. parts[2]
-    end
-  end
+    --   -- Get system information using wezterm's built-in functions
+    --   local success, stdout, stderr = wezterm.run_child_process({
+    --       "bash",
+    --       "-c",
+    --       [[
+    --   cpu_usage=$(top -l 2 | grep -E "^CPU" | tail -1 | awk '{print $3}' | sed 's/,//')
+    --   memory=$(vm_stat | awk '/free/ {free=$3} /active/ {active=$3} /inactive/ {inactive=$3} /speculative/ {speculative=$3} /wired/ {wired=$4} END {total=(free+active+inactive+speculative+wired)*4096/1024/1024/1024; printf "%.1f", total}')
+    --   echo "$cpu_usage|${memory}GB"
+    -- ]],
+    --   })
+    --   local cpu_usage = "CPU: ?"
+    --   local mem_usage = "RAM: ?"
+    --   local function split_string(str, sep)
+    --       local parts = {}
+    --       for part in string.gmatch(str, "([^" .. sep .. "]+)") do
+    --           table.insert(parts, part)
+    --       end
+    --       return parts
+    --   end
+    --   if success then
+    --       local cleaned = stdout:gsub("\n", "")
+    --       local parts = split_string(cleaned, "|")
+    --       if #parts == 2 then
+    --           cpu_usage = "CPU: " .. parts[1]
+    --           mem_usage = "RAM: " .. parts[2]
+    --       end
+    --   end
 
-  -- Set the right status with all metrics
-  window:set_right_status(wezterm.format({
-    { Background = { Color = "#0b0022" } },
-    { Foreground = { Color = "#c0c0c0" } },
-    { Text = string.format(" %s  %s  %s  %s  %s ", cpu_usage, mem_usage, battery, time, wezterm.nerdfonts.fa_apple) },
-  }))
+    -- Set the right status with all metrics
+    window:set_right_status(wezterm.format({
+        { Background = { Color = "#0b0022" } },
+        { Foreground = { Color = "#c0c0c0" } },
+        {
+            Text = string.format(" %s | %s | %s   ", battery, time, wezterm.nerdfonts.fa_apple),
+        },
+    }))
 end)
 
 return config
