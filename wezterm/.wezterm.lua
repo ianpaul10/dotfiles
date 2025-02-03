@@ -99,7 +99,7 @@ config.keys = {
 -- TAB BAR
 config.use_fancy_tab_bar = false
 
--- Time and battery status in right status
+-- Time and system status in right status
 wezterm.on("update-right-status", function(window, pane)
   -- Get current time
   local time = wezterm.strftime("%H:%M")
@@ -110,11 +110,29 @@ wezterm.on("update-right-status", function(window, pane)
     battery = string.format("%.0f%%", b.state_of_charge * 100)
   end
 
-  -- Set the right status
+  -- Get system information using wezterm's built-in functions
+  local success, stdout, stderr = wezterm.run_child_process({"bash", "-c", [[
+    cpu_usage=$(top -l 1 | grep -E "^CPU" | grep -Eo '[^[:space:]]+%' | head -1)
+    memory=$(memory_pressure | grep "System-wide memory free percentage:" | awk '{print $5}')
+    echo "$cpu_usage|$memory%"
+  ]]})
+
+  local cpu_usage = "CPU: ?"
+  local mem_usage = "RAM: ?"
+  
+  if success then
+    local parts = stdout:gsub("\n", ""):split("|")
+    if #parts == 2 then
+      cpu_usage = "CPU: " .. parts[1]
+      mem_usage = "RAM: " .. parts[2]
+    end
+  end
+
+  -- Set the right status with all metrics
   window:set_right_status(wezterm.format({
     { Background = { Color = "#0b0022" } },
     { Foreground = { Color = "#c0c0c0" } },
-    { Text = string.format(" %s  %s ", battery, time) },
+    { Text = string.format(" %s  %s  %s  %s  %s ", cpu_usage, mem_usage, battery, time, wezterm.nerdfonts.fa_apple) },
   }))
 end)
 
