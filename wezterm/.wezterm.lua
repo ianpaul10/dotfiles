@@ -112,9 +112,9 @@ wezterm.on("update-right-status", function(window, pane)
 
   -- Get system information using wezterm's built-in functions
   local success, stdout, stderr = wezterm.run_child_process({"bash", "-c", [[
-    cpu_usage=$(top -l 1 | grep -E "^CPU" | grep -Eo '[^[:space:]]+%' | head -1)
-    memory=$(memory_pressure | grep "System-wide memory free percentage:" | awk '{print $5}')
-    echo "$cpu_usage|$memory%"
+    cpu_usage=$(top -l 2 | grep -E "^CPU" | tail -1 | awk '{print $3}' | sed 's/,//')
+    memory=$(vm_stat | awk '/free/ {free=$3} /active/ {active=$3} /inactive/ {inactive=$3} /speculative/ {speculative=$3} /wired/ {wired=$4} END {total=(free+active+inactive+speculative+wired)*4096/1024/1024/1024; printf "%.1f", total}')
+    echo "$cpu_usage|${memory}GB"
   ]]})
 
   local cpu_usage = "CPU: ?"
