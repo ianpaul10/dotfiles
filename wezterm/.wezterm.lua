@@ -120,8 +120,18 @@ wezterm.on("update-right-status", function(window, pane)
   local cpu_usage = "CPU: ?"
   local mem_usage = "RAM: ?"
   
+  -- Helper function to split string
+  local function split_string(str, sep)
+    local parts = {}
+    for part in string.gmatch(str, "([^" .. sep .. "]+)") do
+      table.insert(parts, part)
+    end
+    return parts
+  end
+
   if success then
-    local parts = stdout:gsub("\n", ""):split("|")
+    local cleaned = stdout:gsub("\n", "")
+    local parts = split_string(cleaned, "|")
     if #parts == 2 then
       cpu_usage = "CPU: " .. parts[1]
       mem_usage = "RAM: " .. parts[2]
