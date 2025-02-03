@@ -1,7 +1,5 @@
--- Pull in the wezterm API
 local wezterm = require("wezterm")
 
--- This will hold the configuration.
 local config = wezterm.config_builder()
 
 -- For example, changing the color scheme:
@@ -18,8 +16,6 @@ config.window_padding = {
 -- FONTS AND COLOURS
 config.font = wezterm.font("JetBrains Mono")
 config.font_size = 13.5 -- default is 12
-
-config.use_fancy_tab_bar = false
 
 config.colors = {
     cursor_bg = "#97cda9",
@@ -89,5 +85,44 @@ config.keys = {
 }
 
 config.audible_bell = "Disabled"
+
+-- KEYBINDINGS
+config.keys = {
+    {
+        key = "9",
+        mods = "ALT",
+        action = action.ShowLauncher,
+        -- action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|TABS" }),
+    },
+}
+
+-- TAB BAR
+-- The filled in variant of the < symbol
+local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+-- The filled in variant of the > symbol
+local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+config.use_fancy_tab_bar = false
+config.tab_bar_style = {
+    -- active_tab_left = wezterm.format({
+    --     { Background = { Color = "#0b0022" } },
+    --     { Foreground = { Color = "#2b2042" } },
+    --     { Text = SOLID_LEFT_ARROW },
+    -- }),
+    -- active_tab_right = wezterm.format({
+    --     { Background = { Color = "#0b0022" } },
+    --     { Foreground = { Color = "#2b2042" } },
+    --     { Text = SOLID_RIGHT_ARROW },
+    -- }),
+    -- inactive_tab_left = wezterm.format({
+    --     { Background = { Color = "#0b0022" } },
+    --     { Foreground = { Color = "#1b1032" } },
+    --     { Text = SOLID_LEFT_ARROW },
+    -- }),
+    -- inactive_tab_right = wezterm.format({
+    --     { Background = { Color = "#0b0022" } },
+    --     { Foreground = { Color = "#1b1032" } },
+    --     { Text = SOLID_RIGHT_ARROW },
+    -- }),
+}
 
 return config
