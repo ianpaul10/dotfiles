@@ -97,43 +97,6 @@ config.keys = {
 }
 
 -- TAB BAR
--- The filled in variant of the < symbol
-local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
--- The filled in variant of the > symbol
-local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
-
--- Tab bar formatting function
-config.tab_bar_style = wezterm.format({
-  { Background = { Color = "#0b0022" } },
-})
-
-function tab_title(tab_info)
-  local title = tab_info.tab_title
-  -- show the tab index too
-  return string.format(" %d: %s ", tab_info.tab_index + 1, title)
-end
-
 config.use_fancy_tab_bar = false
-config.tab_max_width = 32
-
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-  local edge_background = "#0b0022"
-  local background = tab.is_active and "#2b2042" or "#1b1032"
-  local foreground = tab.is_active and "#c0c0c0" or "#808080"
-
-  local title = tab_title(tab)
-
-  return {
-    { Background = { Color = edge_background } },
-    { Foreground = { Color = background } },
-    { Text = SOLID_LEFT_ARROW },
-    { Background = { Color = background } },
-    { Foreground = { Color = foreground } },
-    { Text = title },
-    { Background = { Color = edge_background } },
-    { Foreground = { Color = background } },
-    { Text = SOLID_RIGHT_ARROW },
-  }
-end)
 
 return config
