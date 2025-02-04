@@ -74,20 +74,16 @@ table.insert(config.hyperlink_rules, {
     format = "https://www.github.com/$1/$3",
 })
 
--- KEYBINDINGS FOR NATURAL KEY MOTIONS
+-- KEYBINDINGS
 local action = wezterm.action
 config.keys = {
+    -- KEY MOTIONS
     { mods = "OPT", key = "LeftArrow", action = action.SendKey({ mods = "ALT", key = "b" }) },
     { mods = "OPT", key = "RightArrow", action = action.SendKey({ mods = "ALT", key = "f" }) },
     { mods = "CMD", key = "LeftArrow", action = action.SendKey({ mods = "CTRL", key = "a" }) },
     { mods = "CMD", key = "RightArrow", action = action.SendKey({ mods = "CTRL", key = "e" }) },
     { mods = "CMD", key = "Backspace", action = action.SendKey({ mods = "CTRL", key = "u" }) },
-}
-
-config.audible_bell = "Disabled"
-
--- KEYBINDINGS
-config.keys = {
+    -- wezterm launcher
     {
         key = "9",
         mods = "ALT",
@@ -95,6 +91,8 @@ config.keys = {
         -- action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|TABS" }),
     },
 }
+
+config.audible_bell = "Disabled"
 
 -- TAB BAR
 config.use_fancy_tab_bar = false
