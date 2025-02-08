@@ -118,6 +118,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 ### Ruby setup
 
 1. Ruby install (for jekyll): `brew install ruby`
+2. Install formatter `brew install rubyfmt`
 
 ### Node.js setup
 

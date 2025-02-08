@@ -32,7 +32,7 @@ return { -- LSP Configuration & Plugins
   'neovim/nvim-lspconfig',
   dependencies = {
     -- Automatically install LSPs and related tools to stdpath for Neovim
-    { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+    { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependents
     'williamboman/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -181,7 +181,10 @@ return { -- LSP Configuration & Plugins
       --
       -- But for many setups, the LSP `ts_ls` (prev `tsserver`) will work just fine
       ts_ls = {},
-      --
+
+      -- ruby
+      ruby_lsp = {}, -- Shopify's ruby LSP
+      sorbet = {}, -- type checker for ruby
 
       lua_ls = {
         -- cmd = {...},
@@ -226,6 +229,8 @@ return { -- LSP Configuration & Plugins
           require('lspconfig')[server_name].setup(server)
         end,
       },
+      ensure_installed = ensure_installed,
+      automatic_installation = true,
     }
   end,
 }

@@ -46,6 +46,7 @@ return { -- Autoformat
       yaml = { 'prettier' },
       markdown = { 'prettier' },
       graphql = { 'prettier' },
+      ruby = { 'rubyfmt' },
     },
   },
 }
