@@ -183,8 +183,11 @@ return { -- LSP Configuration & Plugins
       ts_ls = {},
 
       -- ruby
-      ruby_lsp = {}, -- Shopify's ruby LSP
-      sorbet = {}, -- type checker for ruby
+      -- WARN: having multiple ruby versions seems to cause issues with Mason's mgmt of the LSPs. More info:
+      -- https://shopify.github.io/ruby-lsp/editors.html#mason
+      -- https://github.com/williamboman/mason.nvim/issues/1292
+      ruby_lsp = {},
+      sorbet = {},
 
       lua_ls = {
         -- cmd = {...},
@@ -223,6 +226,11 @@ return { -- LSP Configuration & Plugins
           -- by the server configuration above. Useful when disabling
           -- certain features of an LSP (for example, turning off formatting for tsserver)
           server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+
+          if server_name == 'sorbet' then
+            server.root_dir = require('lspconfig.util').root_pattern 'sorbet/config'
+          end
+
           require('lspconfig')[server_name].setup(server)
         end,
       },
