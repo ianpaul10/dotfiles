@@ -147,3 +147,6 @@ export wut() {
 
 # Aider config
 export AIDER_DARK_MODE=true
+
+# Ruby
+eval "$(rbenv init - zsh)"

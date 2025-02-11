@@ -117,8 +117,11 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 
 ### Ruby setup
 
-1. Ruby install (for jekyll): `brew install ruby`
-2. Install formatter `brew install rubyfmt`
+1. Install ruby env/version manager: `brew install rbenv`
+2. Install relevant ruby versions: `rbenv install 3.4.1` (or any other version, see which are available via `rbenv install -l`)
+3. Set global ruby version: `rbenv gloabl 3.4.1`. rbenv will choose the specific version based on the dir you're in based on the `.ruby-version` file, and otherwise will default to the global version
+4. Ruby install (for jekyll): `brew install ruby`
+5. Install formatter `brew install rubyfmt`
 
 ### Node.js setup
 
