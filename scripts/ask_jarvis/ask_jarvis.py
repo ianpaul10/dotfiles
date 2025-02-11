@@ -227,7 +227,10 @@ def main():
         "--run", action="store_true", help="Run the last generated command"
     )
     parser.add_argument(
-        "--chat", type=int, default=0, help="Pass in the last n messages to the LLM"
+        "--chat",
+        type=int,
+        default=0,
+        help=f"Pass in the last n messages to the LLM. Find chat history in {ask_app_dir}.",
     )
     parser.add_argument(
         "--wut",
