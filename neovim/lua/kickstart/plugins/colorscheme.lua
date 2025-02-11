@@ -37,7 +37,13 @@ local kanagawa = {
       dimInactive = false, -- dim inactive window `:h hl-NormalNC`
       terminalColors = true, -- define vim.g.terminal_color_{0,17}
       colors = { -- add/modify theme and palette colors
-        palette = {},
+        palette = {
+          -- NOTE: swapping these two default values
+          -- sumiInk0 -> for floating windows/statuslines, prev darker, now lighter
+          -- sumiInk3 -> for background, prev lighter, now darker
+          sumiInk0 = '#363646',
+          sumiInk3 = '#16161D',
+        },
         theme = {
           wave = {},
           lotus = {},
