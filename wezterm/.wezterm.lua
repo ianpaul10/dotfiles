@@ -14,7 +14,8 @@ config.window_padding = {
 }
 
 -- FONTS AND COLOURS
-config.font = wezterm.font("JetBrains Mono")
+-- harfbuzz_features disables ligatures
+config.font = wezterm.font({ family = "JetBrains Mono", harfbuzz_features = { "calt=0", "clig=0", "liga=0" } })
 config.font_size = 13.5 -- default is 12
 
 config.colors = {
@@ -138,7 +139,7 @@ wezterm.on("update-right-status", function(window, pane)
         { Background = { Color = "#0b0022" } },
         { Foreground = { Color = "#c0c0c0" } },
         {
-            Text = string.format(" %s | %s | %s   ", battery, time, wezterm.nerdfonts.fa_apple),
+            Text = string.format("[%s] [%s] %s   ", battery, time, wezterm.nerdfonts.dev_apple),
         },
     }))
 end)
