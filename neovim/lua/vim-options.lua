@@ -39,6 +39,7 @@ vim.opt.smartcase = true
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
 
+-- different colored bar @ 120 chars
 vim.opt.colorcolumn = '120'
 
 -- Decrease update time

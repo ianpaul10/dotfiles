@@ -41,8 +41,9 @@ local kanagawa = {
           -- NOTE: updating default bg values to make them slightly darker for higher contrast
           -- sumiInk0 -> for statusline & floating windows, prev darker, now lighter
           -- sumiInk3 -> for background, prev lighter, now darker
-          sumiInk0 = '#21212c', -- prev #16161D
-          sumiInk3 = '#16161D', -- prev #363646
+          -- sumiInk0 = '#21212c', -- prev #16161D
+          -- sumiInk3 = '#1F1F28', -- prev #363646, other default in the colorscheme, lower contrast
+          -- sumiInk3 = '#070821', -- darker & more bluey blue pulled directly from the photo, higher contrast
         },
         theme = {
           wave = {},
