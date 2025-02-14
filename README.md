@@ -56,6 +56,8 @@ I'm using zen as my default browser for now.
 
 #### iTerm2
 
+No longer main terminal, WezTerm is much easier to customize with lua
+
 1. Download iTerm2 `brew install --cask iterm2`
    1. Update the blue colour in `iTerm -> Settings -> Profiles -> [ choose needed profile ] -> Colors` for a better exp with agnoster's theme
 2. Download nerd fonts and set iTerm2's font to it
@@ -80,20 +82,6 @@ I'm using zen as my default browser for now.
 
 ### Text editor setup
 
-#### VSCode
-
-1. Install vscode
-   1. Run `brew install --cask visual-studio-code`
-2. Nano should come pre-installed
-   1. [Nano text editor shortcuts](https://www.nano-editor.org/dist/latest/cheatsheet.html)
-3. To ensure debugging works on vscode:
-   1. System Preferences -> Desktop & Dock -> Keyboard & Mouse Shortcuts -> Show Desktop -> Keyboard Shortcut -> toggle off F11 key. (`F11` should be reserved for step through debugging)
-4. Run `code .` to open a new file/folder in vscode
-
-#### Nano
-
-Should already come pre-installed. Simply run `nano` in the terminal to open a new file.
-
 #### Neovim
 
 1. Based on [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) and [this guide](https://www.youtube.com/watch?v=m8C0Cq9Uv9o)
@@ -102,6 +90,18 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
    2. Run: `git clone https://github.com/ianpaul10/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim`
 3. You're off to the races! Run `nvim .` to open a new file/folder in neovim
 
+#### VSCode
+
+1. Install vscode
+   1. Run `brew install --cask visual-studio-code`
+2. To ensure debugging works on vscode:
+   1. System Preferences -> Desktop & Dock -> Keyboard & Mouse Shortcuts -> Show Desktop -> Keyboard Shortcut -> toggle off F11 key. (`F11` should be reserved for step through debugging)
+3. Run `code .` to open a new file/folder in vscode
+
+#### Nano
+
+Should already come pre-installed. Simply run `nano` in the terminal to open a new file.
+
 ### Python setup
 
 1. Install pyenv `brew install pyenv`
@@ -109,7 +109,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 3. Run `pip install virtualenv` to install virtualenv locally
 4. Run `git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv` and `pyenv global 3` to activate what you just installed.
 5. When starting/loading a new python repo:
-   1. Start a new python virtual environment `python3 -m venv venv`
+   1. Start a new python virtual environment `python3 -m venv venv` (or replace the 2nd venv with whatever you want to name your virtual env, e.g. `.venv`)
    2. Activate the python virtual environment `source venv/bin/activate`
    3. When done work in that repo, run `deactivate`
    4. This will help keep dependencies for a given repo local to that `/venv` folder inside the root repo dir
@@ -120,17 +120,16 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 1. Install ruby env/version manager: `brew install rbenv`
 2. Install relevant ruby versions: `rbenv install 3.4.1` (or any other version, see which are available via `rbenv install -l`)
 3. Set global ruby version: `rbenv gloabl 3.4.1`. rbenv will choose the specific version based on the dir you're in based on the `.ruby-version` file, and otherwise will default to the global version
-4. Ruby install (for jekyll): `brew install ruby`
-5. Install formatter `brew install rubyfmt`
+4. Install formatter `brew install rubyfmt`
 
 ### Node.js setup
 
 1. Install node version manager
-1. `brew install nvm`
-1. Ensure you update your `.zshrc` with the appropriate info to load node properly.
-1. Install node.js
-1. `nvm install node # install most recent Node stable version`
-1. Node.js and nvm config included in `.zshrc`
+2. `brew install nvm`
+3. Ensure you update your `.zshrc` with the appropriate info to load node properly.
+4. Install node.js
+5. `nvm install node # install most recent Node stable version`
+6. Node.js and nvm config included in `.zshrc`
 
 ### .NET/C# setup
 
@@ -138,10 +137,10 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 
 ### Local scripts setup
 
-1. `ask` command to ask GPT-4 a question from the command line
+1. `jarvis` command to ask GPT-4 a question from the command line
    1. Run `pip install -r requirements.txt` to install the required packages
    2. Run `cp .env.example .env` to create a `.env` file
-   3. Update the `.env` file with your OpenAI API key
+   3. Update the `.env` file with your OpenAI API key & Groq API key
 2. If you want to add any new scripts, add them in the `/scripts` folder and include an `alias` in your `.zshrc` file to run them. Be sure to update the local scripts setup alias in `.zshrc` to point to the new script.
 3. Heavily inspired from [dnbt777](https://github.com/dnbt777/EasyModularScripts/tree/main)
 
@@ -170,4 +169,4 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 8. [Desktop background](https://apod.nasa.gov/apod/ap210129.html)
 9. Private env vars that you want access to in your terminal can be put into `.zshenv`
 10. If you see a blue arrow at the beginning of your terminal prompt, it's likely a iTerm2 issue. See [here](https://github.com/ohmyzsh/ohmyzsh/issues/5088#issuecomment-221139633) to fix it.
-11. Install loop for window/tile managment `brew install loop`
+11. Install rectangle for window/tile management `brew install rectangle`
