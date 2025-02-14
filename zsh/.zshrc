@@ -63,7 +63,7 @@ COMPLETION_WAITING_DOTS="true"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
+HIST_STAMPS="yyyy-mm-dd"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -137,7 +137,7 @@ export NVM_DIR="$HOME/.nvm"
 # local scripts setup
 export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
 # alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
-# NOTE using the global pyenv version which should have the required depenencies, instead of the possible virtual env version which might not
+# NOTE: using the global pyenv version which should have the required depenencies, instead of the possible virtual env version which might not
 alias jarvis="$HOME/.pyenv/shims/python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
 
 export wut() {
