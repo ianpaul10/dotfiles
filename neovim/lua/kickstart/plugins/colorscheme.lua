@@ -1,9 +1,6 @@
--- Change the name of the colorscheme plugin below, and then
--- change the command in the config to whatever the name of that colorscheme is.
--- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
 local night_owl = {
   'oxfist/night-owl.nvim',
-  lazy = false, -- make sure we load this during startup if it is your main colorscheme
+  -- dir = '~/code/night-owl.nvim/', -- custom fork of night-owl with specific ruby config
   priority = 1000, -- make sure to load this before all the other start plugins
   config = function()
     require('night-owl').setup {
@@ -16,8 +13,24 @@ local night_owl = {
 
     vim.cmd.colorscheme 'night-owl'
     -- also setting borders around windows in vim-options.lua
+  end,
+}
 
-    -- vim.cmd.colorscheme 'slate' -- If you want to use the default slate colorscheme, you can uncomment this line.
+local tokyo_night = {
+  'folke/tokyonight.nvim',
+  lazy = false,
+  priority = 1000,
+  opts = {},
+  config = function()
+    require('tokyonight').setup {
+      styles = {
+        keywords = { italic = false },
+        comments = { italic = false },
+      },
+    }
+
+    -- 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+    vim.cmd.colorscheme 'tokyonight-night'
   end,
 }
 
@@ -70,26 +83,5 @@ local kanagawa = {
   end,
 }
 
-return night_owl
-
--- Supposed to be good for colourblind people. I didn't find it high-contrast enough. Night owl is where it's at.
--- return {
---   'EdenEast/nightfox.nvim',
---   lazy = false,
---   priority = 1000,
---   config = function()
---     require('nightfox').setup {
---       options = {
---         colorblind = {
---           enable = true,
---           severity = {
---             protan = 0.9,
---             deutan = 0.3,
---             tritan = 0.0,
---           },
---         },
---       },
---     }
---     vim.cmd.colorscheme 'nightfox'
---   end,
--- }
+-- night-owl doesn't work perfectly with ruby, so swapping back to tokyo_night for now
+return tokyo_night
