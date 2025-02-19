@@ -86,16 +86,61 @@ config.keys = {
     { mods = "CMD", key = "Backspace", action = action.SendKey({ mods = "CTRL", key = "u" }) },
     -- wezterm launcher
     {
-        key = "9",
-        mods = "ALT",
+        key = "0",
+        mods = "CMD",
         action = action.ShowLauncher,
-        -- action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|TABS" }),
+        -- action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|TABS" }), -- to enter in fuzzy mode automatically
+    },
+    -- PANE MANAGEMENT
+    {
+        key = ":",
+        mods = "CMD|SHIFT",
+        action = wezterm.action.SplitPane({
+            direction = "Down",
+            size = { Percent = 25 },
+        }),
+    },
+    {
+        key = "w",
+        mods = "CMD|SHIFT",
+        action = wezterm.action.CloseCurrentPane({ confirm = true }),
+    },
+    { mods = "CMD|SHIFT", key = "j", action = action.ActivatePaneDirection("Down") },
+    { mods = "CMD|SHIFT", key = "k", action = action.ActivatePaneDirection("Up") },
+    { mods = "CMD|SHIFT", key = "h", action = action.ActivatePaneDirection("Left") },
+    { mods = "CMD|SHIFT", key = "l", action = action.ActivatePaneDirection("Right") },
+    -- WORKSPACE MANAGEMENT
+    -- Prompt for a name to use for a new workspace and switch to it.
+    {
+        key = "T",
+        mods = "CMD|SHIFT",
+        action = action.PromptInputLine({
+            description = wezterm.format({
+                { Attribute = { Intensity = "Bold" } },
+                { Foreground = { AnsiColor = "Fuchsia" } },
+                { Text = "Enter name for new workspace" },
+            }),
+            action = wezterm.action_callback(function(window, pane, line)
+                -- line will be `nil` if they hit escape without entering anything
+                -- An empty string if they just hit enter
+                -- Or the actual line of text they wrote
+                if line then
+                    window:perform_action(
+                        action.SwitchToWorkspace({
+                            name = line,
+                        }),
+                        pane
+                    )
+                end
+            end),
+        }),
     },
 }
 
 config.audible_bell = "Disabled"
 
 -- TAB BAR
+config.default_workspace = "dflt"
 config.use_fancy_tab_bar = false
 
 wezterm.on("update-right-status", function(window, pane)
@@ -104,6 +149,11 @@ wezterm.on("update-right-status", function(window, pane)
     local battery = ""
     for _, b in ipairs(wezterm.battery_info()) do
         battery = string.format("%.0f%%", b.state_of_charge * 100)
+    end
+
+    local workspace_name = window:active_workspace()
+    if workspace_name == nil then
+        workspace_name = "n/a"
     end
 
     --   -- Get system information using wezterm's built-in functions
@@ -139,7 +189,8 @@ wezterm.on("update-right-status", function(window, pane)
         { Background = { Color = "#0b0022" } },
         { Foreground = { Color = "#c0c0c0" } },
         {
-            Text = string.format("[%s] [%s] %s   ", battery, time, wezterm.nerdfonts.dev_apple),
+            -- Text = string.format("[%s] [%s] [%s] %s   ", workspace_name, battery, time, wezterm.nerdfonts.dev_apple),
+            Text = string.format("[%s] [%s] [%s] %s   ", workspace_name, battery, time, wezterm.nerdfonts.dev_apple),
         },
     }))
 end)
