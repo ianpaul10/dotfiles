@@ -35,8 +35,8 @@ return { -- Collection of various small independent plugins/modules
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require('mini.surround').setup()
 
-    -- NOTE: Simple and easy statusline.
-    -- from left to right: mode, file info icon ('+n ~n -n' for line changes),
+    -- NOTE: Simple and easy statusline. From left to right:
+    -- mode, file info icon ('+n ~n -n' for line changes),
     -- beaker icon ('Hn In Wn En' for hints, info, warn, error counts),
     -- circled 'L' for LSP sever count (num of + is number of servers)
     -- file name/path

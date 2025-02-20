@@ -184,12 +184,10 @@ wezterm.on("update-right-status", function(window, pane)
     --       end
     --   end
 
-    -- Set the right status with all metrics
     window:set_right_status(wezterm.format({
         { Background = { Color = "#0b0022" } },
         { Foreground = { Color = "#c0c0c0" } },
         {
-            -- Text = string.format("[%s] [%s] [%s] %s   ", workspace_name, battery, time, wezterm.nerdfonts.dev_apple),
             Text = string.format("[%s] [%s] [%s] %s   ", workspace_name, battery, time, wezterm.nerdfonts.dev_apple),
         },
     }))
