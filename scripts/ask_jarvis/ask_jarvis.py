@@ -343,9 +343,6 @@ def main():
     if args.run:
         sys.exit(_handle_run_command(args, ask_app_dir))
 
-    if args.git_commit:
-        sys.exit(_handle_git_commit(args, ask_app_dir))
-
     sys.exit(_handle_llm_query(args, ask_app_dir))
 
 
