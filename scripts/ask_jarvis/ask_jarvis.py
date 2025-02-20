@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import os
 import sys
 import json
@@ -7,10 +8,18 @@ import subprocess
 from datetime import datetime
 
 # from openai import OpenAI # lets use Groq fro now
-from groq import Groq
+from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
+
+
+@dataclass
+class ModelAttributes:
+    cli_ref_name: str
+    api_ref_name: str
+    api_key_env_var: str
+    openai_compatible_url: str
 
 
 def _get_history_file_name(ask_app_dir):
@@ -70,12 +79,16 @@ def _get_system_prompt(args: argparse.Namespace):
         return ""
 
     default = """
-        You are J.A.R.V.I.S. (Just a Rather Very Intelligent System), aka Jarvis. You previously only worked for Tony Stark, aka Iron Man, but you now also help software engineers. You are a helpful AI assitant with a depth of software engineering knowledge. Always respond with canoncial, idomatic, and pragmatic code when appropriate.
+        You are J.A.R.V.I.S. (Just a Rather Very Intelligent System), aka Jarvis. You previously only worked for Tony Stark, aka Iron Man, but you now also help software engineers. You are a helpful AI assitant with a depth of software engineering knowledge.
 
-        The person you are speaking with is a software engineer. They are using a computer running MacOS. They run commands in a zsh shell. They use neovim as their main text editor. If it is important, use that information to help you respond.
+        DO NOT HALUCINATE.
         """
     prompts = {
         "general": """
+        Always respond with canoncial, idomatic, and pragmatic code when appropriate. Use code comments only when the logic isn't clear. Write self documenting code with clear variable names. 
+
+        The person you are speaking with is a software engineer. They are using a computer running MacOS. They run commands in a zsh shell. They use neovim as their main text editor. They use WezTerm as their main terminal emulator. If it is important, use that information to help you respond.
+
         Provide clear, concise answers.
         You can use markdown formatting when appropriate.
         """,
@@ -113,11 +126,27 @@ def _handle_run_command(args, ask_app_dir):
 
 def _get_model(model, args):
     models = {
-        "llama": "llama-3.3-70b-versatile",
-        "r1": "deepseek-r1-distill-llama-70b",
+        "llama": ModelAttributes(
+            cli_ref_name="llama",
+            api_ref_name="llama-3.3-70b-versatile",
+            api_key_env_var="GROQ_API_KEY",
+            openai_compatible_url="https://api.groq.com/openai/v1",
+        ),
+        "r1": ModelAttributes(
+            cli_ref_name="r1",
+            api_ref_name="deepseek-r1-distill-llama-70b",
+            api_key_env_var="GROQ_API_KEY",
+            openai_compatible_url="https://api.groq.com/openai/v1",
+        ),
+        "gemini": ModelAttributes(
+            cli_ref_name="gemini",
+            api_ref_name="gemini-2.0-flash",
+            api_key_env_var="GEMINI_API_KEY",
+            openai_compatible_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        ),
     }
 
-    model = models.get(model, "llama-3.3-70b-versatile")
+    model = models[model or "gemini"]
 
     if args.debug:
         print(f"Using {model=}")
@@ -126,17 +155,15 @@ def _get_model(model, args):
 
 
 def _handle_llm_query(args, ask_app_dir):
-    """Handle queries to the LLM."""
+    model = _get_model(args.model, args)
     history = _load_conversation_history(args, ask_app_dir)
 
-    # oai_api_key = os.getenv("OAI_API_KEY")
-    groq_api_key = os.getenv("GROQ_API_KEY")
-    if not groq_api_key:
-        print("ERROR: The GROQ_API_KEY environment variable is not set.")
+    api_key = os.getenv(model.api_key_env_var)
+    if not api_key:
+        print(f"ERROR: The {model.api_key_env_var} environment variable is not set.")
         sys.exit(1)
 
-    # client = OpenAI(api_key=oai_api_key)
-    client = Groq(api_key=groq_api_key)
+    client = OpenAI(api_key=api_key, base_url=model.openai_compatible_url)
     user_prompt = " ".join(args.prompt)
     system_prompt = _get_system_prompt(args)
 
@@ -158,17 +185,14 @@ def _handle_llm_query(args, ask_app_dir):
         print("-- DEBUG --")
 
     try:
-        # cheap_model = "gpt-4-turbo"
-        cheap_model = _get_model(args.model, args)
-
         llm_start_time = datetime.now()
 
         response = client.chat.completions.create(
-            model=cheap_model,
+            model=model.api_ref_name,
             messages=messages,
             stream=True,  # Enable streaming
             # Longer context window for deepseek reasoning model
-            max_completion_tokens=(8192 if args.model == "r1" else None),
+            max_completion_tokens=(8192 if model.cli_ref_name == "r1" else None),
         )
 
         # Collect the full response while streaming
@@ -250,8 +274,8 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        default="llama",
-        help="The model to use for the LLM. Currently supports llama and r1 (for deepseek reasoning model)",
+        default="gemini",
+        help="The model to use for the LLM. Currently supports [gemini, llama, r1] (r1 for deepseek reasoning model)",
     )
     args = parser.parse_args()
 
