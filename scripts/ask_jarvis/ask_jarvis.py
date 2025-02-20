@@ -7,7 +7,6 @@ import subprocess
 
 from datetime import datetime
 
-# from openai import OpenAI # lets use Groq fro now
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -20,6 +19,28 @@ class ModelAttributes:
     api_ref_name: str
     api_key_env_var: str
     openai_compatible_url: str
+
+
+_MODELS = {
+    "llama": ModelAttributes(
+        cli_ref_name="llama",
+        api_ref_name="llama-3.3-70b-versatile",
+        api_key_env_var="GROQ_API_KEY",
+        openai_compatible_url="https://api.groq.com/openai/v1",
+    ),
+    "r1": ModelAttributes(
+        cli_ref_name="r1",
+        api_ref_name="deepseek-r1-distill-llama-70b",
+        api_key_env_var="GROQ_API_KEY",
+        openai_compatible_url="https://api.groq.com/openai/v1",
+    ),
+    "gemini": ModelAttributes(
+        cli_ref_name="gemini",
+        api_ref_name="gemini-2.0-flash",
+        api_key_env_var="GEMINI_API_KEY",
+        openai_compatible_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+    ),
+}
 
 
 def _get_history_file_name(ask_app_dir):
@@ -70,6 +91,35 @@ def _save_conversation_history(ask_app_dir, history):
         json.dump(history, f, indent=2)
 
 
+def _get_git_diff():
+    what_pwd = subprocess.run(
+        ["echo", "$PWD"],
+        capture_output=True,
+        text=True,  # Automatically decode bytes to string
+        check=True,  # Raise an exception for non-zero exit codes
+    )
+    print(what_pwd.stdout)
+    result = subprocess.run(
+        [
+            "git",
+            "diff",
+            "--unified=1",  # Show only the lines that changed
+            "--cached",  # Only show changes that are staged
+        ],
+        capture_output=True,
+        text=True,  # Automatically decode bytes to string
+        check=True,  # Raise an exception for non-zero exit codes
+    )
+
+    cleaned_lines = []
+    for line in result.stdout.splitlines():
+        line = line[1:] if line.startswith(" ") else line
+        cleaned_lines.append(line)
+
+    cleaned_diff = "\n".join(cleaned_lines)
+    return cleaned_diff
+
+
 def _get_system_prompt(args: argparse.Namespace):
     if args.model == "r1":
         # Supposedly reasoning models work better without a system prompt
@@ -97,10 +147,18 @@ def _get_system_prompt(args: argparse.Namespace):
         Do not include any formatting tokens such as ` or ```. No yapping. No markdown. No fenced code blocks. Do not hallucinate.
         What you return will be passed to subprocess.check_output() directly.
         """,
+        "git_commit": """
+        You are a git commit message generator. You will be given a diff of the changes in the current git repository. You will need to summarize the changes in a single sentence. Do not include any formatting tokens such as ` or ```. No yapping. No markdown. No fenced code blocks. Do not hallucinate.
+
+        The change description will be a description of the change.
+        
+        Prefix the sentence with one of ["feat", "fix", "chore", "docs", "style", "refactor", "perf", "test", "build", "ci", "revert", "wip"] followed by a colon.
+        """,
     }
 
     mode = "cmd" if args.cmd else "general"
-    return default + prompts.get(mode, prompts["general"])
+    mode = "git_commit" if args.git_commit else mode
+    return default + prompts[mode]
 
 
 def _handle_run_command(args, ask_app_dir):
@@ -124,29 +182,23 @@ def _handle_run_command(args, ask_app_dir):
         sys.exit(1)
 
 
-def _get_model(model, args):
-    models = {
-        "llama": ModelAttributes(
-            cli_ref_name="llama",
-            api_ref_name="llama-3.3-70b-versatile",
-            api_key_env_var="GROQ_API_KEY",
-            openai_compatible_url="https://api.groq.com/openai/v1",
-        ),
-        "r1": ModelAttributes(
-            cli_ref_name="r1",
-            api_ref_name="deepseek-r1-distill-llama-70b",
-            api_key_env_var="GROQ_API_KEY",
-            openai_compatible_url="https://api.groq.com/openai/v1",
-        ),
-        "gemini": ModelAttributes(
-            cli_ref_name="gemini",
-            api_ref_name="gemini-2.0-flash",
-            api_key_env_var="GEMINI_API_KEY",
-            openai_compatible_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-        ),
-    }
+def _get_git_commit_prompt_message(args):
+    git_diff = _get_git_diff()
+    prompt = _get_system_prompt(args)
 
-    model = models[model or "gemini"]
+    return f"""
+    <prompt>
+    {prompt}
+    </prompt>
+
+    <git_diff>
+    {git_diff}
+    </git_diff>
+    """
+
+
+def _get_model(model, args):
+    model = _MODELS[model or "gemini"]
 
     if args.debug:
         print(f"Using {model=}")
@@ -178,6 +230,10 @@ def _handle_llm_query(args, ask_app_dir):
         messages.append({"role": "user", "content": user_prompt})
     elif args.wut:
         messages.append({"role": "user", "content": _get_wut_message(ask_app_dir)})
+    elif args.git_commit:
+        messages.append(
+            {"role": "user", "content": _get_git_commit_prompt_message(args)}
+        )
 
     if args.debug:
         print("-- DEBUG --")
@@ -275,12 +331,20 @@ def main():
         "--model",
         type=str,
         default="gemini",
-        help="The model to use for the LLM. Currently supports [gemini, llama, r1] (r1 for deepseek reasoning model)",
+        help=f"The model to use for the LLM. Currently supports {list(_MODELS.keys())}",
+    )
+    parser.add_argument(
+        "--git-commit",
+        action="store_true",
+        help="Create a commit message based on the git diff",
     )
     args = parser.parse_args()
 
     if args.run:
         sys.exit(_handle_run_command(args, ask_app_dir))
+
+    if args.git_commit:
+        sys.exit(_handle_git_commit(args, ask_app_dir))
 
     sys.exit(_handle_llm_query(args, ask_app_dir))
 
