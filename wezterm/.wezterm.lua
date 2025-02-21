@@ -76,6 +76,7 @@ table.insert(config.hyperlink_rules, {
 })
 
 -- KEYBINDINGS
+config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
 local action = wezterm.action
 config.keys = {
     -- KEY MOTIONS
@@ -87,33 +88,35 @@ config.keys = {
     -- wezterm launcher
     {
         key = "0",
-        mods = "CMD",
+        mods = "LEADER",
         action = action.ShowLauncher,
         -- action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|TABS" }), -- to enter in fuzzy mode automatically
     },
     -- PANE MANAGEMENT
     {
-        key = ":",
-        mods = "CMD|SHIFT",
+        key = ";",
+        mods = "LEADER",
         action = wezterm.action.SplitPane({
             direction = "Down",
             size = { Percent = 25 },
         }),
     },
+    { key = '"', mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Right" }) },
+    { key = "%", mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Down" }) },
     {
         key = "w",
-        mods = "CMD|SHIFT",
+        mods = "LEADER",
         action = wezterm.action.CloseCurrentPane({ confirm = true }),
     },
-    { mods = "CMD|SHIFT", key = "j", action = action.ActivatePaneDirection("Down") },
-    { mods = "CMD|SHIFT", key = "k", action = action.ActivatePaneDirection("Up") },
-    { mods = "CMD|SHIFT", key = "h", action = action.ActivatePaneDirection("Left") },
-    { mods = "CMD|SHIFT", key = "l", action = action.ActivatePaneDirection("Right") },
+    { mods = "LEADER", key = "j", action = action.ActivatePaneDirection("Down") },
+    { mods = "LEADER", key = "k", action = action.ActivatePaneDirection("Up") },
+    { mods = "LEADER", key = "h", action = action.ActivatePaneDirection("Left") },
+    { mods = "LEADER", key = "l", action = action.ActivatePaneDirection("Right") },
     -- WORKSPACE MANAGEMENT
     -- Prompt for a name to use for a new workspace and switch to it.
     {
-        key = "T",
-        mods = "CMD|SHIFT",
+        key = "n",
+        mods = "LEADER",
         action = action.PromptInputLine({
             description = wezterm.format({
                 { Attribute = { Intensity = "Bold" } },
