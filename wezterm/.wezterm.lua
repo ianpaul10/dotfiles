@@ -94,12 +94,25 @@ config.keys = {
     },
     -- PANE MANAGEMENT
     {
+        -- Creates a new pane in the bottom if it doesn't exist, otherwise toggles showing and hiding the bottom pane/terminal
         key = ";",
         mods = "LEADER",
-        action = wezterm.action.SplitPane({
-            direction = "Down",
-            size = { Percent = 25 },
-        }),
+        action = wezterm.action_callback(function(_, pane)
+            local tab = pane:tab()
+            local panes = tab:panes_with_info()
+            if #panes == 1 then
+                pane:split({
+                    direction = "Bottom",
+                    size = 0.25,
+                })
+            elseif not panes[1].is_zoomed then
+                panes[1].pane:activate()
+                tab:set_zoomed(true)
+            elseif panes[1].is_zoomed then
+                tab:set_zoomed(false)
+                panes[2].pane:activate()
+            end
+        end),
     },
     { key = '"', mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Right" }) },
     { key = "%", mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Down" }) },
