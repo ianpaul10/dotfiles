@@ -19,7 +19,8 @@ config.window_padding = {
 -- FONTS AND COLOURS
 -- harfbuzz_features disables ligatures
 config.font = wezterm.font({ family = "JetBrains Mono", harfbuzz_features = { "calt=0", "clig=0", "liga=0" } })
-config.font_size = 13.5 -- default is 12
+-- 12.5 for MBP 14", 13.5 for MBA 15"
+config.font_size = 12.5 -- default is 12
 
 config.colors = {
     cursor_bg = "#97cda9",
@@ -83,11 +84,11 @@ config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
 local action = wezterm.action
 config.keys = {
     -- KEY MOTIONS
-    { mods = "OPT", key = "LeftArrow", action = action.SendKey({ mods = "ALT", key = "b" }) },
+    { mods = "OPT", key = "LeftArrow",  action = action.SendKey({ mods = "ALT", key = "b" }) },
     { mods = "OPT", key = "RightArrow", action = action.SendKey({ mods = "ALT", key = "f" }) },
-    { mods = "CMD", key = "LeftArrow", action = action.SendKey({ mods = "CTRL", key = "a" }) },
+    { mods = "CMD", key = "LeftArrow",  action = action.SendKey({ mods = "CTRL", key = "a" }) },
     { mods = "CMD", key = "RightArrow", action = action.SendKey({ mods = "CTRL", key = "e" }) },
-    { mods = "CMD", key = "Backspace", action = action.SendKey({ mods = "CTRL", key = "u" }) },
+    { mods = "CMD", key = "Backspace",  action = action.SendKey({ mods = "CTRL", key = "u" }) },
     -- wezterm launcher
     {
         key = "0",
