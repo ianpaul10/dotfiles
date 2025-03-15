@@ -79,6 +79,8 @@ No longer main terminal, WezTerm is much easier to customize with lua
 6. Install [fzf](https://github.com/junegunn/fzf) `brew install fzf`
 7. Install [ripgrep](https://github.com/BurntSushi/ripgrep) `brew install ripgrep`
 8. Install [fzf-tab](https://github.com/Aloxaf/fzf-tab) `git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab`
+9. Install [fzf-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) `brew install zsh-autosuggestions`
+10. Install [fzf-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) `brew install zsh-syntax-highlighting`
 
 ### Text editor setup
 
