@@ -121,7 +121,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 
 1. Install ruby env/version manager: `brew install rbenv`
 2. Install relevant ruby versions: `rbenv install 3.4.1` (or any other version, see which are available via `rbenv install -l`)
-3. Set global ruby version: `rbenv gloabl 3.4.1`. rbenv will choose the specific version based on the dir you're in based on the `.ruby-version` file, and otherwise will default to the global version
+3. Set global ruby version: `rbenv global 3.4.1`. rbenv will choose the specific version based on the dir you're in based on the `.ruby-version` file, and otherwise will default to the global version
 4. Install formatter `brew install rubyfmt`
 
 ### Node.js setup
@@ -142,7 +142,7 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
 1. `jarvis` command to ask GPT-4 a question from the command line
    1. Run `pip install -r requirements.txt` to install the required packages
    2. Run `cp .env.example .env` to create a `.env` file
-   3. Update the `.env` file with your OpenAI API key & Groq API key
+   3. Update the `.env` file with your OpenAI API key & Groq (**not Grok**) API key
 2. If you want to add any new scripts, add them in the `/scripts` folder and include an `alias` in your `.zshrc` file to run them. Be sure to update the local scripts setup alias in `.zshrc` to point to the new script.
 3. Heavily inspired from [dnbt777](https://github.com/dnbt777/EasyModularScripts/tree/main)
 
@@ -159,7 +159,8 @@ Should already come pre-installed. Simply run `nano` in the terminal to open a n
       1. Enable Sunset to Sunrise
       2. Set color temperature to more warm
 3. Install FlyCut from the app store (copy/paste clipboard)
-   1. Preferences -> Move pasted items to top of stack -> Select check box
+   1. `brew install --cask flycut`
+   2. Preferences -> Move pasted items to top of stack -> Select check box
 4. Install docker
    1. Run `brew install --cask docker`
 5. Install spotify
