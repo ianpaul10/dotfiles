@@ -211,7 +211,7 @@ def _handle_llm_query(args, ask_app_dir):
     history = _load_conversation_history(args, ask_app_dir)
 
     api_key = os.getenv(model.api_key_env_var)
-    if not api_key:
+    if not api_key or api_key.strip() == "" or api_key.strip().lower() == "todo":
         print(f"ERROR: The {model.api_key_env_var} environment variable is not set.")
         sys.exit(1)
 
