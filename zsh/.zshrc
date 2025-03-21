@@ -10,8 +10,8 @@ export ZSH="$HOME/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
 # ZSH_THEME="norm"
-# ZSH_THEME="agnoster"
-ZSH_THEME="philips"
+ZSH_THEME="agnoster"
+# ZSH_THEME="philips"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -151,29 +151,7 @@ export AIDER_DARK_MODE=true
 # Ruby config
 eval "$(rbenv init - zsh)"
 
-# Git integration for zsh prompt
-autoload -Uz vcs_info
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd vcs_info
-
-# Format the vcs_info_msg_0_ variable
-zstyle ':vcs_info:git:*' check-for-changes true
-zstyle ':vcs_info:git:*' stagedstr '%F{yellow}●%f'
-zstyle ':vcs_info:git:*' unstagedstr '%F{red}●%f'
-zstyle ':vcs_info:git:*' formats '%F{green}(%b)%f %c%u'
-zstyle ':vcs_info:git:*' actionformats '%F{green}(%b|%a)%f %c%u'
-
-# Configure the prompt
-setopt PROMPT_SUBST
-
-# Custom prompt
-PROMPT_GIT=" ${vcs_info_msg_0_}"
-PROMPT_HOST="%F{#00ffff}%n@%m%f" # username@hostname in cyan
-PROMPT_DIR=" %F{#ff8000}%(5~|…/%3~|%~)%f" # Shorten the path to 3 when it exceeds 5 elements, in orange
-# NOTE: will ignore and keep default prompt for now
-PROMPT="${PROMPT_HOST} ->${PROMPT_DIR}${PROMPT_GIT} %# "
-
-# NOTE: update right prompt though
+# NOTE: custom right prompt
 PROMPT_STATUS="%F{red}%(?..[%?])%f" # Show exit status of last command in red, if non-zero
 TIME_24HR="%F{241}%B[%*]%b%f" # 24hr clock in gray
 RPROMPT="${PROMPT_STATUS}${TIME_24HR}"
