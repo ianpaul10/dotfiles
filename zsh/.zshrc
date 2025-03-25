@@ -148,10 +148,15 @@ export wut() {
 # Aider config
 export AIDER_DARK_MODE=true
 
+# NOTE: commenting out rbenv setup now, as it's incompatible with current co. tooling
 # Ruby config
-eval "$(rbenv init - zsh)"
+# eval "$(rbenv init - zsh)"
 
 # NOTE: custom right prompt
 PROMPT_STATUS="%F{red}%(?..[%?])%f" # Show exit status of last command in red, if non-zero
 TIME_24HR="%F{241}%B[%*]%b%f" # 24hr clock in gray
 RPROMPT="${PROMPT_STATUS}${TIME_24HR}"
+
+[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
+
+[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
