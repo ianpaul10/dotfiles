@@ -22,6 +22,12 @@ class ModelAttributes:
 
 
 _MODELS = {
+    "shop": ModelAttributes(
+        cli_ref_name="shop",
+        api_ref_name="default",
+        api_key_env_var="OPENAI_API_KEY",
+        openai_compatible_url="https://proxy.shopify.ai/v1",
+    ),
     "llama": ModelAttributes(
         cli_ref_name="llama",
         api_ref_name="llama-3.3-70b-versatile",
