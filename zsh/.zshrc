@@ -125,7 +125,7 @@ source <(fzf --zsh)
 # simple sd below. But it errors out on Library folder
 # alias sd="cd ~/code && cd \$(find . -type d -maxdepth 3 | fzf)"
 # exclude Library folder & its sub folders
-alias sd="cd ~ && cd \$(find . -path ./Library -prune -o -path ./.Trash -prune -o -type d -maxdepth 3 -print | fzf)"
+alias sd="cd ~ && cd \$(find . -path ./Library -prune -o -path ./.Trash -prune -o -type d -maxdepth 4 -print | fzf)"
 
 alias sf="cd ~/code && nvim \$(find . -type f | fzf)"
 
