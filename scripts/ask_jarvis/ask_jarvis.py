@@ -4,6 +4,7 @@ import sys
 import json
 import argparse
 import subprocess
+import traceback
 
 from datetime import datetime
 
@@ -91,9 +92,11 @@ def _get_wut_message(ask_app_dir):
     """
 
 
-def _save_conversation_history(ask_app_dir, history):
+def _save_conversation_history(args, ask_app_dir, history):
     history_file = _get_history_file_name(ask_app_dir)
     with open(history_file, "w") as f:
+        if args.debug:
+            print(f"INFO: writing hist to ${history_file}")
         json.dump(history, f, indent=2)
 
 
@@ -184,7 +187,9 @@ def _handle_run_command(args, ask_app_dir):
             print("ERROR: Errors:", result.stderr, file=sys.stderr)
         return result.returncode
     except Exception as e:
-        print(f"ERROR: Error executing command: {e}", file=sys.stderr)
+        print(
+            f"ERROR: Error executing command: {traceback.format_exc()}", file=sys.stderr
+        )
         sys.exit(1)
 
 
@@ -227,9 +232,11 @@ def _handle_llm_query(args, ask_app_dir):
 
     messages = []
     if args.chat:
+        # NOTE: we want to include each user <-> assistant interaction, so 1 chat back means the past two messages
+        chat_items_to_get = args.chat * 2
         hist = history.get("messages", [])
-        if len(hist) > args.chat:
-            hist = hist[-args.chat :]
+        if len(hist) > chat_items_to_get:
+            hist = hist[-chat_items_to_get:]
         messages.extend(hist)
     messages.append({"role": "system", "content": system_prompt})
     if user_prompt:
@@ -257,10 +264,9 @@ def _handle_llm_query(args, ask_app_dir):
             max_completion_tokens=(8192 if model.cli_ref_name == "r1" else None),
         )
 
-        # Collect the full response while streaming
         collected_response = []
         for chunk in response:
-            if chunk.choices[0].delta.content:
+            if chunk.choices and chunk.choices[0].delta.content:
                 content = chunk.choices[0].delta.content
                 print(content, end="", flush=True)
                 collected_response.append(content)
@@ -288,15 +294,15 @@ def _handle_llm_query(args, ask_app_dir):
         if args.cmd:
             history["last_command"] = full_response.strip()
 
-        _save_conversation_history(ask_app_dir, history)
+        _save_conversation_history(args, ask_app_dir, history)
 
         if args.time:
             save_end_time = datetime.now()
             print(f"INFO: ⏱️  History save took: {save_end_time - save_start_time}")
         return 0
 
-    except Exception as e:
-        print(f"ERROR: {e}")
+    except Exception:
+        print(f"ERROR: {traceback.format_exc()}")
         return 1
 
 
