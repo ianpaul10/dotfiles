@@ -64,7 +64,7 @@ return { -- Collection of various small independent plugins/modules
     -- require('mini.pairs').setup() -- NOTE: try without for now
     -- require('mini.jump').setup() -- NOTE: using eyeliner instead for now
 
-    require('mini.files').setup()
+    require('mini.files').setup({windows = { preview = true }})
     local minifiles_toggle = function(use_cur_buffer)
       if not MiniFiles.close() then
         if use_cur_buffer then
