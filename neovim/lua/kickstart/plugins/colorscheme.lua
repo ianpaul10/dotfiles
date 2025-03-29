@@ -26,6 +26,8 @@ local tokyo_night = {
       styles = {
         keywords = { italic = false },
         comments = { italic = false },
+        functions = { italic = false },
+        variables = { italic = false },
       },
     }
 
@@ -87,7 +89,7 @@ local catppuccin = {
   'catppuccin/nvim',
   name = 'catppuccin',
   lazy = false,
-  priority = 999,
+  priority = 1000,
   config = function()
     require('catppuccin').setup {
       flavour = 'mocha', -- latte, frappe, macchiato, mocha
@@ -99,4 +101,4 @@ local catppuccin = {
 }
 
 -- night-owl doesn't work perfectly with ruby, so swapping back to tokyo_night for now
-return catppuccin
+return tokyo_night
