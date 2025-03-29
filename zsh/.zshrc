@@ -162,3 +162,4 @@ RPROMPT="${PROMPT_STATUS}${TIME_24HR}"
 [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
 
 [[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

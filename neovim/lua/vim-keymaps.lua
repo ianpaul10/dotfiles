@@ -83,3 +83,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+-- NOTE: notes
+vim.keymap.set('n', '<leader>bd', ':e ~/code/brain_dump/notes.md <CR>', { desc = 'Brain dump' })
