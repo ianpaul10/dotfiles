@@ -106,12 +106,19 @@ return { -- Fuzzy Finder (files, lsp, etc)
     require('telescope').setup {
       -- You can put your default mappings / updates / etc. in here
       --  All the info you're looking for is in `:help telescope.setup()`
-      --
-      -- defaults = {
-      --   mappings = {
-      --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-      --   },
-      -- },
+      defaults = {
+        -- mappings = {
+        --   i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+        -- },
+        -- Format path as "file.txt (path\to\file\)"
+        path_display = function(opts, path)
+          local tail = require('telescope.utils').path_tail(path)
+
+          -- NOTE: extracts relative path (:.) to cwd and then extracts the non-file path part (:h or :head)
+          local rel_path = vim.fn.fnamemodify(vim.fn.fnamemodify(path, ':.'), ':h')
+          return string.format('%s [%s]', tail, rel_path)
+        end,
+      },
       -- pickers = {}
       extensions = {
         ['ui-select'] = {

@@ -1,6 +1,6 @@
-vim.keymap.set({ 'n' }, '<C-k>', function()
+vim.keymap.set({ 'n' }, '<leader>cl', function()
   require('lsp_signature').toggle_float_win()
-end, { silent = true, noremap = true, desc = 'toggle signature' })
+end, { noremap = true, desc = 'toggle LSP signature (aka popup window when typing)' })
 
 return {
   {
