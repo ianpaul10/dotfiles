@@ -154,6 +154,7 @@ export OPENAI_API_KEY=$(openai_key.sh cat) # NOTE: this is overriding it in .zsh
 
 # Aider config
 export AIDER_DARK_MODE=true
+alias aider_shop="aider --model openai/anthropic:claude-3-5-sonnet-20241022 --watch-files"
 
 # NOTE: commenting out rbenv setup now, as it's incompatible with current co. tooling
 # Ruby config
