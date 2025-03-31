@@ -40,7 +40,6 @@ function check() {
     return 0
 }
 
-# can you make another option where it actually sets the environment variable $OPENAI_API_KEY as the output of the cat value? AI!
 case $1 in
   update)
     update
@@ -52,8 +51,13 @@ case $1 in
     check || update
     jq -r .key < "$HOME/$key_file"
     ;;
+  env)
+    check || update
+    export OPENAI_API_KEY=$(jq -r .key < "$HOME/$key_file")
+    echo "OPENAI_API_KEY has been set"
+    ;;
   *)
-    echo "Usage: $0 {update|check|cat}"
+    echo "Usage: $0 {update|check|cat|env}"
     exit 1
     ;;
 esac
