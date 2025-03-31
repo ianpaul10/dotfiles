@@ -40,6 +40,7 @@ function check() {
     return 0
 }
 
+# can you make another option where it actually sets the environment variable $OPENAI_API_KEY as the output of the cat value? AI!
 case $1 in
   update)
     update
