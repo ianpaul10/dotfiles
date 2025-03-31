@@ -139,11 +139,18 @@ export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
 # alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
 # NOTE: using the global pyenv version which should have the required depenencies, instead of the possible virtual env version which might not
 alias jarvis="$HOME/.pyenv/shims/python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
+alias pls="$LOCAL_SCRIPTS_DIR/openai_key.sh"
 
 export wut() {
   echo "$@" > $HOME/.jarvis/wut_command.log  # Log the command
   "$@" > >(tee -a $HOME/.jarvis/wut_command.log) 2> >(tee -a $HOME/.jarvis/wut_command.log >&2) # Log the output from the command
 }
+
+# Check for open ai key, update if expired
+if ! $(openai_key.sh check); then
+  openai_key.sh update
+fi
+export OPENAI_API_KEY=$(openai_key.sh cat) # NOTE: this is overriding it in .zshenv, which we're okay with because it needs to be consistently refreshed
 
 # Aider config
 export AIDER_DARK_MODE=true
@@ -157,6 +164,7 @@ PROMPT_STATUS="%F{red}%(?..[%?])%f" # Show exit status of last command in red, i
 TIME_24HR="%F{241}%B[%*]%b%f" # 24hr clock in gray
 RPROMPT="${PROMPT_STATUS}${TIME_24HR}"
 
+# NOTE: below are auto added lines
 [[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
 
 [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
