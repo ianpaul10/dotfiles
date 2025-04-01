@@ -342,7 +342,7 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        default="gemini",
+        default="shop",
         help=f"The model to use for the LLM. Currently supports {list(_MODELS.keys())}",
     )
     parser.add_argument(
