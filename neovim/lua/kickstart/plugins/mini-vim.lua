@@ -36,12 +36,18 @@ return { -- Collection of various small independent plugins/modules
     require('mini.surround').setup()
 
     -- NOTE: Simple and easy statusline. From left to right:
-    -- mode, file info icon ('+n ~n -n' for line changes),
+    -- --
+    -- mode
+    -- --
+    -- git branch icon + branch name  <> file info icon + ('+n ~n -n' for line changes),
     -- beaker icon ('Hn In Wn En' for hints, info, warn, error counts),
     -- circled 'L' for LSP sever count (num of + is number of servers)
+    -- --
     -- file name/path
     -- BREAK
-    -- filetype, file encoding, file size, pos, percentage
+    -- filetype, file encoding, file size
+    -- --
+    -- pos, percentage
     local statusline = require 'mini.statusline'
     -- set use_icons to true if you have a Nerd Font
     statusline.setup { use_icons = vim.g.have_nerd_font }
@@ -64,7 +70,7 @@ return { -- Collection of various small independent plugins/modules
     -- require('mini.pairs').setup() -- NOTE: try without for now
     -- require('mini.jump').setup() -- NOTE: using eyeliner instead for now
 
-    require('mini.files').setup({windows = { preview = true }})
+    require('mini.files').setup { windows = { preview = true } }
     local minifiles_toggle = function(use_cur_buffer)
       if not MiniFiles.close() then
         if use_cur_buffer then

@@ -40,7 +40,8 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = 'yes'
 
 -- different colored bar @ 120 chars
-vim.opt.colorcolumn = '120'
+-- NOTE: disable for now, not necessary, leave it to the linters
+-- vim.opt.colorcolumn = '120'
 
 -- Decrease update time
 vim.opt.updatetime = 250

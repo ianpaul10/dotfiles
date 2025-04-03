@@ -41,11 +41,11 @@ local kanagawa = {
   config = function()
     require('kanagawa').setup {
       compile = false, -- enable compiling the colorscheme
-      undercurl = true, -- enable undercurls
+      undercurl = true,
       commentStyle = { italic = false },
       functionStyle = {},
       keywordStyle = { italic = false },
-      statementStyle = { bold = false },
+      statementStyle = { bold = true },
       typeStyle = {},
       transparent = false, -- do not set background color
       dimInactive = false, -- dim inactive window `:h hl-NormalNC`
@@ -58,6 +58,7 @@ local kanagawa = {
           -- sumiInk0 = '#21212c', -- prev #16161D
           -- sumiInk3 = '#1F1F28', -- prev #363646, other default in the colorscheme, lower contrast
           -- sumiInk3 = '#070821', -- darker & more bluey blue pulled directly from the photo, higher contrast
+          sumiInk3 = '#1A1B26', -- tokyonight-night background color, better contrast without being too blue
         },
         theme = {
           wave = {},
@@ -73,7 +74,7 @@ local kanagawa = {
       overrides = function(colors) -- add/modify highlights
         return {}
       end,
-      -- theme = 'wave', -- wave/dragon/lotus set via background
+      theme = 'wave', -- wave/dragon/lotus set via backgroundsom
       background = {
         dark = 'wave', -- vim.o.background = "dark"
         light = 'lotus', -- vim.o.background = "light"
@@ -81,7 +82,7 @@ local kanagawa = {
     }
 
     -- setup must be called before loading
-    vim.cmd 'colorscheme kanagawa'
+    vim.cmd.colorscheme 'kanagawa'
   end,
 }
 
@@ -101,4 +102,4 @@ local catppuccin = {
 }
 
 -- night-owl doesn't work perfectly with ruby, so swapping back to tokyo_night for now
-return tokyo_night
+return kanagawa
