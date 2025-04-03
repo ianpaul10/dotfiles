@@ -139,7 +139,6 @@ export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
 # alias jarvis="python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
 # NOTE: using the global pyenv version which should have the required depenencies, instead of the possible virtual env version which might not
 alias jarvis="$HOME/.pyenv/shims/python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
-alias pls="$LOCAL_SCRIPTS_DIR/openai_key.sh"
 
 export wut() {
   echo "$@" > $HOME/.jarvis/wut_command.log  # Log the command
@@ -147,10 +146,11 @@ export wut() {
 }
 
 # Check for open ai key, update if expired
-if ! $(openai_key.sh check); then
-  openai_key.sh update
+if ! $(openai_key check); then
+  openai_key update
 fi
-export OPENAI_API_KEY=$(openai_key.sh cat) # NOTE: this is overriding it in .zshenv, which we're okay with because it needs to be consistently refreshed
+export OPENAI_API_KEY=$(openai_key cat) # NOTE: this is overriding it in .zshenv, which we're okay with because it needs to be consistently refreshed
+alias pls="openai_key"
 
 # Aider config
 export AIDER_DARK_MODE=true

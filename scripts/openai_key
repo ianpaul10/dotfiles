@@ -63,7 +63,7 @@ case $1 in
     echo "OPENAI_API_KEY has been set"
     ;;
   *)
-    echo "Usage: $0 {update [-v]|check [-v]|cat|env}"
+    echo "Usage: $0 {update|check|cat|env} [-v]"
     exit 1
     ;;
 esac
