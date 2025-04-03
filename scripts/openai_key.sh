@@ -2,15 +2,20 @@
 
 key_file="${OPENAI_KEY_FILE:-.openai-proxy-details}"
 
-# When running this function, it prints out the response/json object sent into the $HOME/$key_file. Can you help me fix it so it does everything silently? AI?
 function update() {
-  curl -s 'https://openai-proxy.shopify.io/hmac/personal' \
+  local verbose=$1
+  local response
+  
+  response=$(curl -s 'https://openai-proxy.shopify.io/hmac/personal' \
       -X 'POST' \
       -H 'content-type: application/json' \
       -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
-      -o "$HOME/$key_file"
+      -o "$HOME/$key_file")
 
-  jq -r .$1 < "$HOME/$key_file"
+  if [[ $verbose = "-v" ]]; then
+    echo "Key updated and saved to $HOME/$key_file"
+    jq . < "$HOME/$key_file"  # Pretty print the JSON if verbose
+  fi
 
   return 0
 }
@@ -43,22 +48,22 @@ function check() {
 
 case $1 in
   update)
-    update
+    update "$2"  # Pass the second argument (which could be -v)
     ;;
   check)
     check "$2"
     ;;
   cat)
-    check || update
+    check || update "$2"
     jq -r .key < "$HOME/$key_file"
     ;;
   env)
-    check || update
+    check || update "$2"
     export OPENAI_API_KEY=$(jq -r .key < "$HOME/$key_file")
     echo "OPENAI_API_KEY has been set"
     ;;
   *)
-    echo "Usage: $0 {update|check|cat|env}"
+    echo "Usage: $0 {update [-v]|check [-v]|cat|env}"
     exit 1
     ;;
 esac
