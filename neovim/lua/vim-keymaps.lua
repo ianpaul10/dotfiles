@@ -39,6 +39,7 @@ vim.keymap.set('n', '<C-w><C-v>', '<C-w>v<C-w><C-h><C-6><C-w><C-l>', { desc = 'S
 vim.keymap.set('n', 'g0', ':bnext<CR>', { desc = '[G]o to the next buffer (i.e. file)' })
 vim.keymap.set('n', 'g9', ':bprevious<CR>', { desc = '[G]o to the previous buffer (i.e. file)' })
 vim.keymap.set('n', 'gq', ':bdelete<CR>', { desc = '[q]uit the current buffer (i.e. file)' })
+vim.keymap.set('n', 'gw', ':bp | bd #<CR>', { desc = '[q]uit the current buffer (i.e. file) without closing the buffer window' })
 vim.keymap.set('n', 'gQ', ':bdelete!<CR>', { desc = 'Force [Q]uit the current buffer (i.e. file)' })
 
 -- Remove keymap of s for vim in favour of mini.nvim mini.surround
