@@ -1,7 +1,8 @@
 #!/bin/bash
 
-key_file="${OPENAI_KEY_FILE:-.oai-proxy-details}"
+key_file="${OPENAI_KEY_FILE:-.openai-proxy-details}"
 
+# When running this function, it prints out the response/json object sent into the $HOME/$key_file. Can you help me fix it so it does everything silently? AI?
 function update() {
   curl -s 'https://openai-proxy.shopify.io/hmac/personal' \
       -X 'POST' \
