@@ -36,6 +36,10 @@ local live_multi_grep = function(opts)
       end
 
       -- NOTE: TWO spaces to split the first and second piece of the command
+      -- resulting rg command:
+      -- rg -e <regex> --hidden -g <glob> --color=never --no-heading --with-filename --line-number --column --smart-case
+      -- example glob can be something like *.txt or *.lua for file filters, or **/*test*/** for dir filters
+
       local pieces = vim.split(prompt, '  ')
       local args = { 'rg' }
 
@@ -48,6 +52,11 @@ local live_multi_grep = function(opts)
         table.insert(args, '--hidden')
         table.insert(args, '-g') -- glob
         table.insert(args, pieces[2])
+      end
+
+      if pieces[3] then
+        table.insert(args, '-g') -- glob
+        table.insert(args, pieces[3])
       end
 
       return vim.tbl_flatten {
