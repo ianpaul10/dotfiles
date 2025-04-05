@@ -131,7 +131,7 @@ alias sd="cd ~ && cd \$(find . -path ./Library -prune -o -path ./.Trash -prune -
 
 alias sf="cd ~/code && nvim \$(find . -type f | fzf)"
 
-# node.js & nvm config
+# # node.js & nvm config
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
@@ -147,12 +147,13 @@ export wut() {
   "$@" > >(tee -a $HOME/.jarvis/wut_command.log) 2> >(tee -a $HOME/.jarvis/wut_command.log >&2) # Log the output from the command
 }
 
-# Check for open ai key, update if expired
-if ! $(openai_key check); then
-  openai_key update
-fi
-export OPENAI_API_KEY=$(openai_key cat) # NOTE: this is overriding it in .zshenv, which we're okay with because it needs to be consistently refreshed
-alias pls="openai_key"
+# NOTE: shop specific
+# # Check for open ai key, update if expired
+# if ! $(openai_key check); then
+#   openai_key update
+# fi
+# export OPENAI_API_KEY=$(openai_key cat) # NOTE: this is overriding it in .zshenv, which we're okay with because it needs to be consistently refreshed
+# alias pls="openai_key"
 
 # Aider config
 export AIDER_DARK_MODE=true
@@ -168,9 +169,9 @@ TIME_24HR="%F{241}%B[%*]%b%f" # 24hr clock in gray
 RPROMPT="${PROMPT_STATUS}${TIME_24HR}"
 
 # NOTE: below are auto added lines
-[[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
+# [[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
 
-[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
-
-[[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# NOTE: shop specific
+# [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
+# [[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
