@@ -117,6 +117,8 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias gs="git status"
+
 
 # # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
