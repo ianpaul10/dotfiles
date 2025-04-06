@@ -119,6 +119,9 @@ fi
 
 alias gs="git status"
 
+# gron is cool -> https://github.com/tomnomnom/gron
+alias norg="gron --ungron"
+alias ungron="gron --ungron"
 
 # # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
@@ -161,7 +164,7 @@ alias aider_shop="aider --model openai/anthropic:claude-3-5-sonnet-20241022 --wa
 
 # NOTE: commenting out rbenv setup now, as it's incompatible with current co. tooling
 # Ruby config
-# eval "$(rbenv init - zsh)"
+eval "$(rbenv init - zsh)"
 
 # NOTE: custom right prompt
 PROMPT_STATUS="%F{red}%(?..[%?])%f" # Show exit status of last command in red, if non-zero

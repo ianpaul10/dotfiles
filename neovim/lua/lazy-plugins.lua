@@ -39,7 +39,7 @@ require('lazy').setup({
   require 'custom.plugins.undo-tree',
   require 'custom.plugins.fugitive',
   require 'custom.plugins.copilot',
-  -- require 'custom.plugins.supermaven', -- disable for now
+  require 'custom.plugins.supermaven', -- disable for now
   -- require 'custom.plugins.groq-and-roll', -- haven't used this in a while, using avante and aider instead
   -- require 'custom.plugins.avante', -- haven't used this in a while, using aider from the command line for now
   require 'custom.plugins.comments', -- specifically for ts/tsx comments
