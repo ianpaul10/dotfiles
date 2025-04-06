@@ -49,6 +49,7 @@ require('lazy').setup({
   require 'custom.plugins.timber',
   require 'custom.plugins.git-diffview',
   require 'custom.plugins.vim-test',
+  require 'custom.plugins.terminal-toggle',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
