@@ -117,6 +117,11 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias gs="git status"
+
+# gron is cool -> https://github.com/tomnomnom/gron
+alias norg="gron --ungron"
+alias ungron="gron --ungron"
 
 # # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
@@ -151,11 +156,13 @@ export wut() {
 }
 
 # Check for open ai key, update if expired
-if ! $(openai_key check); then
-  openai_key update
+if $WORK_LAPPY; then
+  if ! $(openai_key check); then
+    openai_key update
+  fi
+  export OPENAI_API_KEY=$(openai_key cat) # NOTE: this is overriding it in .zshenv, which we're okay with because it needs to be consistently refreshed
+  alias pls="openai_key"
 fi
-export OPENAI_API_KEY=$(openai_key cat) # NOTE: this is overriding it in .zshenv, which we're okay with because it needs to be consistently refreshed
-alias pls="openai_key"
 
 # Aider config
 export AIDER_DARK_MODE=true

@@ -110,6 +110,13 @@ return { -- Fuzzy Finder (files, lsp, etc)
     -- Useful for getting pretty icons, but requires a Nerd Font.
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     -- { 'echasnovski/mini.icons', enabled = vim.g.have_nerd_font }, -- mini.icons don't seem to work
+    {
+      'nvim-telescope/telescope-frecency.nvim',
+      version = '*',
+      config = function()
+        require('telescope').load_extension 'frecency'
+      end,
+    },
   },
   config = function()
     require('telescope').setup {
@@ -134,12 +141,14 @@ return { -- Fuzzy Finder (files, lsp, etc)
           require('telescope.themes').get_dropdown(),
         },
         fzf = {},
+        frecency = {},
       },
     }
 
     -- Enable Telescope extensions if they are installed
     pcall(require('telescope').load_extension, 'fzf')
     pcall(require('telescope').load_extension, 'ui-select')
+    pcall(require('telescope').load_extension, 'frecency')
 
     -- See `:help telescope.builtin`
     local builtin = require 'telescope.builtin'
@@ -152,7 +161,8 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-    vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+    vim.keymap.set('n', '<leader>so', builtin.buffers, { desc = '[ ] Find existing open buffers' })
+    vim.keymap.set('n', '<leader><leader>', ':Telescope frecency workspace=CWD show_scores=true <CR>', { desc = '[S]earch frecent files' })
 
     vim.keymap.set('n', '<leader>sF', function()
       builtin.find_files {
