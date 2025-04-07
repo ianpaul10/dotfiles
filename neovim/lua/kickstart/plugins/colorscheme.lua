@@ -43,7 +43,7 @@ local kanagawa = {
       compile = false, -- enable compiling the colorscheme
       undercurl = true,
       commentStyle = { italic = false },
-      functionStyle = {},
+      functionStyle = { italic = false },
       keywordStyle = { italic = false },
       statementStyle = { bold = true },
       typeStyle = {},
@@ -72,7 +72,10 @@ local kanagawa = {
         },
       },
       overrides = function(colors) -- add/modify highlights
-        return {}
+        -- kudos https://github.com/rebelot/kanagawa.nvim/issues/216
+        return {
+          ['@variable.builtin'] = { italic = false },
+        }
       end,
       theme = 'wave', -- wave/dragon/lotus set via backgroundsom
       background = {
