@@ -125,7 +125,12 @@ source <(fzf --zsh)
 # simple sd below. But it errors out on Library folder
 # alias sd="cd ~/code && cd \$(find . -type d -maxdepth 3 | fzf)"
 # exclude Library folder & its sub folders
-alias sd="cd ~ && cd \$(find . -path ./Library -prune -o -path ./.Trash -prune -o -type d -maxdepth 4 -print | fzf)"
+max_depth=4
+if $WORK_LAPPY; then
+  max_depth=7 # long paths for whatever reason
+fi
+
+alias sd="cd ~ && cd \$(find . -path ./Library -prune -o -path ./.Trash -prune -o -type d -maxdepth ${max_depth} -print | fzf)"
 
 alias sf="cd ~/code && nvim \$(find . -type f | fzf)"
 
@@ -156,9 +161,11 @@ alias pls="openai_key"
 export AIDER_DARK_MODE=true
 alias aider_shop="aider --model openai/anthropic:claude-3-5-sonnet-20241022 --watch-files"
 
-# NOTE: commenting out rbenv setup now, as it's incompatible with current co. tooling
 # Ruby config
-# eval "$(rbenv init - zsh)"
+if ! $WORK_LAPPY; then
+  # NOTE: ignoring rbenv setup now, it's incompatible with current co. tooling
+  eval "$(rbenv init - zsh)"
+fi
 
 # NOTE: custom right prompt
 PROMPT_STATUS="%F{red}%(?..[%?])%f" # Show exit status of last command in red, if non-zero
@@ -168,7 +175,8 @@ RPROMPT="${PROMPT_STATUS}${TIME_24HR}"
 # NOTE: below are auto added lines
 [[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
 
-[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
-
-[[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if $WORK_LAPPY; then
+  [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
+  [[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+fi

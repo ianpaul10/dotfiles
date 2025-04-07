@@ -339,10 +339,12 @@ def main():
         action="store_true",
         help="Print the time it took to execute the command",
     )
+
+    def_model = "shop" if os.getenv("WORK_LAPPY", False) else "gemini"
     parser.add_argument(
         "--model",
         type=str,
-        default="shop",
+        default=def_model,
         help=f"The model to use for the LLM. Currently supports {list(_MODELS.keys())}",
     )
     parser.add_argument(
