@@ -135,7 +135,7 @@ if $WORK_LAPPY; then
   max_depth=7 # long paths for whatever reason
 fi
 
-alias sd="cd ~ && cd \$(find . -path ./Library -prune -o -path ./.Trash -prune -o -type d -maxdepth ${max_depth} -print | fzf)"
+alias sd="cd ~ && cd \$(find ./code ./src ./world ./.jarvis ./idontexist -path '*/.git' -prune -o -type d -maxdepth ${max_depth} -print | fzf)"
 
 alias sf="cd ~/code && nvim \$(find . -type f | fzf)"
 
