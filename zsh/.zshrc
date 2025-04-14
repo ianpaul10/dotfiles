@@ -166,7 +166,7 @@ fi
 
 # Aider config
 export AIDER_DARK_MODE=true
-alias aider_shop="aider --model openai/anthropic:claude-3-5-sonnet-20241022 --watch-files"
+alias aider_shop="aider --model openai/anthropic:claude-3-5-sonnet-20241022 --watch-files --map-refresh manual --map-tokens 2048"
 
 # Ruby config
 if ! $WORK_LAPPY; then
