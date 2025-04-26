@@ -45,6 +45,7 @@ class JarvisSentinel(FileSystemEventHandler):
             </file_content>
             """
 
+        # can we replace this to be using openai's API instead of anthropic? Look to ask_jarvis.py for inspo. AI!
         # Send to Claude and get response
         # TODO: replace with openai api
         response = self.claude_client.messages.create(
