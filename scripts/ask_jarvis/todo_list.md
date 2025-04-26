@@ -1,0 +1,3 @@
+- [ ] basic read and send req flow and print out to standard out
+- [ ] write to file
+- [ ] have claude code cmd that will watch that file to be able to get context on what I'm talking about
