@@ -5,18 +5,28 @@ from openai import OpenAI
 import re
 
 
-# This isn't working but I'm not sure why, can you add debug statements that trigger if a --debug flag is passed in as an cmd line arg. AI!
 class JarvisSentinel(FileSystemEventHandler):
-    def __init__(self, openai_client):
+    def __init__(self, openai_client, debug=False):
         self.openai_client = openai_client
         self.trigger_string = "AI!"
+        self.debug = debug
 
     def on_modified(self, event):
+        if self.debug:
+            print(f"File modified: {event.src_path}")
+            print(f"Is directory: {event.is_directory}")
+
         if event.is_directory:
             return
 
-        with open(event.src_path, "r") as file:
-            content = file.read()
+        try:
+            with open(event.src_path, "r") as file:
+                content = file.read()
+                if self.debug:
+                    print(f"Read {len(content)} characters from file")
+        except Exception as e:
+            print(f"Error reading file: {e}")
+            return
 
         self.process_ai_comments(event.src_path, content)
 
@@ -62,10 +72,10 @@ class JarvisSentinel(FileSystemEventHandler):
         print()  # Add final newline
 
 
-def start_file_watcher(paths_to_watch, openai_api_key):
+def start_file_watcher(paths_to_watch, openai_api_key, debug=False):
     openai_client = OpenAI(api_key=openai_api_key)
 
-    event_handler = JarvisSentinel(openai_client)
+    event_handler = JarvisSentinel(openai_client, debug=debug)
     observer = Observer()
 
     for path in paths_to_watch:
@@ -97,6 +107,11 @@ if __name__ == "__main__":
         default=".",
         help="Directory to watch (default: current directory)",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug logging",
+    )
     args = parser.parse_args()
 
     # Expand user path and make absolute
@@ -111,4 +126,6 @@ if __name__ == "__main__":
         exit(1)
 
     print(f"Watching directory: {watch_dir}")
-    start_file_watcher([watch_dir], OPENAI_API_KEY)
+    if args.debug:
+        print("Debug mode enabled")
+    start_file_watcher([watch_dir], OPENAI_API_KEY, debug=args.debug)
