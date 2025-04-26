@@ -5,6 +5,7 @@ from openai import OpenAI
 import re
 
 
+# This isn't working but I'm not sure why, can you add debug statements that trigger if a --debug flag is passed in as an cmd line arg. AI!
 class JarvisSentinel(FileSystemEventHandler):
     def __init__(self, openai_client):
         self.openai_client = openai_client
@@ -21,6 +22,7 @@ class JarvisSentinel(FileSystemEventHandler):
 
     def find_ai_comments(self, content):
         # This regex pattern would need to be adjusted based on your specific needs
+        # Explain how this pattern works? AI!
         pattern = f".*{self.trigger_string}.*$"
         return re.findall(pattern, content, re.MULTILINE)
 
@@ -62,14 +64,11 @@ class JarvisSentinel(FileSystemEventHandler):
 
 
 def start_file_watcher(paths_to_watch, openai_api_key):
-    # Initialize OpenAI client
     openai_client = OpenAI(api_key=openai_api_key)
 
-    # Create event handler and observer
     event_handler = JarvisSentinel(openai_client)
     observer = Observer()
 
-    # Add paths to watch
     for path in paths_to_watch:
         observer.schedule(event_handler, path, recursive=False)
 
