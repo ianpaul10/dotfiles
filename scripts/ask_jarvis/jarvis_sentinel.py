@@ -21,8 +21,7 @@ class JarvisSentinel(FileSystemEventHandler):
         self.process_ai_comments(event.src_path, content)
 
     def find_ai_comments(self, content):
-        # This regex pattern would need to be adjusted based on your specific needs
-        # Explain how this pattern works? AI!
+        # Matches any line containing the trigger string
         pattern = f".*{self.trigger_string}.*$"
         return re.findall(pattern, content, re.MULTILINE)
 
