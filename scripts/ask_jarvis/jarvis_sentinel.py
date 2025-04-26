@@ -48,14 +48,16 @@ class JarvisSentinel(FileSystemEventHandler):
         response = self.openai_client.chat.completions.create(
             model="gpt-4-turbo-preview",
             messages=[{"role": "user", "content": context}],
-            stream=True
+            stream=True,
         )
 
         print(f"\nResponse for comment in {file_path}:")
+        collected_resp = []
         for chunk in response:
             if chunk.choices and chunk.choices[0].delta.content:
                 content = chunk.choices[0].delta.content
                 print(content, end="", flush=True)
+                collected_resp.append(content)
         print()  # Add final newline
 
 
@@ -78,12 +80,15 @@ def start_file_watcher(paths_to_watch, openai_api_key):
             time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
+        print("GSD")
     observer.join()
 
 
 # Usage example
 if __name__ == "__main__":
     OPENAI_API_KEY = "your-api-key-here"
+    # Can you make this dynamic so it gets passed in as a cmd line variable where you can pass in the directory (w.g. even '.' or '~/folder/somewhere/' and it will use that as the dir. AI!
+
     PATHS_TO_WATCH = ["/path/to/watch"]
 
     start_file_watcher(PATHS_TO_WATCH, OPENAI_API_KEY)
