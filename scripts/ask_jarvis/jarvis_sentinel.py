@@ -86,9 +86,31 @@ def start_file_watcher(paths_to_watch, openai_api_key):
 
 # Usage example
 if __name__ == "__main__":
-    OPENAI_API_KEY = "your-api-key-here"
-    # Can you make this dynamic so it gets passed in as a cmd line variable where you can pass in the directory (w.g. even '.' or '~/folder/somewhere/' and it will use that as the dir. AI!
+    import argparse
+    import os
+    from dotenv import load_dotenv
 
-    PATHS_TO_WATCH = ["/path/to/watch"]
+    load_dotenv()  # take environment variables from .env
 
-    start_file_watcher(PATHS_TO_WATCH, OPENAI_API_KEY)
+    parser = argparse.ArgumentParser(description="Watch directory for AI comments")
+    parser.add_argument(
+        "directory",
+        nargs="?",
+        default=".",
+        help="Directory to watch (default: current directory)",
+    )
+    args = parser.parse_args()
+
+    # Expand user path and make absolute
+    watch_dir = os.path.abspath(os.path.expanduser(args.directory))
+    if not os.path.exists(watch_dir):
+        print(f"Error: Directory '{watch_dir}' does not exist")
+        exit(1)
+
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    if not OPENAI_API_KEY:
+        print("Error: OPENAI_API_KEY environment variable not set")
+        exit(1)
+
+    print(f"Watching directory: {watch_dir}")
+    start_file_watcher([watch_dir], OPENAI_API_KEY)
