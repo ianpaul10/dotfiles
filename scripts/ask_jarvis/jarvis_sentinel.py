@@ -1,13 +1,13 @@
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import anthropic
+from openai import OpenAI
 import re
 
 
 class JarvisSentinel(FileSystemEventHandler):
-    def __init__(self, claude_client):
-        self.claude_client = claude_client
+    def __init__(self, openai_client):
+        self.openai_client = openai_client
         self.trigger_string = "AI!"
 
     def on_modified(self, event):
@@ -45,25 +45,26 @@ class JarvisSentinel(FileSystemEventHandler):
             </file_content>
             """
 
-        # can we replace this to be using openai's API instead of anthropic? Look to ask_jarvis.py for inspo. AI!
-        # Send to Claude and get response
-        # TODO: replace with openai api
-        response = self.claude_client.messages.create(
-            model="claude-3-opus-20240229",
-            max_tokens=1000,
+        response = self.openai_client.chat.completions.create(
+            model="gpt-4-turbo-preview",
             messages=[{"role": "user", "content": context}],
+            stream=True
         )
 
         print(f"\nResponse for comment in {file_path}:")
-        print(response.content)
+        for chunk in response:
+            if chunk.choices and chunk.choices[0].delta.content:
+                content = chunk.choices[0].delta.content
+                print(content, end="", flush=True)
+        print()  # Add final newline
 
 
-def start_file_watcher(paths_to_watch, claude_api_key):
-    # Initialize Claude client
-    claude_client = anthropic.Client(api_key=claude_api_key)
+def start_file_watcher(paths_to_watch, openai_api_key):
+    # Initialize OpenAI client
+    openai_client = OpenAI(api_key=openai_api_key)
 
     # Create event handler and observer
-    event_handler = JarvisSentinel(claude_client)
+    event_handler = JarvisSentinel(openai_client)
     observer = Observer()
 
     # Add paths to watch
@@ -82,7 +83,7 @@ def start_file_watcher(paths_to_watch, claude_api_key):
 
 # Usage example
 if __name__ == "__main__":
-    CLAUDE_API_KEY = "your-api-key-here"
+    OPENAI_API_KEY = "your-api-key-here"
     PATHS_TO_WATCH = ["/path/to/watch"]
 
-    start_file_watcher(PATHS_TO_WATCH, CLAUDE_API_KEY)
+    start_file_watcher(PATHS_TO_WATCH, OPENAI_API_KEY)
