@@ -1,9 +1,10 @@
-return {
+M = {
   'zbirenbaum/copilot.lua',
   cmd = 'Copilot',
   event = 'InsertEnter',
   config = function()
     vim.keymap.set('n', '<leader>ct', ':Copilot toggle<CR>', { desc = '[C]opilot [t]oggle' })
+    vim.keymap.set('n', '<leader>cs', ':Copilot suggestion<CR>', { desc = '[C]opilot [s]uggestion' })
     require('copilot').setup {
       panel = {
         enabled = true,
@@ -13,7 +14,7 @@ return {
           jump_next = ']]',
           accept = '<CR>',
           refresh = 'gr',
-          open = '<M-CR>',
+          open = '<leader>co',
         },
         layout = {
           position = 'right', -- | top | left | right | horizontal | vertical
@@ -55,3 +56,4 @@ return {
     }
   end,
 }
+return M
