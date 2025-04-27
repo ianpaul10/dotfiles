@@ -3,6 +3,7 @@ return {
   cmd = 'Copilot',
   event = 'InsertEnter',
   config = function()
+    vim.keymap.set('n', '<leader>ct', ':Copilot toggle<CR>', { desc = '[C]opilot [t]oggle' })
     require('copilot').setup {
       panel = {
         enabled = true,
