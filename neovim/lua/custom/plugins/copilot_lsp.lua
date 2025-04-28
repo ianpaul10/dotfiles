@@ -7,7 +7,7 @@ return {
     pcall(function()
       vim.lsp.enable 'copilot_ls'
     end)
-    vim.keymap.set('n', '<leader>cv', function()
+    vim.keymap.set('n', '<Tab>', function()
       -- Try to jump to the start of the suggestion edit.
       -- If already at the start, then apply the pending suggestion and jump to the end of the edit.
       local _ = require('copilot-lsp.nes').walk_cursor_start_edit()
