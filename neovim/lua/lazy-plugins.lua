@@ -38,8 +38,8 @@ require('lazy').setup({
   require 'custom.plugins.arrow',
   require 'custom.plugins.undo-tree',
   require 'custom.plugins.fugitive',
-  -- require 'custom.plugins.copilot',
-  require 'custom.plugins.copilot_lsp',
+  require 'custom.plugins.copilot',
+  -- require 'custom.plugins.copilot_lsp',
   -- require 'custom.plugins.copilot_nes',
   -- require 'custom.plugins.supermaven', -- disable for now TODO: make this and copilot dynamic based on $WORK_LAPPY
   -- require 'custom.plugins.groq-and-roll', -- haven't used this in a while, using avante and aider instead
