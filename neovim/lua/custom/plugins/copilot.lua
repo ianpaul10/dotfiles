@@ -7,23 +7,11 @@ M = {
     vim.keymap.set('n', '<leader>cs', ':Copilot suggestion<CR>', { desc = '[C]opilot [s]uggestion' })
     require('copilot').setup {
       panel = {
-        enabled = true,
-        auto_refresh = false,
-        keymap = {
-          jump_prev = '[[',
-          jump_next = ']]',
-          accept = '<CR>',
-          refresh = 'gr',
-          open = '<leader>co',
-        },
-        layout = {
-          position = 'right', -- | top | left | right | horizontal | vertical
-          ratio = 0.4,
-        },
+        enabled = false,
       },
       suggestion = {
         enabled = true,
-        auto_trigger = false,
+        auto_trigger = true,
         hide_during_completion = true,
         debounce = 75,
         trigger_on_accept = true,
