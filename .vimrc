@@ -22,7 +22,7 @@ set t_vb=
 set laststatus=2  " Always show status line
 
 " column @ 120 chars in
-set colorcolumn=120
+" set colorcolumn=120
 
 " Basic status line with white text on dark grey
 set statusline=%f\ %m%r%h%w%=%y[%{&ff}][%l:%v][%p%%]
