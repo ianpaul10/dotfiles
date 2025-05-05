@@ -44,7 +44,7 @@ vim.keymap.set('n', 'gQ', ':bdelete!<CR>', { desc = 'Force [Q]uit the current bu
 
 -- Remove keymap of s for vim in favour of mini.nvim mini.surround
 -- Acltually not remvoing for now. Not worrying about mini.surround ATM
--- vim.keymap.set('n', 's', '<Nop>', { desc = 'Ignore default [s] keymap in favour of mini.nvim mini.surround' })
+vim.keymap.set('n', 's', '<Nop>', { desc = 'Ignore default [s] keymap in favour of mini.nvim mini.surround' })
 
 -- When highlighted, you can move text around the buffer
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv'", { desc = 'Move highlighted text up or down' })

@@ -18,8 +18,12 @@ return {
         -- Create a temporary split to create the terminal buffer
         vim.cmd 'botright vnew'
         terminal_buf = vim.api.nvim_get_current_buf()
-        vim.fn.termopen(vim.o.shell)
+        vim.fn.jobstart(vim.o.shell, { term = true })
         vim.bo[terminal_buf].buflisted = false
+
+        -- NOTE: it says it's deprecated but 'vim.api.nvim_set_option_value('number', true, { buf = terminal_buf })' fails to parse the buf num
+        vim.api.nvim_buf_set_option(terminal_buf, 'number', true)
+        vim.api.nvim_buf_set_option(terminal_buf, 'relativenumber', true)
 
         -- Close the temporary window and return to original window
         vim.api.nvim_win_close(0, true)
