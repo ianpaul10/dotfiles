@@ -1,0 +1,18 @@
+sabres:
+  shop-server:
+    directory: ~/src/github.com/Shopify/shop-server
+    commands:
+      - dev up
+      - dev s
+
+  core:
+    directory: ~/world/trees/root/src/areas/core/shopify/
+    commands:
+      - dev up
+      - dev s
+
+  sfr:
+    directory: ~/world/trees/root/src/areas/core/storefront/
+    commands:
+      - dev up
+      - dev s
