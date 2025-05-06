@@ -5,6 +5,7 @@ import os
 import sys
 import threading
 import time
+import logging
 
 from typing import Dict, List
 from dataclasses import dataclass, field
@@ -75,9 +76,10 @@ class ComposeSabres:
 
 class SabresManager:
     def __init__(self, config_file):
+        logging.debug(f"Initializing SabresManager with config file: {config_file}")
         with open(config_file, "r") as f:
             config_dict = yaml.safe_load(f)
-
+        logging.debug(f"Loaded configuration: {config_dict}")
         self.config = ComposeSabres.from_dict(config_dict)
         self.processes = {}
         self.stop_event = threading.Event()
@@ -94,18 +96,19 @@ class SabresManager:
                 sys.stdout.flush()
 
     def _start_sabre(self, name, config, color):
+        logging.debug(f"Starting sabre '{name}' with config: {config}")
         print(colored(f"Starting {name}...", color))
 
-        # Change to the service directory
         cwd = os.path.abspath(config["directory"])
+        logging.debug(f"Working directory for '{name}': {cwd}")
 
-        # Set up environment variables
         env = os.environ.copy()
         if "environment" in config:
+            logging.debug(f"Adding environment variables for '{name}': {config['environment']}")
             env.update(config["environment"])
 
-        # Run commands in sequence
         for cmd in config["commands"]:
+            logging.debug(f"Executing command for '{name}': {cmd}")
             process = subprocess.Popen(
                 cmd,
                 shell=True,
@@ -135,12 +138,12 @@ class SabresManager:
 
     def _start_all(self):
         """Start all services in the correct order based on dependencies"""
-        # Build dependency graph
+        logging.debug("Starting all services")
         dependencies = {
             name: set(config.depends_on) for name, config in self.config.sabres.items()
         }
+        logging.debug(f"Dependency graph: {dependencies}")
 
-        # Topological sort
         started = set()
         color_index = 0
 
@@ -174,14 +177,17 @@ class SabresManager:
 
     def _stop_all(self):
         """Stop all running processes"""
+        logging.debug("Stopping all services")
         print("\nStopping all services...")
         for name, process in self.processes.items():
             if process.poll() is None:  # Process is still running
+                logging.debug(f"Stopping process '{name}'")
                 print(f"Stopping {name}...")
                 process.terminate()
                 try:
                     process.wait(timeout=5)
                 except subprocess.TimeoutExpired:
+                    logging.debug(f"Process '{name}' did not terminate, forcing kill")
                     process.kill()
 
         print(colored("All services stopped", Colors.YELLOW))
@@ -202,9 +208,16 @@ class SabresManager:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: dev-compose.py <config.yml>")
+    if len(sys.argv) < 2:
+        print("Usage: dev-compose.py <config.yml> [--debug]")
         sys.exit(1)
+
+    debug_mode = "--debug" in sys.argv
+    if debug_mode:
+        logging.basicConfig(level=logging.DEBUG)
+        sys.argv.remove("--debug")
+    else:
+        logging.basicConfig(level=logging.INFO)
 
     manager = SabresManager(sys.argv[1])
     manager.run()
