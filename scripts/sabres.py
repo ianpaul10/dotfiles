@@ -269,17 +269,37 @@ class SabresManager:
 
         self.logger.info("All services stopped", Colors.YELLOW)
 
+    def _signal_handler(self, signum, frame):
+        """Handle signals by forwarding them to process groups"""
+        self.logger.info(f"Received signal {signum}", Colors.RED)
+        
+        # Forward the signal to all process groups
+        for name, process in self.processes.items():
+            if process.poll() is None:  # if process is still running
+                try:
+                    pgid = os.getpgid(process.pid)
+                    os.killpg(pgid, signum)
+                    self.logger.debug(f"Forwarded signal {signum} to process group {pgid} ({name})")
+                except ProcessLookupError:
+                    pass
+        
+        if signum == signal.SIGINT:
+            self.stop_event.set()
+
     def run(self):
+        # Set up signal handlers
+        signal.signal(signal.SIGINT, self._signal_handler)
+        signal.signal(signal.SIGTERM, self._signal_handler)
+
         try:
             self._start_all()
 
-            # Keep the main thread alive until Ctrl+C
+            # Keep the main thread alive until stop_event is set
             while not self.stop_event.is_set():
                 time.sleep(1)
 
-        except KeyboardInterrupt:
-            self.logger.info("Encountered Ctrl-C keyboard interrupt!", Colors.RED)
-            pass
+        except Exception as e:
+            self.logger.error(f"Unexpected error: {e}")
         finally:
             self._stop_all()
 
