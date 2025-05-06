@@ -101,7 +101,7 @@ class SabresManager:
         logging.debug(f"Starting sabre '{name}' with config: {config}")
         print(colored(f"Starting {name}...", color))
 
-        cwd = os.path.abspath(config.directory)
+        cwd = os.path.abspath(os.path.expanduser(config.directory))
         logging.debug(f"Working directory for '{name}': {cwd}")
 
         env = os.environ.copy()
