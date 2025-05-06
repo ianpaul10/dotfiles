@@ -47,8 +47,8 @@ class Logger:
         self.debug_mode = debug_mode
         logging.basicConfig(
             level=logging.DEBUG if debug_mode else logging.INFO,
-            format='%(asctime)s.%(msecs)03d %(levelname)s: %(message)s',
-            datefmt='%H:%M:%S'
+            format="%(asctime)s.%(msecs)03d [%(levelname)s] ⚔️: %(message)s",
+            datefmt="%H:%M:%S",
         )
 
     def debug(self, msg):
@@ -65,6 +65,7 @@ class Logger:
 
     def success(self, msg):
         logging.info(colored(msg, Colors.GREEN))
+
 
 def colored(text, color):
     if USE_COLORS:
@@ -98,12 +99,15 @@ class ComposeSabres:
 
 
 class SabresManager:
-    def __init__(self, config_file, logger):
+    def __init__(self, config_file: str, logger: Logger):
         self.logger = logger
-        self.logger.info(" ⚔️ Dev Sabres ⚔️ ", Colors.BOLD)
+
+        self.logger.info("dev sabres starting up... ⚔️⚔️⚔️", Colors.BOLD)
         self.logger.debug(f"Initializing SabresManager with config file: {config_file}")
+
         with open(config_file, "r") as f:
             config_dict = yaml.safe_load(f)
+
         self.logger.debug(f"Loaded configuration: {config_dict}")
         self.config = ComposeSabres.from_dict(config_dict)
         self.logger.debug(f"Parsed configuration: {self.config}")
@@ -118,6 +122,7 @@ class SabresManager:
             if not line and process.poll() is not None:
                 break
             if line:
+                # not using logger to avoid double prefixing
                 sys.stdout.write(f"{prefix}{line.decode('utf-8')}")
                 sys.stdout.flush()
 
@@ -195,7 +200,9 @@ class SabresManager:
                         progress = True
 
             if not progress and len(started) < len(self.config.sabres):
-                self.logger.error("Error: Circular dependency detected or services failed to start")
+                self.logger.error(
+                    "Error: Circular dependency detected or services failed to start"
+                )
                 self._stop_all()
                 return
 
@@ -204,8 +211,7 @@ class SabresManager:
         self.logger.success("All services started successfully!")
 
     def _stop_all(self):
-        self.logger.debug("Stopping all services")
-        self.logger.info("\nStopping all services...")
+        self.logger.info("Gracefully stopping all services...", Colors.RED)
 
         # Send SIGINT (Ctrl-C) to all processes
         for name, process in self.processes.items():
@@ -215,7 +221,7 @@ class SabresManager:
                 process.send_signal(signal.SIGINT)
 
         # Give processes time to gracefully shutdown
-        grace_period = 30
+        grace_period = 600
         deadline = time.time() + grace_period
 
         while time.time() < deadline:
@@ -229,7 +235,9 @@ class SabresManager:
         # Force kill any remaining processes
         for name, process in self.processes.items():
             if process.poll() is None:
-                self.logger.debug(f"Process '{name}' did not stop gracefully, forcing kill")
+                self.logger.debug(
+                    f"Process '{name}' did not stop gracefully, forcing kill"
+                )
                 process.kill()
                 process.wait()
 
@@ -244,7 +252,7 @@ class SabresManager:
                 time.sleep(1)
 
         except KeyboardInterrupt:
-            self.logger.info("\nStopping services...", Colors.RED)
+            self.logger.info("Encountered Ctrl-C keyboard interrupt!", Colors.RED)
             pass
         finally:
             self._stop_all()
@@ -258,7 +266,7 @@ if __name__ == "__main__":
     debug_mode = "--debug" in sys.argv
     if debug_mode:
         sys.argv.remove("--debug")
-    
+
     logger = Logger(debug_mode)
     manager = SabresManager(sys.argv[1], logger)
     manager.run()
