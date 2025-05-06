@@ -221,7 +221,9 @@ class SabresManager:
                 try:
                     # Kill entire process group
                     pgid = os.getpgid(process.pid)
-                    self.logger.debug(f"Sending SIGTERM to process group {pgid} ({name})")
+                    self.logger.debug(
+                        f"Sending SIGTERM to process group {pgid} ({name})"
+                    )
                     self.logger.info(f"Stopping {name}...")
                     os.killpg(pgid, signal.SIGTERM)
                 except ProcessLookupError:
@@ -243,8 +245,10 @@ class SabresManager:
         for name, process in self.processes.items():
             if process.poll() is None:
                 try:
-                    self.logger.debug(f"Process '{name}' did not stop gracefully, forcing kill")
-                    
+                    self.logger.debug(
+                        f"Process '{name}' did not stop gracefully, forcing kill"
+                    )
+
                     # Find and kill all child processes
                     parent = psutil.Process(process.pid)
                     children = parent.children(recursive=True)
@@ -253,14 +257,14 @@ class SabresManager:
                             child.kill()
                         except psutil.NoSuchProcess:
                             pass
-                    
+
                     # Kill the process group
                     pgid = os.getpgid(process.pid)
                     os.killpg(pgid, signal.SIGKILL)
-                    
+
                 except (ProcessLookupError, psutil.NoSuchProcess):
                     pass
-                
+
                 process.wait()
 
         self.logger.info("All services stopped", Colors.YELLOW)
