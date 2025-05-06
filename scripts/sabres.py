@@ -111,11 +111,16 @@ class SabresManager:
             )
             env.update(config.environment)
 
+        # Create the shell command that sources your shell's RC file and then runs the command
+        shell_setup = "source ~/.zshrc || source ~/.bashrc"
+
         for cmd in config.commands:
             logging.debug(f"Executing command for '{name}': {cmd}")
+            full_cmd = f'{shell_setup} && {cmd}'
             process = subprocess.Popen(
-                cmd,
+                full_cmd,
                 shell=True,
+                executable='/bin/zsh',
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 cwd=cwd,
