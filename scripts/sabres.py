@@ -3,6 +3,7 @@ import yaml
 import subprocess
 import os
 import sys
+import psutil
 import threading
 import time
 import logging
@@ -145,7 +146,7 @@ class SabresManager:
 
         for cmd in config.commands:
             self.logger.debug(f"Executing command for '{name}': {cmd}")
-            full_cmd = f"{shell_setup} && {cmd}"
+            full_cmd = f"{shell_setup} && exec {cmd}"  # exec replaces shell with actual process
             process = subprocess.Popen(
                 full_cmd,
                 shell=True,
@@ -154,6 +155,7 @@ class SabresManager:
                 stderr=subprocess.STDOUT,
                 cwd=cwd,
                 env=env,
+                preexec_fn=os.setsid,  # Create new process group
             )
 
             self.processes[name] = process
@@ -213,15 +215,20 @@ class SabresManager:
     def _stop_all(self):
         self.logger.info("Gracefully stopping all services...", Colors.RED)
 
-        # Send SIGINT (Ctrl-C) to all processes
+        # First try SIGTERM for graceful shutdown
         for name, process in self.processes.items():
-            if process.poll() is None:  # Process is still running
-                self.logger.debug(f"Sending SIGINT to process '{name}'")
-                self.logger.info(f"Stopping {name}...")
-                process.send_signal(signal.SIGINT)
+            if process.poll() is None:
+                try:
+                    # Kill entire process group
+                    pgid = os.getpgid(process.pid)
+                    self.logger.debug(f"Sending SIGTERM to process group {pgid} ({name})")
+                    self.logger.info(f"Stopping {name}...")
+                    os.killpg(pgid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
 
         # Give processes time to gracefully shutdown
-        grace_period = 600
+        grace_period = 10  # Reduced from 600 to 10 seconds
         deadline = time.time() + grace_period
 
         while time.time() < deadline:
@@ -232,13 +239,28 @@ class SabresManager:
                 break
             time.sleep(0.5)
 
-        # Force kill any remaining processes
+        # Force kill any remaining processes and their children
         for name, process in self.processes.items():
             if process.poll() is None:
-                self.logger.debug(
-                    f"Process '{name}' did not stop gracefully, forcing kill"
-                )
-                process.kill()
+                try:
+                    self.logger.debug(f"Process '{name}' did not stop gracefully, forcing kill")
+                    
+                    # Find and kill all child processes
+                    parent = psutil.Process(process.pid)
+                    children = parent.children(recursive=True)
+                    for child in children:
+                        try:
+                            child.kill()
+                        except psutil.NoSuchProcess:
+                            pass
+                    
+                    # Kill the process group
+                    pgid = os.getpgid(process.pid)
+                    os.killpg(pgid, signal.SIGKILL)
+                    
+                except (ProcessLookupError, psutil.NoSuchProcess):
+                    pass
+                
                 process.wait()
 
         self.logger.info("All services stopped", Colors.YELLOW)
