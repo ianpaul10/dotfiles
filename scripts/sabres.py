@@ -64,7 +64,7 @@ class ComposeSabres:
     @classmethod
     def from_dict(cls, data: dict) -> "ComposeSabres":
         services = {}
-        for name, service_data in data.get("services", {}).items():
+        for name, service_data in data.get("sabres", {}).items():
             services[name] = Sabre(
                 directory=service_data.get("directory", "."),
                 commands=service_data.get("commands", []),
@@ -76,11 +76,13 @@ class ComposeSabres:
 
 class SabresManager:
     def __init__(self, config_file):
+        logging.info(" ⚔️ Dev Sabres ⚔️ ")
         logging.debug(f"Initializing SabresManager with config file: {config_file}")
         with open(config_file, "r") as f:
             config_dict = yaml.safe_load(f)
         logging.debug(f"Loaded configuration: {config_dict}")
         self.config = ComposeSabres.from_dict(config_dict)
+        logging.debug(f"Parsed configuration: {self.config}")
         self.processes = {}
         self.stop_event = threading.Event()
 
@@ -99,15 +101,17 @@ class SabresManager:
         logging.debug(f"Starting sabre '{name}' with config: {config}")
         print(colored(f"Starting {name}...", color))
 
-        cwd = os.path.abspath(config["directory"])
+        cwd = os.path.abspath(config.directory)
         logging.debug(f"Working directory for '{name}': {cwd}")
 
         env = os.environ.copy()
-        if "environment" in config:
-            logging.debug(f"Adding environment variables for '{name}': {config['environment']}")
-            env.update(config["environment"])
+        if config.environment:
+            logging.debug(
+                f"Adding environment variables for '{name}': {config.environment}"
+            )
+            env.update(config.environment)
 
-        for cmd in config["commands"]:
+        for cmd in config.commands:
             logging.debug(f"Executing command for '{name}': {cmd}")
             process = subprocess.Popen(
                 cmd,
@@ -128,7 +132,7 @@ class SabresManager:
             thread.start()
 
             # If this isn't the last command, wait for it to complete
-            if cmd != config["commands"][-1]:
+            if cmd != config.commands[-1]:
                 process.wait()
                 if process.returncode != 0:
                     print(colored(f"[{name}] Command failed: {cmd}", Colors.RED))
@@ -137,11 +141,11 @@ class SabresManager:
         return True
 
     def _start_all(self):
-        """Start all services in the correct order based on dependencies"""
         logging.debug("Starting all services")
-        dependencies = {
-            name: set(config.depends_on) for name, config in self.config.sabres.items()
-        }
+        dependencies = {}
+        for name, config in self.config.sabres.items():
+            logging.debug(f"Processing service '{name}' with config: {config}")
+            dependencies[name] = set(config.depends_on) if config.depends_on else set()
         logging.debug(f"Dependency graph: {dependencies}")
 
         started = set()
