@@ -114,11 +114,11 @@ class SabresManager:
 
         for cmd in config.commands:
             logging.debug(f"Executing command for '{name}': {cmd}")
-            full_cmd = f'{shell_setup} && {cmd}'
+            full_cmd = f"{shell_setup} && {cmd}"
             process = subprocess.Popen(
                 full_cmd,
                 shell=True,
-                executable='/bin/zsh',
+                executable="/bin/zsh",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 cwd=cwd,
@@ -183,10 +183,9 @@ class SabresManager:
         print(colored("All services started successfully!", Colors.GREEN))
 
     def _stop_all(self):
-        """Stop all running processes"""
         logging.debug("Stopping all services")
         print("\nStopping all services...")
-        
+
         # Send SIGINT (Ctrl-C) to all processes
         for name, process in self.processes.items():
             if process.poll() is None:  # Process is still running
@@ -195,11 +194,13 @@ class SabresManager:
                 process.send_signal(signal.SIGINT)
 
         # Give processes time to gracefully shutdown
-        grace_period = 10
+        grace_period = 30
         deadline = time.time() + grace_period
-        
+
         while time.time() < deadline:
-            still_running = [name for name, p in self.processes.items() if p.poll() is None]
+            still_running = [
+                name for name, p in self.processes.items() if p.poll() is None
+            ]
             if not still_running:
                 break
             time.sleep(0.5)
