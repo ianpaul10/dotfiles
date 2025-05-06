@@ -6,6 +6,7 @@ import sys
 import threading
 import time
 import logging
+import signal
 
 from typing import Dict, List
 from dataclasses import dataclass, field
@@ -188,16 +189,33 @@ class SabresManager:
         """Stop all running processes"""
         logging.debug("Stopping all services")
         print("\nStopping all services...")
+        
+        # First try SIGINT (Ctrl-C) on all processes
         for name, process in self.processes.items():
             if process.poll() is None:  # Process is still running
-                logging.debug(f"Stopping process '{name}'")
+                logging.debug(f"Sending SIGINT to process '{name}'")
                 print(f"Stopping {name}...")
-                process.terminate()
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    logging.debug(f"Process '{name}' did not terminate, forcing kill")
-                    process.kill()
+                if sys.platform == "win32":
+                    process.send_signal(signal.CTRL_C_EVENT)
+                else:
+                    process.send_signal(signal.SIGINT)
+
+        # Give processes time to gracefully shutdown
+        grace_period = 10
+        deadline = time.time() + grace_period
+        
+        while time.time() < deadline:
+            still_running = [name for name, p in self.processes.items() if p.poll() is None]
+            if not still_running:
+                break
+            time.sleep(0.5)
+
+        # Force kill any remaining processes
+        for name, process in self.processes.items():
+            if process.poll() is None:
+                logging.debug(f"Process '{name}' did not stop gracefully, forcing kill")
+                process.kill()
+                process.wait()
 
         print(colored("All services stopped", Colors.YELLOW))
 
