@@ -35,10 +35,7 @@ COLORS = [
 
 
 def supports_color():
-    if os.name == "nt":
-        return os.environ.get("ANSICON") is not None or "TERM" in os.environ
-    else:
-        return sys.stdout.isatty()
+    return sys.stdout.isatty()
 
 
 USE_COLORS = supports_color()
@@ -190,15 +187,12 @@ class SabresManager:
         logging.debug("Stopping all services")
         print("\nStopping all services...")
         
-        # First try SIGINT (Ctrl-C) on all processes
+        # Send SIGINT (Ctrl-C) to all processes
         for name, process in self.processes.items():
             if process.poll() is None:  # Process is still running
                 logging.debug(f"Sending SIGINT to process '{name}'")
                 print(f"Stopping {name}...")
-                if sys.platform == "win32":
-                    process.send_signal(signal.CTRL_C_EVENT)
-                else:
-                    process.send_signal(signal.SIGINT)
+                process.send_signal(signal.SIGINT)
 
         # Give processes time to gracefully shutdown
         grace_period = 10
