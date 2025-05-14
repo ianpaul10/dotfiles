@@ -89,7 +89,6 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.buf.signature_help {
 vim.diagnostic.config {
   float = { border = _border },
 }
-vim.o.winborder = 'rounded'
 
 vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
