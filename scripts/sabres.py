@@ -3,7 +3,6 @@ import yaml
 import subprocess
 import os
 import sys
-import psutil
 import threading
 import time
 import logging
@@ -146,16 +145,15 @@ class SabresManager:
 
         for cmd in config.commands:
             self.logger.debug(f"Executing command for '{name}': {cmd}")
-            full_cmd = f"{shell_setup} && exec {cmd}"  # exec replaces shell with actual process
+            full_cmd = f"{shell_setup} && {cmd}"
             process = subprocess.Popen(
-                full_cmd,
+                "dev up",
                 shell=True,
                 executable="/bin/zsh",
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 cwd=cwd,
                 env=env,
-                preexec_fn=os.setsid,  # Create new process group
             )
 
             self.processes[name] = process
@@ -215,22 +213,15 @@ class SabresManager:
     def _stop_all(self):
         self.logger.info("Gracefully stopping all services...", Colors.RED)
 
-        # First try SIGTERM for graceful shutdown
+        # Send SIGINT (Ctrl-C) to all processes
         for name, process in self.processes.items():
-            if process.poll() is None:
-                try:
-                    # Kill entire process group
-                    pgid = os.getpgid(process.pid)
-                    self.logger.debug(
-                        f"Sending SIGTERM to process group {pgid} ({name})"
-                    )
-                    self.logger.info(f"Stopping {name}...")
-                    os.killpg(pgid, signal.SIGTERM)
-                except ProcessLookupError:
-                    pass
+            if process.poll() is None:  # Process is still running
+                self.logger.debug(f"Sending SIGINT to process '{name}'")
+                self.logger.info(f"Stopping {name}...")
+                process.send_signal(signal.SIGINT)
 
         # Give processes time to gracefully shutdown
-        grace_period = 10  # Reduced from 600 to 10 seconds
+        grace_period = 60
         deadline = time.time() + grace_period
 
         while time.time() < deadline:
@@ -241,65 +232,28 @@ class SabresManager:
                 break
             time.sleep(0.5)
 
-        # Force kill any remaining processes and their children
+        # Force kill any remaining processes
         for name, process in self.processes.items():
             if process.poll() is None:
-                try:
-                    self.logger.debug(
-                        f"Process '{name}' did not stop gracefully, forcing kill"
-                    )
-
-                    # Find and kill all child processes
-                    parent = psutil.Process(process.pid)
-                    children = parent.children(recursive=True)
-                    for child in children:
-                        try:
-                            child.kill()
-                        except psutil.NoSuchProcess:
-                            pass
-
-                    # Kill the process group
-                    pgid = os.getpgid(process.pid)
-                    os.killpg(pgid, signal.SIGKILL)
-
-                except (ProcessLookupError, psutil.NoSuchProcess):
-                    pass
-
+                self.logger.debug(
+                    f"Process '{name}' did not stop gracefully, forcing kill"
+                )
+                process.kill()
                 process.wait()
 
         self.logger.info("All services stopped", Colors.YELLOW)
 
-    def _signal_handler(self, signum, frame):
-        """Handle signals by forwarding them to process groups"""
-        self.logger.info(f"Received signal {signum}", Colors.RED)
-        
-        # Forward the signal to all process groups
-        for name, process in self.processes.items():
-            if process.poll() is None:  # if process is still running
-                try:
-                    pgid = os.getpgid(process.pid)
-                    os.killpg(pgid, signum)
-                    self.logger.debug(f"Forwarded signal {signum} to process group {pgid} ({name})")
-                except ProcessLookupError:
-                    pass
-        
-        if signum == signal.SIGINT:
-            self.stop_event.set()
-
     def run(self):
-        # Set up signal handlers
-        signal.signal(signal.SIGINT, self._signal_handler)
-        signal.signal(signal.SIGTERM, self._signal_handler)
-
         try:
             self._start_all()
 
-            # Keep the main thread alive until stop_event is set
+            # Keep the main thread alive until Ctrl+C
             while not self.stop_event.is_set():
                 time.sleep(1)
 
-        except Exception as e:
-            self.logger.error(f"Unexpected error: {e}")
+        except KeyboardInterrupt:
+            self.logger.info("Encountered Ctrl-C keyboard interrupt!", Colors.RED)
+            pass
         finally:
             self._stop_all()
 

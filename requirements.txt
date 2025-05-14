@@ -9,6 +9,7 @@ httpx==0.28.1
 idna==3.10
 jiter==0.9.0
 openai==1.76.0
+psutil==7.0.0
 pydantic==2.11.3
 pydantic_core==2.33.1
 python-dotenv==1.1.0
