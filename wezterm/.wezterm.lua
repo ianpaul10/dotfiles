@@ -7,6 +7,7 @@ local config = wezterm.config_builder()
 
 config.window_close_confirmation = "AlwaysPrompt"
 config.skip_close_confirmation_for_processes_named = {} -- confirm for ALL tabs
+config.native_macos_fullscreen_mode = true
 
 -- PADDING FOR NVIM
 config.window_padding = {
@@ -129,6 +130,7 @@ config.keys = {
     { mods = "LEADER", key = "k", action = action.ActivatePaneDirection("Up") },
     { mods = "LEADER", key = "h", action = action.ActivatePaneDirection("Left") },
     { mods = "LEADER", key = "l", action = action.ActivatePaneDirection("Right") },
+    { mods = "LEADER", key = "f", action = action.ToggleFullScreen },
     -- WORKSPACE MANAGEMENT
     -- Prompt for a name to use for a new workspace and switch to it.
     {
