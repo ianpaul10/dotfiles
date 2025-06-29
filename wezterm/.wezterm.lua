@@ -157,6 +157,7 @@ config.keys = {
             end),
         }),
     },
+    { mods = "LEADER", key = "=", action = action.ResetFontSize },
 }
 
 config.audible_bell = "Disabled"
