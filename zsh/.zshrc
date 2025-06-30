@@ -10,8 +10,9 @@ export ZSH="$HOME/.oh-my-zsh"
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="robbyrussell"
 # ZSH_THEME="norm"
-ZSH_THEME="agnoster"
+# ZSH_THEME="agnoster"
 # ZSH_THEME="philips"
+ZSH_THEME="wot_in_tarnation" # custom theme
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -173,11 +174,6 @@ if ! $WORK_LAPPY; then
   # NOTE: ignoring rbenv setup now, it's incompatible with current co. tooling
   eval "$(rbenv init - zsh)"
 fi
-
-# NOTE: custom right prompt
-PROMPT_STATUS="%F{red}%(?..[%?])%f" # Show exit status of last command in red, if non-zero
-TIME_24HR="%F{241}%B[%*]%b%f" # 24hr clock in gray
-RPROMPT="${PROMPT_STATUS}${TIME_24HR}"
 
 # NOTE: below are auto added lines
 [[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)

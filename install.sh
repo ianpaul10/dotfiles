@@ -13,6 +13,7 @@ echo -e "${GREEN}Syncing zsh files...${NC}"
 ln -sf "$PWD/zsh/.zshrc" ~/.zshrc
 ln -sf "$PWD/zsh/.zprofile" ~/.zprofile
 ln -sf "$PWD/zsh/.zshenv" ~/.zshenv
+ln -sf "$PWD/zsh/wot_in_tarnation.zsh-theme" ~/.oh-my-zsh/custom/themes
 
 # Sync vim files
 echo -e "${GREEN}Syncing vim files...${NC}"
