@@ -36,3 +36,10 @@ augroup END
 " Set colorscheme
 " colorscheme sorbet
 colorscheme wildcharm
+
+" clipboard support
+if system('uname -s') == "Darwin\n"
+  set clipboard=unnamed "OSX
+else
+  set clipboard=unnamedplus "Linux
+endif
