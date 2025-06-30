@@ -1,6 +1,7 @@
 # inspired by af-magic
+# also help from https://aamnah.com/notes/sysadmin/zsh-custom-theme-ultimate-guide/
 
-#use extended color palette if available
+# use extended color palette if available
 if [[ $terminfo[colors] -ge 256 ]]; then
     turquoise="%F{81}"
     tangerine="%F{166}"
@@ -10,7 +11,7 @@ if [[ $terminfo[colors] -ge 256 ]]; then
     hotpink="%F{161}"
     limegreen="%F{118}"
     green="%F{078}"
-    gray="%F{237}"
+    gray="%F{241}"
     blue="%F{032}"
     red="%F{red}"
 else
@@ -60,4 +61,4 @@ PROMPT_STATUS="%F{red}%(?..[%?])%f" # Show exit status of last command in red, i
 RPS1="${PROMPT_STATUS}"
 
 (( $+functions[virtualenv_prompt_info] )) && RPS1+='$(virtualenv_prompt_info)'
-RPS1+="%F{241}%B[%*]%b%f" # 24hr clock in gray
+RPS1+="%{$gray%}%B[%*]%b%f" # 24hr clock in gray
