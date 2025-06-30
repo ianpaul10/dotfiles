@@ -78,6 +78,7 @@ plugins=(
 	colorize
 	dotenv
 	fzf-tab # custom (aka not included in oh-my-zsh's default list) plugin
+	shrink-path
 	)
 
 source $ZSH/oh-my-zsh.sh

@@ -48,11 +48,12 @@ ZSH_THEME_VIRTUALENV_PREFIX=" $FG[075]["
 ZSH_THEME_VIRTUALENV_SUFFIX="]%{$reset_color%}"
 
 # primary prompt
-PS1='%{$blue%}%c %{$turquoise%}$(git_prompt_info) %{$purple%}%(!.#.%%) ${PR_RST}'
+# NOTE: if things get slow, swap $(shrink_path -f) with %~ or %c
+PS1='%{$blue%}$(shrink_path -f) %{$turquoise%}$(git_prompt_info) %{$purple%}%(!.#.%%) ${PR_RST}'
 
 # primary prompt when no git repo
 if [ -z "$(git_current_branch)" ]; then 
-PS1='%{$blue%}%c %{$purple%}%(!.#.%) ${PR_RST}'
+PS1='%{$blue%}$(shrink_path -f) %{$purple%}%(!.#.%) ${PR_RST}'
 fi
 
 # right prompt
