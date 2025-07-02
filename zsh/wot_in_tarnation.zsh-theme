@@ -53,7 +53,7 @@ PS1='%{$blue%}$(shrink_path -f) %{$turquoise%}$(git_prompt_info) %{$purple%}%(!.
 
 # primary prompt when no git repo
 if [ -z "$(git_current_branch)" ]; then 
-PS1='%{$blue%}$(shrink_path -f) %{$purple%}%(!.#.%) ${PR_RST}'
+PS1='%{$blue%}$(shrink_path -f) %{$purple%}%(!.#.%%) ${PR_RST}'
 fi
 
 # right prompt
