@@ -14,6 +14,7 @@ if [[ $terminfo[colors] -ge 256 ]]; then
     gray="%F{241}"
     blue="%F{032}"
     red="%F{red}"
+    fuchsia="%F{13}"
 else
     turquoise="%F{cyan}"
     tangerine="%F{yellow}"
@@ -26,6 +27,7 @@ else
     gray="%F{white}"
     blue="%F{blue}"
     red="%F{red}"
+    fuchsia="%F{magenta}"
 fi
 
 PR_RST="%f"
@@ -33,7 +35,7 @@ PR_RST="%f"
 # git settings
 ZSH_THEME_GIT_PROMPT_PREFIX=""
 ZSH_THEME_GIT_PROMPT_CLEAN=""
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$orange%}*${PR_RST}"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fuchsia%}*${PR_RST}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="${PR_RST}"
 
 ZSH_THEME_GIT_PROMPT_ADDED="%{$green%} ✈"
@@ -49,11 +51,11 @@ ZSH_THEME_VIRTUALENV_SUFFIX="]%{$reset_color%}"
 
 # primary prompt
 # NOTE: if things get slow, swap $(shrink_path -f) with %~ or %c
-PS1='%{$blue%}$(shrink_path -f) %{$turquoise%}$(git_prompt_info) %{$purple%}%(!.#.λ) ${PR_RST}'
+PS1='%{$blue%}$(shrink_path -f) %{$turquoise%}$(git_prompt_info) %{$orange%}%(!.#.λ) ${PR_RST}'
 
 # primary prompt when no git repo
 if [ -z "$(git_current_branch)" ]; then 
-PS1='%{$blue%}$(shrink_path -f) %{$purple%}%(!.#.λ) ${PR_RST}'
+PS1='%{$blue%}$(shrink_path -f) %{$orange%}%(!.#.λ) ${PR_RST}'
 fi
 
 # right prompt
