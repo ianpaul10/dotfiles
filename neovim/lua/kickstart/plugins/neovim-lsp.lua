@@ -199,7 +199,7 @@ return { -- LSP Configuration & Plugins
       -- WARN: having multiple ruby versions seems to cause issues with Mason's mgmt of the LSPs. More info:
       -- https://shopify.github.io/ruby-lsp/editors.html#mason
       -- https://github.com/williamboman/mason.nvim/issues/1292
-      ruby_lsp = {},
+      -- ruby_lsp = {}, -- NOTE: lets try with JUST sorbet for now
       sorbet = {},
 
       lua_ls = {
