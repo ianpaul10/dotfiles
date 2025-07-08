@@ -158,6 +158,9 @@ config.keys = {
         }),
     },
     { mods = "LEADER", key = "=", action = action.ResetFontSize },
+    -- SCROLL
+    { mods = "SHIFT", key = "UpArrow", action = wezterm.action.ScrollToPrompt(-1) },
+    { mods = "SHIFT", key = "DownArrow", action = wezterm.action.ScrollToPrompt(1) },
 }
 
 config.audible_bell = "Disabled"
