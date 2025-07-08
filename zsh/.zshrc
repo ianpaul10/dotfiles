@@ -77,6 +77,8 @@ export wut() {
   "$@" > >(tee -a $HOME/.jarvis/wut_command.log) 2> >(tee -a $HOME/.jarvis/wut_command.log >&2) # Log the output from the command
 }
 
+source $LOCAL_SCRIPTS_DIR/semantic_prompt_wrapper.sh
+
 # Check for open ai key, update if expired
 if $WORK_LAPPY; then
   if ! $(openai_key check); then
