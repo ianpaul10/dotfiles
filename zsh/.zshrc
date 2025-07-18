@@ -45,6 +45,7 @@ else
 fi
 
 alias gs="git status"
+alias lmk="afplay /System/Library/Sounds/Submarine.aiff" # let me know
 
 # gron is cool -> https://github.com/tomnomnom/gron
 alias norg="gron --ungron"
