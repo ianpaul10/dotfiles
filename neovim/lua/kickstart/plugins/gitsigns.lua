@@ -8,6 +8,8 @@ return {
     on_attach = function(bufnr)
       local gitsigns = require 'gitsigns'
 
+      gitsigns.toggle_current_line_blame(true) -- enable line blame by default
+
       local function map(mode, l, r, opts)
         opts = opts or {}
         opts.buffer = bufnr
@@ -43,7 +45,7 @@ return {
       map('n', '<leader>gh', gitsigns.stage_hunk, { desc = '[G]it stage [h]unk' })
       map('n', '<leader>gr', gitsigns.reset_hunk, { desc = '[G]it [r]eset hunk' })
       map('n', '<leader>gS', gitsigns.stage_buffer, { desc = '[G]it [S]tage buffer' })
-      map('n', '<leader>gu', gitsigns.undo_stage_hunk, { desc = '[G]it [u]ndo stage hunk' })
+      map('n', '<leader>gu', gitsigns.stage_hunk, { desc = '[G]it [u]ndo stage hunk' })
       map('n', '<leader>gR', gitsigns.reset_buffer, { desc = '[G]it [R]eset buffer' })
       map('n', '<leader>gp', gitsigns.preview_hunk, { desc = '[G]it [p]review hunk' })
       map('n', '<leader>gb', gitsigns.blame_line, { desc = '[G]it [b]lame line' })
@@ -54,7 +56,7 @@ return {
       end, { desc = '[G]it [D]iff against last commit' })
       -- Toggles
       map('n', '<leader>gtb', gitsigns.toggle_current_line_blame, { desc = '[G]it [T]oggle show [b]lame line' })
-      map('n', '<leader>gtd', gitsigns.toggle_deleted, { desc = '[G]it [T]oggle show [D]eleted' })
+      map('n', '<leader>gtd', gitsigns.preview_hunk_inline, { desc = '[G]it [T]oggle show [D]eleted' })
 
       map('n', '<leader>gn', function()
         gitsigns.nav_hunk 'next'
