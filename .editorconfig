@@ -3,7 +3,7 @@
 # EditorConfig is awesome: https://editorconfig.org
 
 # top-most EditorConfig file
-# root = true
+root = true
 
 # Unix-style newlines with a newline ending every file
 [*]
@@ -24,11 +24,9 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-
 [*.lua]
 indent_style = space
-indent_size = 4
-
+indent_size = 2
 
 # Tab indentation (no size specified)
 [Makefile]
@@ -43,5 +41,3 @@ indent_size = 2
 [{package.json,.travis.yml}]
 indent_style = space
 indent_size = 2
-
-

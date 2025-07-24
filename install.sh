@@ -19,6 +19,7 @@ ln -sf "$PWD/.vimrc" ~/.vimrc
 echo -e "${GREEN}Syncing neovim configuration...${NC}"
 rm -rf ~/.config/nvim
 ln -sf "$PWD/neovim" ~/.config/nvim
+ln -sf "$PWD/.editorconfig" ~/.editorconfig
 
 echo -e "${GREEN}Syncing wezterm configuration...${NC}"
 rm -rf ~/.wezterm.lua
