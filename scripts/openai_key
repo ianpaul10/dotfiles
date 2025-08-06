@@ -5,7 +5,7 @@ key_file="${OPENAI_KEY_FILE:-.openai-proxy-details}"
 function update() {
   local verbose=$1
   local response
-  
+
   response=$(curl -s 'https://openai-proxy.shopify.io/hmac/personal' \
       -X 'POST' \
       -H 'content-type: application/json' \
