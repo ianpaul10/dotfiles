@@ -78,6 +78,13 @@ export wut() {
   "$@" > >(tee -a $HOME/.jarvis/wut_command.log) 2> >(tee -a $HOME/.jarvis/wut_command.log >&2) # Log the output from the command
 }
 
+# note taking for geekbot/gokbeet
+export gokbeet() {
+  local message="$*"
+  local filename="$(date +%Y_%m_%d).md"
+  echo "$message" >> "$HOME/code/brain_dump/daily/$filename"
+}
+
 source $LOCAL_SCRIPTS_DIR/semantic_prompt_wrapper.sh
 
 # Check for open ai key, update if expired
