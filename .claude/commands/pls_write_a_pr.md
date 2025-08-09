@@ -1,5 +1,5 @@
 ---
-name: write_a_pr
+name: pls_write_a_pr
 description: Generate a PR description from recent commits and changes
 arguments:
   - name: branch
@@ -14,8 +14,8 @@ This command analyzes recent commits and changes to generate a professional pull
 ## Usage
 
 ```
-/write_a_pr
-/write_a_pr feature-branch
+/pls_write_a_pr
+/pls_write_a_pr feature-branch
 ```
 
 ## What it does
