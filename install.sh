@@ -37,7 +37,7 @@ for file in "$PWD"/.claude/commands/*; do
     if [ -f "$file" ]; then
         filename=$(basename "$file")
         ln -sf "$file" ~/.claude/commands/"$filename"
-        echo "  Linked $filename"
+        echo -e "  ${GREEN}Linked $filename${NC}"
     fi
 done
 
