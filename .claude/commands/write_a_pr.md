@@ -1,31 +1,64 @@
-# PR Description Generator
-
-You are a senior software engineer. Based on our past conversation and the most recent commit in this GitHub repository, your task is to write a pull request description.
-
-The pull request description should not be overly verbose, no yapping, and should mostly be in bullet points. Do not include any additional/fancy formatting (e.g. no bold font, no italics, etc.).
-
-You should always include the following sections:
-
-## TL;DR
-
-A 1-2 sentence summary of the changes.
-
-## What
-
-Summarize what the changes include using bullet points.
-
-## Why
-
-Describe why these changes are necessary and why we went with this approach using bullet points.
-
-## Observability
-
-Only include the text: `@spy page shop-identity`
-
+---
+name: write_a_pr
+description: Generate a PR description from recent commits and changes
+arguments:
+  - name: branch
+    description: Target branch name (optional, defaults to current branch)
+    required: false
 ---
 
-Instructions:
+# PR Description Generator
 
-1. Analyze the git diff and recent commits
-2. Generate a concise PR description following the format above
-3. Write the output to a markdown file in /tmp/ directory with a filename like: pr-description-[timestamp].md
+This command analyzes recent commits and changes to generate a professional pull request description.
+
+## Usage
+
+```
+/write_a_pr
+/write_a_pr feature-branch
+```
+
+## What it does
+
+1. Analyzes git diff and recent commits in the repository
+2. Extracts key changes and their purpose
+3. Generates a structured PR description following team conventions
+4. Saves the output to a temp file for easy copying
+
+## Output Format
+
+The command generates a PR description with these sections:
+
+### TL;DR
+
+A 1-2 sentence summary of the changes
+
+### What
+
+- Bullet points summarizing the changes
+- No verbose descriptions
+- Focus on what was modified
+
+### Why
+
+- Bullet points explaining the necessity
+- Rationale for the chosen approach
+- Business or technical justification
+
+### Observability
+
+- Standard team observability tag: `@spy page shop-identity`
+
+## Requirements
+
+- Must be run in a git repository
+- Should have uncommitted changes or recent commits to analyze
+- Output saved to `/tmp/pr-description-[timestamp].md`
+
+## Notes
+
+- No fancy formatting (bold, italics, etc.)
+- Concise bullet points preferred
+- Professional tone without unnecessary verbosity
+
+ARGUMENTS: $ARGUMENTS

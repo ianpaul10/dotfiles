@@ -3,7 +3,7 @@ name: gokbeet
 description: Summarize daily notes into Geekbot standup format
 arguments:
   - name: date
-    description: Date in YYYY-MM-DD format
+    description: Date in YYYY_MM_DD format
     required: true
 ---
 
@@ -14,7 +14,7 @@ This command reads your daily notes and generates a professional standup summary
 ## Usage
 
 ```
-/gokbeet 2024-12-20
+/gokbeet 2024_12_20
 ```
 
 ## What it does
@@ -33,3 +33,4 @@ The command will:
 - Preserve links in markdown format
 - Use code formatting where appropriate
 - Keep the summary brief and professional
+- Logically group together items that are seemingly related into sub bullet points (e.g. all code reviews can be grouped together)
