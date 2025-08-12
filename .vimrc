@@ -24,6 +24,12 @@ set laststatus=2  " Always show status line
 " column @ 120 chars in
 " set colorcolumn=120
 
+" Tab settings
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
 " Basic status line with white text on dark grey
 set statusline=%f\ %m%r%h%w%=%y[%{&ff}][%l:%v][%p%%]
 " Set status line colors after VimEnter
