@@ -34,9 +34,9 @@ set softtabstop=4
 set statusline=%f\ %m%r%h%w%=%y[%{&ff}][%l:%v][%p%%]
 " Set status line colors after VimEnter
 augroup StatusLineColors
-	autocmd!
-	autocmd ColorScheme * hi StatusLine ctermbg=15 ctermfg=237
-	autocmd ColorScheme * hi StatusLineNC ctermbg=15 ctermfg=237
+  autocmd!
+  autocmd ColorScheme * hi StatusLine ctermbg=15 ctermfg=237
+  autocmd ColorScheme * hi StatusLineNC ctermbg=15 ctermfg=237
 augroup END
 
 " Set colorscheme
