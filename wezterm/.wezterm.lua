@@ -194,6 +194,7 @@ config.use_fancy_tab_bar = false
 
 wezterm.on("update-right-status", function(window, pane)
   local time = wezterm.strftime("%H:%M")
+  local date = wezterm.strftime("%a %b %d") -- Day of week (short), Month (short), Day
 
   local battery = ""
   for _, b in ipairs(wezterm.battery_info()) do
@@ -237,7 +238,7 @@ wezterm.on("update-right-status", function(window, pane)
     { Background = { Color = "#0b0022" } },
     { Foreground = { Color = "#c0c0c0" } },
     {
-      Text = string.format("[%s] [%s] [%s] %s   ", workspace_name, battery, time, wezterm.nerdfonts.dev_apple),
+      Text = string.format("[%s] [%s] [%s] [%s] %s   ", workspace_name, battery, date, time, wezterm.nerdfonts.dev_apple),
     },
   }))
 end)
