@@ -182,6 +182,8 @@ config.keys = {
   -- SCROLL
   { mods = "SHIFT", key = "UpArrow", action = wezterm.action.ScrollToPrompt(-1) },
   { mods = "SHIFT", key = "DownArrow", action = wezterm.action.ScrollToPrompt(1) },
+  { mods = "CMD", key = "u", action = wezterm.action.ScrollByPage(-0.5) }, -- can't use CTRL b/c that overrides nvim's impl.
+  { mods = "CMD", key = "d", action = wezterm.action.ScrollByPage(0.5) },
 }
 
 config.audible_bell = "Disabled"
