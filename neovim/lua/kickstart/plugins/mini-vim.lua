@@ -64,7 +64,12 @@ return { -- Collection of various small independent plugins/modules
       local session_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t'):gsub('/$', ''):gsub('%.', '')
       MiniSessions.write(session_name)
     end
+    local read_cwd = function()
+      local session_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t'):gsub('/$', ''):gsub('%.', '')
+      MiniSessions.read(session_name)
+    end
     vim.keymap.set('n', '<Leader>ww', write_as_cwd, { desc = '[W]rite [W]orkspace to a session' })
+    vim.keymap.set('n', '<Leader>wo', read_cwd, { desc = '[W]orkspace [O]pen session based on cwd' })
 
     require('mini.starter').setup { header = header_art_2, footer = '' }
     -- require('mini.pairs').setup() -- NOTE: try without for now
