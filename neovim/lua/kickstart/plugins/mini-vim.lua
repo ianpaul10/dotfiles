@@ -1,4 +1,3 @@
----@diagnostic disable: unused-local
 local header_art_1 = [[
  ╭╮╭┬─╮╭─╮┬  ┬┬╭┬╮
  │││├┤ │ │╰┐┌╯││││
@@ -56,24 +55,40 @@ return { -- Collection of various small independent plugins/modules
       return '[%l:%v][%p%%]'
     end
 
-    -- require('mini.tabline').setup()
     require('mini.icons').setup()
 
     require('mini.sessions').setup { autoread = false, autowrite = true, directory = '~/.neovim_sessions' }
-    local write_as_cwd = function()
-      local session_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t'):gsub('/$', ''):gsub('%.', '')
+    local get_session_name = function(incl_branch)
+      local dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':t'):gsub('/$', ''):gsub('%.', '')
+      local branch = vim.fn.system('git branch --show-current'):gsub('\n', '')
+      if not incl_branch then
+        return dir
+      end
+      return dir .. '__' .. branch
+    end
+    local write_session = function(incl_branch)
+      local session_name = get_session_name(incl_branch)
       MiniSessions.write(session_name)
     end
-    local read_cwd = function()
-      local session_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t'):gsub('/$', ''):gsub('%.', '')
+    local read_session = function(incl_branch)
+      local session_name = get_session_name(incl_branch)
       MiniSessions.read(session_name)
     end
-    vim.keymap.set('n', '<Leader>ww', write_as_cwd, { desc = '[W]rite [W]orkspace to a session' })
-    vim.keymap.set('n', '<Leader>wo', read_cwd, { desc = '[W]orkspace [O]pen session based on cwd' })
+
+    vim.keymap.set('n', '<Leader>ww', function()
+      write_session(false)
+    end, { desc = '[W]rite [w]orkspace to a session (dir)' })
+    vim.keymap.set('n', '<Leader>wW', function()
+      write_session(true)
+    end, { desc = '[W]rite [W]orkspace to a session (dir__branch)' })
+    vim.keymap.set('n', '<Leader>wo', function()
+      read_session(false)
+    end, { desc = '[W]orkspace [o]pen session based on dir' })
+    vim.keymap.set('n', '<Leader>wO', function()
+      read_session(true)
+    end, { desc = '[W]orkspace [o]pen session based on dir__branch' })
 
     require('mini.starter').setup { header = header_art_2, footer = '' }
-    -- require('mini.pairs').setup() -- NOTE: try without for now
-    -- require('mini.jump').setup() -- NOTE: using eyeliner instead for now
 
     require('mini.files').setup { windows = { preview = true } }
     local minifiles_toggle = function(use_cur_buffer)
