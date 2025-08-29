@@ -60,7 +60,7 @@ return { -- Collection of various small independent plugins/modules
     require('mini.sessions').setup { autoread = false, autowrite = true, directory = '~/.neovim_sessions' }
     local get_session_name = function(incl_branch)
       local dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':t'):gsub('/$', ''):gsub('%.', '')
-      local branch = vim.fn.system('git branch --show-current'):gsub('\n', '')
+      local branch = vim.fn.system('git branch --show-current'):gsub('\n', ''):gsub('/', '_')
       if not incl_branch then
         return dir
       end
