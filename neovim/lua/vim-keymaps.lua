@@ -88,4 +88,5 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- NOTE: notes
 vim.keymap.set('n', '<leader>bd', ':e ~/code/brain_dump/notes.md <CR>', { desc = 'Brain dump' })
 
-vim.keymap.set('n', '<leader>cp', ':let @+=expand("%")<CR>', { desc = '[C]opy current buffer [p]ath' })
+vim.keymap.set('n', '<leader>cp', ':let @+=expand("%")<CR>', { desc = '[C]opy current buffer [p]ath from PWD' })
+vim.keymap.set('n', '<leader>cP', ':let @+=expand("%:p")<CR>', { desc = '[C]opy current buffer [P]ath from root' })
