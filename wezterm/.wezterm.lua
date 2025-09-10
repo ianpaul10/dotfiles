@@ -152,6 +152,7 @@ config.keys = {
   { mods = "LEADER", key = "h", action = action.ActivatePaneDirection("Left") },
   { mods = "LEADER", key = "l", action = action.ActivatePaneDirection("Right") },
   { mods = "LEADER", key = "f", action = action.ToggleFullScreen },
+  { mods = "LEADER", key = "6", action = action.ActivateLastTab },
   -- WORKSPACE MANAGEMENT
   -- Prompt for a name to use for a new workspace and switch to it.
   {
@@ -238,7 +239,14 @@ wezterm.on("update-right-status", function(window, pane)
     { Background = { Color = "#0b0022" } },
     { Foreground = { Color = "#c0c0c0" } },
     {
-      Text = string.format("[%s] [%s] [%s] [%s] %s   ", workspace_name, battery, date, time, wezterm.nerdfonts.dev_apple),
+      Text = string.format(
+        "[%s] [%s] [%s] [%s] %s   ",
+        workspace_name,
+        battery,
+        date,
+        time,
+        wezterm.nerdfonts.dev_apple
+      ),
     },
   }))
 end)
