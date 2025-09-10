@@ -35,6 +35,7 @@ The command will:
 - Use conversational language
 - Keep the summary brief and professional. No yapping.
 - List yesterday's non-TODO items as completed tasks from the day under a '## Here's what I did yesterday' section
+- List yesterday's TODO items as tasks that were also completed yesterday under the same section (if there are no or very few completed tasks)
 - List today's TODO items as tasks planned for today under a '## Here's what I plan to do today' section
 - Preserve links in markdown format (e.g. [link text](url)) and use helpful link_text where possible
 - Use code formatting where appropriate (e.g. `code_snippet`)
