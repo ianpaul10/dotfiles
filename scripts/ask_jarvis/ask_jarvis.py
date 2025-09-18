@@ -25,9 +25,10 @@ class ModelAttributes:
 _MODELS = {
     "shop": ModelAttributes(
         cli_ref_name="shop",
-        api_ref_name="default",
+        api_ref_name="fast",
         api_key_env_var="OPENAI_API_KEY",
-        openai_compatible_url="https://proxy.shopify.ai/v1",
+        openai_compatible_url=os.getenv("WRK_AI_PROXY_URL")
+        or "https://api.openai.com/v1",
     ),
     "llama": ModelAttributes(
         cli_ref_name="llama",
