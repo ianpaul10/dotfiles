@@ -28,7 +28,8 @@ require('lazy').setup({
   -- require 'kickstart.plugins.neo-tree', -- use :Ex and :Lexplore instead and oil.nvim
   require 'kickstart.plugins.gitsigns',
 
-  require 'kickstart.plugins.telescope',
+  -- require 'kickstart.plugins.telescope', -- using fzf-lua instead of telescope
+  require 'custom.plugins.fzf-lua',
   require 'kickstart.plugins.tree-sitter',
 
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically (aka spacing/tabs/indentation). Reads from `.editorconfig`
