@@ -9,8 +9,8 @@ vim.keymap.set('n', '<leader>tl', ':TestLast<CR>', { desc = 'Re-run [l]ast test'
 vim.keymap.set('n', '<leader>tn', ':TestFile -strategy=neovim<CR>', { desc = '[T]est file in [N]eoVim' })
 
 vim.cmd "let test#strategy = 'wezterm'"
-vim.cmd 'let test#wezterm#split_percent = 25'
-vim.cmd 'let test#wezterm#split_direction = "bottom"'
-vim.cmd 'let test#neovim#term_position = "horizontal 25"'
+vim.cmd 'let test#wezterm#split_percent = 30'
+vim.cmd 'let test#wezterm#split_direction = "right"'
+vim.cmd 'let test#neovim#term_position = "vertical 30"'
 
 return M
