@@ -39,9 +39,10 @@ return { -- Fuzzy Finder (files, lsp, etc)
         git_icons = true,
         file_icons = vim.g.have_nerd_font,
         color_icons = true,
+        fd_opts = '--type f --hidden --follow --exclude .git',
       },
       grep = {
-        rg_opts = '--hidden --column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e',
+        rg_opts = '--hidden --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --glob=!.git/ --glob=!node_modules/ -e',
         file_icons = vim.g.have_nerd_font,
         color_icons = true,
         rg_glob = true, -- enable glob parsing
@@ -60,12 +61,11 @@ return { -- Fuzzy Finder (files, lsp, etc)
       },
     }
 
-    -- See `:help fzf-lua`
     vim.keymap.set('n', '<leader>sh', fzf.help_tags, { desc = '[S]earch [H]elp' })
     vim.keymap.set('n', '<leader>sk', fzf.keymaps, { desc = '[S]earch [K]eymaps' })
     vim.keymap.set('n', '<leader>sf', fzf.files, { desc = '[S]earch [F]iles' })
     vim.keymap.set('n', '<leader>ss', fzf.builtin, { desc = '[S]earch [S]elect FzfLua' })
-    vim.keymap.set('n', '<leader>sw', fzf.grep_cWORD, { desc = '[S]earch current [W]ord' })
+    vim.keymap.set('n', '<leader>sw', fzf.grep_cword, { desc = '[S]earch current [W]ord' })
     vim.keymap.set('n', '<leader>sg', fzf.live_grep, { desc = '[S]earch by [G]rep' })
     vim.keymap.set('n', '<leader>sd', fzf.diagnostics_workspace, { desc = '[S]earch [D]iagnostics' })
     vim.keymap.set('n', '<leader>sr', fzf.resume, { desc = '[S]earch [R]esume' })
