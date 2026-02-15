@@ -84,6 +84,8 @@ table.insert(config.hyperlink_rules, {
 config.leader = { key = "Space", mods = "CTRL", timeout_milliseconds = 1000 }
 local action = wezterm.action
 config.keys = {
+  { key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) }, -- for claude code shift+enter to go to next line \r\n
+
   -- KEY MOTIONS
   { mods = "OPT", key = "LeftArrow", action = action.SendKey({ mods = "ALT", key = "b" }) },
   { mods = "OPT", key = "RightArrow", action = action.SendKey({ mods = "ALT", key = "f" }) },
@@ -100,7 +102,7 @@ config.keys = {
   -- PANE MANAGEMENT
   -- TODO: figure out how to make bot and right work nicely together. Maybe something to do with naming instead of relying on index?
   -- {
-    -- Creates a new pane in the bottom if it doesn't exist, otherwise toggles showing and hiding the bottom pane/terminal
+  -- Creates a new pane in the bottom if it doesn't exist, otherwise toggles showing and hiding the bottom pane/terminal
   --   key = ";",
   --   mods = "LEADER",
   --   action = wezterm.action_callback(function(_, pane)
