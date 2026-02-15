@@ -33,9 +33,32 @@ ZSH_THEME_GIT_PROMPT_SUFFIX="${PR_RST}"
 PS1='%{$blue%}$(shrink_path -f) %{$turquoise%}$(git_prompt_info) %{$orange%}%(!.#.λ) ${PR_RST}'
 
 # primary prompt when no git repo
-if [ -z "$(git_current_branch)" ]; then 
-PS1='%{$blue%}$(shrink_path -f) %{$orange%}%(!.#.λ) ${PR_RST}'
+if [ -z "$(git_current_branch)" ]; then
+    PS1='%{$blue%}$(shrink_path -f) %{$orange%}%(!.#.λ) ${PR_RST}'
 fi
+
+# function preexec() {
+#     echo "preexec"
+#     timer=${timer:-$SECONDS}
+#     echo "$timer"
+# }
+# function precmd() {
+#     echo "precmd"
+#     if [ $timer ]; then
+#         echo "timer set z"
+#         echo "$timer"
+#         timer_show=$(($SECONDS - $timer))
+#         # timer_show=${$SECONDS - $timer}
+#         timer_show=$(printf '%.*f\n' 1 $timer_show)
+#         echo "timer show"
+#         echo $timer_show
+#         export LAST_CMD_TIME=$timer_show
+#         echo $LAST_CMD_TIME
+#         # export LAST_CMD_TIME="[%F{$hcolor}%?%F{$dcolor}] : %F{$hcolor}${timer_show}s %F{$dcolor}"
+#         unset timer
+#     fi
+# }
+# echo $LAST_CMD_TIME
 
 # right prompt
 # prompt when the last command was unsuccessful
