@@ -41,4 +41,8 @@ for file in "$PWD"/.claude/commands/*; do
     fi
 done
 
+echo -e "${GREEN}Syncing ghostty configuration...${NC}"
+rm -rf ~/.config/ghostty/config
+ln -sf "$PWD/ghostty/config" ~/.config/ghostty/config
+
 echo -e "${GREEN}Done! Configuration files have been linked.${NC}"
