@@ -46,6 +46,9 @@ fi
 
 alias gs="git status"
 alias lmk="afplay /System/Library/Sounds/Submarine.aiff" # let me know
+alias rip="dev down && dev reset --all -n . && dev vitess cleanup && dev yugabyte cleanup && dev up"
+alias gtlgtm="gt modify -a && gt submit --stack --update-only"
+alias scratch='cd ~/code/brain_dump/scratch && nvim $(date +%Y_%m_%d_%H%M%S).md'
 
 # gron is cool -> https://github.com/tomnomnom/gron
 alias norg="gron --ungron"
@@ -115,5 +118,8 @@ if $WORK_LAPPY; then
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
   eval "$(shadowenv init zsh 2> /dev/null)"
 fi
+
+# Added by tec agent
+[[ -x /Users/ip_shopify/.local/state/tec/profiles/base/current/global/init ]] && eval "$(/Users/ip_shopify/.local/state/tec/profiles/base/current/global/init zsh)"
 
 echo "🫡"
