@@ -32,6 +32,45 @@ source $ZSH/oh-my-zsh.sh
 # User configuration after sourcing oh-my-zsh
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
+# Session logging - auto-logs all `dev` commands to SQLite
+# ------------------------------------------------------------------------------
+SESSION_LOG_DB="$HOME/.session_logs/commands.db"
+mkdir -p "$(dirname "$SESSION_LOG_DB")"
+
+# Initialize db/table if needed
+sqlite3 "$SESSION_LOG_DB" "CREATE TABLE IF NOT EXISTS commands (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts TEXT NOT NULL,
+  cmd TEXT NOT NULL,
+  output TEXT,
+  exit_code INTEGER,
+  duration_ms INTEGER
+);" 2>/dev/null
+
+dev() {
+  local tmpfile=$(mktemp)
+  local start_ts=$(date -Iseconds)
+  local start_s=$SECONDS
+
+  command dev "$@" 2>&1 | tee "$tmpfile"
+  local exit_code=${pipestatus[1]}
+  local duration_s=$((SECONDS - start_s))
+
+  local cmd="dev $*"
+  local output=$(cat "$tmpfile")
+
+  # Escape single quotes for SQLite
+  cmd="${cmd//\'/\'\'}"
+  output="${output//\'/\'\'}"
+
+  sqlite3 "$SESSION_LOG_DB" \
+    "INSERT INTO commands (ts, cmd, output, exit_code, duration_ms) VALUES ('$start_ts', '$cmd', '$output', $exit_code, $((duration_s * 1000)));"
+
+  rm "$tmpfile"
+  return $exit_code
+}
+
 alias pip=pip3
 
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -49,6 +88,7 @@ alias lmk="afplay /System/Library/Sounds/Submarine.aiff" # let me know
 alias rip="dev down && dev reset --all -n . && dev vitess cleanup && dev yugabyte cleanup && dev up"
 alias gtlgtm="gt modify -a && gt submit --stack --update-only"
 alias scratch='cd ~/code/brain_dump/scratch && nvim $(date +%Y_%m_%d_%H%M%S).md'
+alias devlog="$LOCAL_SCRIPTS_DIR/devlog"
 
 # gron is cool -> https://github.com/tomnomnom/gron
 alias norg="gron --ungron"

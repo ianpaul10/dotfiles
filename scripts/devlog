@@ -1,0 +1,94 @@
+#!/usr/bin/env zsh
+#
+# devlog - Query dev command logs and optionally pipe to jarvis
+#
+# Usage: devlog [options] ["your question"]
+#   -e          errors only (exit_code != 0)
+#   -s          successes only (exit_code == 0)
+#   -d DATE     specific date (YYYY-MM-DD)
+#   -r FROM:TO  date range (YYYY-MM-DD:YYYY-MM-DD)
+#   -n NUM      limit results (default: 10)
+#   -o          output only (no cmd/metadata, just command output)
+#   -h          show this help
+#
+# Examples:
+#   devlog "why did my last commands fail?"
+#   devlog -e "explain these errors"
+#   devlog -d 2026-02-14 "summarize my work"
+#   devlog -r 2026-02-10:2026-02-14 -e "what kept breaking?"
+#   devlog -n 5 -q  # just show last 5, no jarvis
+
+SESSION_LOG_DB="$HOME/.session_logs/commands.db"
+JARVIS_CMD="$HOME/.pyenv/shims/python $HOME/code/dotfiles/scripts/ask_jarvis/ask_jarvis.py"
+
+usage() {
+  sed -n '3,14p' "$0" | sed 's/^# //' | sed 's/^#//'
+  exit 0
+}
+
+errors_only=false
+success_only=false
+date_filter=""
+date_from=""
+date_to=""
+limit=10
+output_only=false
+where_clauses=()
+
+while getopts "esd:r:n:oh" opt; do
+  case $opt in
+    e) errors_only=true ;;
+    s) success_only=true ;;
+    d) date_filter="$OPTARG" ;;
+    r) date_from="${OPTARG%:*}"; date_to="${OPTARG#*:}" ;;
+    n) limit="$OPTARG" ;;
+    o) output_only=true ;;
+    h) usage ;;
+    *) usage ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+question="$*"
+
+if [[ ! -f "$SESSION_LOG_DB" ]]; then
+  echo "No logs found at $SESSION_LOG_DB" >&2
+  exit 1
+fi
+
+# Build WHERE clauses
+if $errors_only; then
+  where_clauses+=("exit_code != 0")
+fi
+if $success_only; then
+  where_clauses+=("exit_code == 0")
+fi
+if [[ -n "$date_filter" ]]; then
+  where_clauses+=("date(ts) = '$date_filter'")
+fi
+if [[ -n "$date_from" && -n "$date_to" ]]; then
+  where_clauses+=("date(ts) >= '$date_from' AND date(ts) <= '$date_to'")
+fi
+
+where=""
+if [[ ${#where_clauses[@]} -gt 0 ]]; then
+  where="WHERE ${(j: AND :)where_clauses}"
+fi
+
+if $output_only; then
+  query="SELECT output FROM commands $where ORDER BY id DESC LIMIT $limit;"
+  results=$(sqlite3 "$SESSION_LOG_DB" "$query")
+else
+  query="SELECT ts, cmd, exit_code, output FROM commands $where ORDER BY id DESC LIMIT $limit;"
+  results=$(sqlite3 -json "$SESSION_LOG_DB" "$query")
+fi
+
+if [[ -z "$question" ]]; then
+  if $output_only; then
+    echo "$results"
+  else
+    echo "$results" | jq .
+  fi
+else
+  echo "$results" | eval "$JARVIS_CMD" "$question"
+fi
