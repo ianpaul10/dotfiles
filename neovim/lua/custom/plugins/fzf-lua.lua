@@ -47,7 +47,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
         color_icons = true,
         rg_glob = true, -- enable glob parsing
         glob_flag = '--iglob', -- case insensitive globs
-        glob_separator = '%s%s', -- query separator pattern (lua): '  '
+        no_esc = true,
       },
       oldfiles = {
         cwd_only = true,

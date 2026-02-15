@@ -90,7 +90,7 @@ return { -- Collection of various small independent plugins/modules
 
     require('mini.starter').setup { header = header_art_2, footer = '' }
 
-    require('mini.files').setup { windows = { preview = true } }
+    require('mini.files').setup { windows = { preview = true, width_preview = 75 } }
     local minifiles_toggle = function(use_cur_buffer)
       if not MiniFiles.close() then
         if use_cur_buffer then

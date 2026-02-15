@@ -12,5 +12,11 @@ return {
       ':GBrowse<CR>',
       desc = '[G]it [o]pen file in GitHub',
     },
+    {
+      '<leader>gO',
+      'V:GBrowse<CR>',
+      desc = '[G]it [o]pen file in GitHub',
+    },
+
   },
 }
