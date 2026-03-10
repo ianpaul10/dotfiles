@@ -9,6 +9,7 @@ config.window_close_confirmation = "AlwaysPrompt"
 config.skip_close_confirmation_for_processes_named = {} -- confirm for ALL tabs
 config.native_macos_fullscreen_mode = true
 config.notification_handling = "AlwaysShow"
+config.enable_kitty_keyboard = true
 
 -- PADDING FOR NVIM
 config.window_padding = {
