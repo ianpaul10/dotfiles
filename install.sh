@@ -35,6 +35,9 @@ rm -f ~/.claude/settings.json
 ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/.claude/settings.json" ~/.claude/settings.json
 
+ln -sf ~/src/github.com/shopify-playground/j/hive/skill.md ~/.claude/commands/hive.md
+echo -e "  ${GREEN}Linked ~/src/github.com/shopify-playground/j/hive/skill.md${NC}"
+
 for file in "$PWD"/.claude/commands/*; do
     if [ -f "$file" ]; then
         filename=$(basename "$file")
