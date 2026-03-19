@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "apiKeyHelper": "/opt/dev/bin/user/devx llm-gateway print-token --key",
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://proxy.shopify.ai/vendors/anthropic-claude-code"
+  },
+  "alwaysThinkingEnabled": true,
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(cd *)",
+      "Bash(fd *)",
+      "Bash(ls *)",
+      "Bash(ls)",
+      "Bash(pwd)",
+      "Bash(echo *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(find *)",
+      "Bash(which *)",
+      "Bash(type *)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(touch *)",
+      "Bash(chmod *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(cut *)",
+      "Bash(awk *)",
+      "Bash(sed *)",
+      "Bash(jq *)",
+      "Bash(tr *)",
+      "Bash(xargs *)",
+      "Bash(env)",
+      "Bash(printenv *)",
+      "Bash(export *)",
+      "Bash(source *)",
+      "Bash(. *)",
+      "Bash(brew *)",
+      "Bash(npm *)",
+      "Bash(yarn *)",
+      "Bash(node *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(ruby *)",
+      "Bash(bundle *)",
+      "Bash(make *)",
+      "Bash(gh *)",
+      "Bash(open *)",
+      "Bash(pbcopy *)",
+      "Bash(pbpaste *)",
+      "Bash(* --version)",
+      "Bash(* --help)",
+      "Bash(* --help *)",
+      "Bash(/opt/dev/bin/dev *)",
+      "Bash(dev *)",
+      "Bash(shadowenv *)",
+      "Write(*)",
+      "Edit(*)",
+      "Read(*)",
+      "Search(*)"
+    ]
+  },
+  "feedbackSurveyState": {
+    "lastShownTime": 1754083893418
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Ping.aiff"
+          }
+        ]
+      }
+    ]
+  }
+}
