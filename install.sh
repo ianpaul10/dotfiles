@@ -31,7 +31,9 @@ ln -sf "$PWD/.tmux.conf" ~/.tmux.conf
 echo -e "${GREEN}Syncing Claude configuration...${NC}"
 mkdir -p ~/.claude/commands
 rm -rf ~/.claude/CLAUDE.md
+rm -f ~/.claude/settings.json
 ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
+ln -sf "$PWD/.claude/settings.json" ~/.claude/settings.json
 
 for file in "$PWD"/.claude/commands/*; do
     if [ -f "$file" ]; then
@@ -44,5 +46,17 @@ done
 echo -e "${GREEN}Syncing ghostty configuration...${NC}"
 rm -rf ~/.config/ghostty/config
 ln -sf "$PWD/ghostty/config" ~/.config/ghostty/config
+
+echo -e "${GREEN}Syncing pi skills, extensions, and agent instructions...${NC}"
+mkdir -p ~/.pi/agent
+rm -rf ~/.pi/agent/skills
+ln -sf "$PWD/pi/skills" ~/.pi/agent/skills
+echo -e "  ${GREEN}Linked pi/skills → ~/.pi/agent/skills${NC}"
+rm -rf ~/.pi/agent/extensions
+ln -sf "$PWD/pi/extensions" ~/.pi/agent/extensions
+echo -e "  ${GREEN}Linked pi/extensions → ~/.pi/agent/extensions${NC}"
+rm -f ~/.pi/agent/AGENTS.md
+ln -sf "$PWD/pi/AGENTS.md" ~/.pi/agent/AGENTS.md
+echo -e "  ${GREEN}Linked pi/AGENTS.md → ~/.pi/agent/AGENTS.md${NC}"
 
 echo -e "${GREEN}Done! Configuration files have been linked.${NC}"
