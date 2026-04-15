@@ -27,3 +27,9 @@ scripts/local
 
 .zshenv
 .aider*
+.claude/CLAUDE.md
+.claude/skills/*
+.claude/hooks/*
+pi/skills/*
+pi/extensions/*
+
