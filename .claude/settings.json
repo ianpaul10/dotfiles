@@ -4,7 +4,6 @@
   "env": {
     "ANTHROPIC_BASE_URL": "https://proxy.shopify.ai/vendors/anthropic-claude-code"
   },
-  "alwaysThinkingEnabled": true,
   "permissions": {
     "allow": [
       "Bash(git *)",
@@ -66,9 +65,6 @@
       "Search(*)"
     ]
   },
-  "feedbackSurveyState": {
-    "lastShownTime": 1754083893418
-  },
   "hooks": {
     "Stop": [
       {
@@ -91,6 +87,23 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/ip_shopify/.claude/hooks/ai-security-context.sh",
+            "timeout": 10000
+          }
+        ]
+      }
     ]
-  }
+  },
+  "alwaysThinkingEnabled": true,
+  "feedbackSurveyState": {
+    "lastShownTime": 1754083893418
+  },
+  "skipDangerousModePermissionPrompt": true
 }
