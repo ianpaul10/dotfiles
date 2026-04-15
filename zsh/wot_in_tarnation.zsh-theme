@@ -29,12 +29,13 @@ ZSH_THEME_GIT_PROMPT_DIRTY="%{$violet%}*${PR_RST}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="${PR_RST}"
 
 # primary prompt
-# NOTE: if things get slow, swap $(shrink_path -f) with %~ or %c
-PS1='%{$blue%}$(shrink_path -f) %{$turquoise%}$(git_prompt_info) %{$orange%}%(!.#.λ) ${PR_RST}'
+cur_path="%~" # ~/code/folder
+# cur_path=$(shrink_path -f) # ~/c/folder
+PS1='%{$blue%}${cur_path} %{$turquoise%}$(git_prompt_info) %{$orange%}%(!.#.λ) ${PR_RST}'
 
 # primary prompt when no git repo
 if [ -z "$(git_current_branch)" ]; then
-    PS1='%{$blue%}$(shrink_path -f) %{$orange%}%(!.#.λ) ${PR_RST}'
+    PS1='%{$blue%}${cur_path} %{$orange%}%(!.#.λ) ${PR_RST}'
 fi
 
 # function preexec() {
