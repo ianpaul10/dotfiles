@@ -29,21 +29,25 @@ rm -rf ~/.tmux.conf
 ln -sf "$PWD/.tmux.conf" ~/.tmux.conf
 
 echo -e "${GREEN}Syncing Claude configuration...${NC}"
-mkdir -p ~/.claude/commands
+mkdir -p ~/.claude/commands ~/.claude/hooks ~/.claude/skills
 rm -rf ~/.claude/CLAUDE.md
 rm -f ~/.claude/settings.json
+rm -f ~/.claude/settings.local.json
 ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/.claude/settings.json" ~/.claude/settings.json
+ln -sf "$PWD/.claude/settings.local.json" ~/.claude/settings.local.json
 
 ln -sf ~/src/github.com/shopify-playground/j/hive/skill.md ~/.claude/commands/hive.md
 echo -e "  ${GREEN}Linked ~/src/github.com/shopify-playground/j/hive/skill.md${NC}"
 
-for file in "$PWD"/.claude/commands/*; do
-    if [ -f "$file" ]; then
-        filename=$(basename "$file")
-        ln -sf "$file" ~/.claude/commands/"$filename"
-        echo -e "  ${GREEN}Linked $filename${NC}"
-    fi
+for dir in commands hooks skills; do
+    for file in "$PWD"/.claude/"$dir"/*; do
+        if [ -f "$file" ]; then
+            filename=$(basename "$file")
+            ln -sf "$file" ~/.claude/"$dir"/"$filename"
+            echo -e "  ${GREEN}Linked $dir/$filename${NC}"
+        fi
+    done
 done
 
 echo -e "${GREEN}Syncing ghostty configuration...${NC}"
