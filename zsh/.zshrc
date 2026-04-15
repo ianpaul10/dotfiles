@@ -158,9 +158,11 @@ if $WORK_LAPPY; then
   [[ -f /opt/dev/sh/chruby/chruby.sh ]] && { type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; } }
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
   eval "$(shadowenv init zsh 2> /dev/null)"
-fi
 
-# Added by tec agent
-[[ -x /Users/ip_shopify/.local/state/tec/profiles/base/current/global/init ]] && eval "$(/Users/ip_shopify/.local/state/tec/profiles/base/current/global/init zsh)"
+  # Added by tec agent
+  [[ -x /Users/ip_shopify/.local/state/tec/profiles/base/current/global/init ]] && eval "$(/Users/ip_shopify/.local/state/tec/profiles/base/current/global/init zsh)"
+
+  eval "$(_wtp init --zsh)"
+fi
 
 echo "🫡"
