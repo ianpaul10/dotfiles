@@ -36,6 +36,7 @@ rm -f ~/.claude/settings.local.json
 ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/.claude/settings.json" ~/.claude/settings.json
 ln -sf "$PWD/.claude/settings.local.json" ~/.claude/settings.local.json
+ln -sf "$PWD/.claude/statusline.sh" ~/.claude/statusline.sh
 
 ln -sf ~/src/github.com/shopify-playground/j/hive/skill.md ~/.claude/commands/hive.md
 echo -e "  ${GREEN}Linked ~/src/github.com/shopify-playground/j/hive/skill.md${NC}"
