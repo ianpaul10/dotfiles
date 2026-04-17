@@ -111,37 +111,38 @@ fi
 # Get git info (branch, dirty, ahead, modified count)
 git_info=""
 git_info_plain=""
-if [ -n "$cwd" ] && git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
-  branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || echo "detached")
-
-  # Check if dirty (staged or unstaged changes)
-  dirty=""
-  if ! git -C "$cwd" diff --quiet 2>/dev/null || ! git -C "$cwd" diff --cached --quiet 2>/dev/null; then
-    dirty="*"
-  fi
-
-  # Check commits ahead of upstream
-  ahead_marker=""
-  ahead_plain=""
-  ahead_output=$(git -C "$cwd" rev-list @{u}..HEAD 2>/dev/null)
-  if [ -n "$ahead_output" ]; then
-    ahead=$(echo "$ahead_output" | wc -l | tr -d ' ')
-    ahead_marker=" ${GREEN}↑${ahead}${RESET}"
-    ahead_plain=" ↑${ahead}"
-  fi
-
-  # Count modified files (staged + unstaged + untracked)
-  mod_count=$(git -C "$cwd" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-  mod_marker=""
-  mod_plain=""
-  if [ "$mod_count" -gt 0 ]; then
-    mod_marker=" ${GRAY}${mod_count}f${RESET}"
-    mod_plain=" ${mod_count}f"
-  fi
-
-  git_info=$(printf "${YELLOW}%s${RESET}${RED}%s${RESET}%s%s" "$branch" "$dirty" "$ahead_marker" "$mod_marker")
-  git_info_plain="${branch}${dirty}${ahead_plain}${mod_plain}"
-fi
+# NOTE: git branch names can be long, so let's just excl for now
+# if [ -n "$cwd" ] && git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
+#   branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || echo "detached")
+#
+#   # Check if dirty (staged or unstaged changes)
+#   dirty=""
+#   if ! git -C "$cwd" diff --quiet 2>/dev/null || ! git -C "$cwd" diff --cached --quiet 2>/dev/null; then
+#     dirty="*"
+#   fi
+#
+#   # Check commits ahead of upstream
+#   ahead_marker=""
+#   ahead_plain=""
+#   ahead_output=$(git -C "$cwd" rev-list @{u}..HEAD 2>/dev/null)
+#   if [ -n "$ahead_output" ]; then
+#     ahead=$(echo "$ahead_output" | wc -l | tr -d ' ')
+#     ahead_marker=" ${GREEN}↑${ahead}${RESET}"
+#     ahead_plain=" ↑${ahead}"
+#   fi
+#
+#   # Count modified files (staged + unstaged + untracked)
+#   mod_count=$(git -C "$cwd" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+#   mod_marker=""
+#   mod_plain=""
+#   if [ "$mod_count" -gt 0 ]; then
+#     mod_marker=" ${GRAY}${mod_count}f${RESET}"
+#     mod_plain=" ${mod_count}f"
+#   fi
+#
+#   git_info=$(printf "${YELLOW}%s${RESET}${RED}%s${RESET}%s%s" "$branch" "$dirty" "$ahead_marker" "$mod_marker")
+#   git_info_plain="${branch}${dirty}${ahead_plain}${mod_plain}"
+# fi
 
 # Format context: show % used of usable context
 # Bar fills as context is used; 100% = autocompact triggers
