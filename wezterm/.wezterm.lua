@@ -85,6 +85,30 @@ table.insert(config.hyperlink_rules, {
 -- KEYBINDINGS
 config.leader = { key = "Space", mods = "CTRL", timeout_milliseconds = 1000 }
 local action = wezterm.action
+
+local function toggle_alt_pane(role, direction, size)
+  return wezterm.action_callback(function(_, pane)
+    local tab = pane:tab()
+    local panes = tab:panes_with_info()
+    local main, target
+    for _, p in ipairs(panes) do
+      if p.left == 0 and p.top == 0 then main = p end
+      if role == "right" and p.left > 0 then target = p end
+      if role == "bottom" and p.top > 0 and p.left == 0 then target = p end
+    end
+    if not target then
+      local source = main and main.pane or pane
+      source:split({ direction = direction, size = size })
+    elseif main and main.is_zoomed then
+      tab:set_zoomed(false)
+      target.pane:activate()
+    else
+      if main then main.pane:activate() end
+      tab:set_zoomed(true)
+    end
+  end)
+end
+
 config.keys = {
   { key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) }, -- for claude code shift+enter to go to next line \r\n
 
@@ -102,49 +126,8 @@ config.keys = {
     -- action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|TABS" }), -- to enter in fuzzy mode automatically
   },
   -- PANE MANAGEMENT
-  -- TODO: figure out how to make bot and right work nicely together. Maybe something to do with naming instead of relying on index?
-  -- {
-  -- Creates a new pane in the bottom if it doesn't exist, otherwise toggles showing and hiding the bottom pane/terminal
-  --   key = ";",
-  --   mods = "LEADER",
-  --   action = wezterm.action_callback(function(_, pane)
-  --     local tab = pane:tab()
-  --     local panes = tab:panes_with_info()
-  --     if #panes == 1 then
-  --       pane:split({
-  --         direction = "Bottom",
-  --         size = 0.25,
-  --       })
-  --     elseif not panes[1].is_zoomed then
-  --       panes[1].pane:activate()
-  --       tab:set_zoomed(true)
-  --     elseif panes[1].is_zoomed then
-  --       tab:set_zoomed(false)
-  --       panes[2].pane:activate()
-  --     end
-  --   end),
-  -- },
-  {
-    -- Creates a new pane on the right if it doesn't exist, otherwise toggles showing and hiding the bottom pane/terminal
-    key = "Space",
-    mods = "LEADER",
-    action = wezterm.action_callback(function(_, pane)
-      local tab = pane:tab()
-      local panes = tab:panes_with_info()
-      if #panes == 1 then
-        pane:split({
-          direction = "Right",
-          size = 0.30,
-        })
-      elseif not panes[1].is_zoomed then
-        panes[1].pane:activate()
-        tab:set_zoomed(true)
-      elseif panes[1].is_zoomed then
-        tab:set_zoomed(false)
-        panes[2].pane:activate()
-      end
-    end),
-  },
+  { key = ";", mods = "LEADER", action = toggle_alt_pane("bottom", "Bottom", 0.20) },
+  { key = "Space", mods = "LEADER", action = toggle_alt_pane("right", "Right", 0.30) },
   { key = '"', mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Right" }) },
   { key = "%", mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Down" }) },
   {
