@@ -3,7 +3,6 @@
 # Features: context bar, git details, time, last prompt, ANSI + emoji
 
 # Configuration
-AUTOCOMPACT_BUFFER_PCT=22  # Claude Code reserves ~22.5% for autocompact buffer
 SEP_STYLE="║"              # Separator style: │ ┃ ║ ⋮ ╎ ┆
 
 # Read JSON input
@@ -12,7 +11,7 @@ input=$(cat)
 # Extract data using jq
 model=$(echo "$input" | jq -r '.model.display_name // "unknown"')
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // ""')
-remaining_pct=$(echo "$input" | jq -r '.context_window.remaining_percentage // 100')
+used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 output_style=$(echo "$input" | jq -r '.output_style.name // ""')
 transcript_path=$(echo "$input" | jq -r '.transcript_path // ""')
 
@@ -144,16 +143,13 @@ git_info_plain=""
 #   git_info_plain="${branch}${dirty}${ahead_plain}${mod_plain}"
 # fi
 
-# Format context: show % used of usable context
-# Bar fills as context is used; 100% = autocompact triggers
+# Format context: show % used of total context window (matches /context)
 # Uses true color (24-bit ANSI) gradient: green → yellow → red
 context_info=""
 context_info_plain=""
 
-# Calculate % used of usable context
-pct_left=$((remaining_pct - AUTOCOMPACT_BUFFER_PCT))
-[ "$pct_left" -lt 0 ] && pct_left=0
-pct_used=$((100 - pct_left))
+pct_used=$used_pct
+[ "$pct_used" -lt 0 ] && pct_used=0
 [ "$pct_used" -gt 100 ] && pct_used=100
 
 filled=$((pct_used / 10))
