@@ -28,6 +28,18 @@ echo -e "${GREEN}Syncing tmux configuration...${NC}"
 rm -rf ~/.tmux.conf
 ln -sf "$PWD/.tmux.conf" ~/.tmux.conf
 
+echo -e "${GREEN}Syncing zellij configuration...${NC}"
+mkdir -p ~/.config/zellij
+rm -f ~/.config/zellij/config.kdl
+ln -sf "$PWD/zellij/config.kdl" ~/.config/zellij/config.kdl
+
+RIG_CONFIG_DIR=~/world/trees/root/src/areas/tools/rig/config
+if [ -d "$RIG_CONFIG_DIR" ]; then
+  rm -f "$RIG_CONFIG_DIR/local.kdl"
+  ln -sf "$PWD/zellij/local.kdl" "$RIG_CONFIG_DIR/local.kdl"
+  echo -e "  ${GREEN}Linked zellij/local.kdl → $RIG_CONFIG_DIR/local.kdl${NC}"
+fi
+
 echo -e "${GREEN}Syncing Claude configuration...${NC}"
 mkdir -p ~/.claude/commands ~/.claude/hooks ~/.claude/skills
 rm -rf ~/.claude/CLAUDE.md

@@ -1,0 +1,10 @@
+// Scalar-only overrides merged into rig's zellij config (rig-ui.kdl).
+// See: rig/lib/rig/commands/up.rb:99-116
+// Do NOT add block settings here (keybinds {...}, themes {...}, ui {...}) —
+// they would fully override rig's blocks and break its custom UI/keybinds.
+
+scroll_buffer_size 100000
+copy_command "pbcopy"
+copy_clipboard "system"
+copy_on_select true
+scrollback_editor "/usr/bin/env nvim"

@@ -1,0 +1,24 @@
+// Zellij config, sane defaults with small personal tweaks.
+// Docs: https://zellij.dev/documentation/options.html
+// Keybindings left at default (modal: Ctrl+p pane, Ctrl+t tab, Ctrl+s scroll, Ctrl+o session, etc.).
+
+// Cleaner look — no pane borders, matches tmux/wezterm style
+pane_frames false
+
+// macOS clipboard (matches .tmux.conf: pbcopy)
+copy_command "pbcopy"
+copy_clipboard "system"
+copy_on_select true
+
+// Mirrors .tmux.conf history-limit 102400
+scroll_buffer_size 100000
+
+// Open scrollback buffer in nvim with Ctrl+s → e
+scrollback_editor "/usr/bin/env nvim"
+
+default_mode "normal"
+default_shell "zsh"
+session_serialization true
+
+// Theme — swap for "dracula", "nord", "gruvbox-dark", "tokyo-night", etc.
+theme "default"
