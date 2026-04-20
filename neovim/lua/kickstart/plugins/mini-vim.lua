@@ -57,14 +57,21 @@ return { -- Collection of various small independent plugins/modules
 
     require('mini.icons').setup()
 
+    -- Session names: disambiguate worktrees automatically.
+    --   ~/world/trees/pool-3/src/.../shop-user-recognition  -> shop-user-recognition__pool-3
+    --   anywhere else                                       -> shop-user-recognition
+    -- Passing incl_branch=true appends __<branch> on top of that.
     require('mini.sessions').setup { autoread = false, autowrite = true, directory = '~/.neovim_sessions' }
     local get_session_name = function(incl_branch)
-      local dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':t'):gsub('/$', ''):gsub('%.', '')
-      local branch = vim.fn.system('git branch --show-current'):gsub('\n', ''):gsub('/', '_')
+      local cwd = vim.fn.getcwd()
+      local dir = vim.fn.fnamemodify(cwd, ':t'):gsub('/$', ''):gsub('%.', '')
+      local worktree = cwd:match('/world/trees/([^/]+)')
+      local base = worktree and (dir .. '__' .. worktree) or dir
       if not incl_branch then
-        return dir
+        return base
       end
-      return dir .. '__' .. branch
+      local branch = vim.fn.system('git branch --show-current'):gsub('\n', ''):gsub('/', '_')
+      return base .. '__' .. branch
     end
     local write_session = function(incl_branch)
       local session_name = get_session_name(incl_branch)

@@ -104,6 +104,7 @@ fi
 
 # search directories
 alias sd="cd ~ && cd \$(find ./code ./src ./world ./.jarvis ./idontexist -path '*/.git' -prune -o -type d -maxdepth ${max_depth} -print | fzf)"
+alias sdt="cd ~ && cd \$(find ./world/trees ./src/github.com -path '*/.git' -prune -o -type d -maxdepth 3 -print | fzf)"
 alias sf="cd ~/code && nvim \$(find . -type f | fzf)"
 
 # node.js & nvm config
