@@ -27,8 +27,9 @@ This command analyzes recent commits and changes to generate a professional pull
 
 ## Output Format
 
-The command generates a PR description with these sections:
+The command generates a PR description with these exact sections
 
+```
 ### TL;DR
 
 A 1-2 sentence summary of the changes
@@ -37,7 +38,7 @@ A 1-2 sentence summary of the changes
 
 - Bullet points summarizing the changes
 - No verbose descriptions
-- Focus on what was modified
+- Focus on what was modified, added, or removed. If relevant, give specific files or components affected.
 
 ### Why
 
@@ -45,9 +46,10 @@ A 1-2 sentence summary of the changes
 - Rationale for the chosen approach
 - Business or technical justification
 
-### Observability
+### PagerDuty
 
-- Standard team observability tag: `@spy page shop-identity`
+`@spy page shop-identity`
+```
 
 ## Requirements
 
@@ -57,8 +59,8 @@ A 1-2 sentence summary of the changes
 
 ## Notes
 
-- No fancy formatting (bold, italics, etc.)
+- No fancy formatting (bold, italics, etc.), but you can use `code_formatting` for file names, functions, or specific terms
 - Concise bullet points preferred
-- Professional tone without unnecessary verbosity
+- Professional tone without unnecessary verbosity (aka no yapping)
 
 ARGUMENTS: $ARGUMENTS
