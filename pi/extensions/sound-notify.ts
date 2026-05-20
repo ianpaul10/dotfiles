@@ -10,7 +10,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { execFile } from "node:child_process";
 
-const SOUND = "/System/Library/Sounds/Tink.aiff";
+const SOUND = "/System/Library/Sounds/Glass.aiff";
 
 export default function (pi: ExtensionAPI) {
 	pi.on("agent_end", async () => {
