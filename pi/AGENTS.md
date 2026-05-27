@@ -51,6 +51,7 @@ If I ask you to commit, push, post a Slack message, or perform any forbidden act
 - Follow existing code conventions and patterns in each project
 - Use meaningful variable and function names that clearly express intent
 - Avoid unnecessary comments -- code should be self-explanatory and self-documenting
+- When implementation choices involve assumptions, tradeoffs, edge cases, or areas the user should scrutinize during review, leave TODO comments calling them out. Follow the project-specific TODO format when one exists (e.g. Shopify smart_todo comments in shop-server).
 
 ## Development Practices
 
@@ -59,6 +60,7 @@ If I ask you to commit, push, post a Slack message, or perform any forbidden act
 - Propose changes in logically separated commit-sized chunks
 - If a task requires multiple commits, propose each change individually
 - When talking about code, always reference specific file paths and lines
+- For code flow walkthroughs, be especially explicit: include file paths and line numbers/ranges for each step so the path through the code is easy to follow.
 
 ### Version Control
 

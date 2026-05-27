@@ -48,7 +48,7 @@ A 1-2 sentence summary of the changes
 
 ### PagerDuty
 
-`@spy page shop-identity`
+`@spy page shop-network`
 ```
 
 ## Requirements
@@ -61,6 +61,7 @@ A 1-2 sentence summary of the changes
 
 - No fancy formatting (bold, italics, etc.), but you can use `code_formatting` for file names, functions, or specific terms
 - Concise bullet points preferred
-- Professional tone without unnecessary verbosity (aka no yapping)
+- Use a professional tone 
+- Most important: no yapping
 
 ARGUMENTS: $ARGUMENTS

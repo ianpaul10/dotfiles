@@ -31,5 +31,6 @@ scripts/local
 .claude/skills/*
 .claude/hooks/*
 pi/skills/*
+!pi/skills/pls-write-a-pr
 pi/extensions/*
 
