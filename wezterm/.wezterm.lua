@@ -85,6 +85,8 @@ table.insert(config.hyperlink_rules, {
 -- KEYBINDINGS
 config.leader = { key = "Space", mods = "CTRL", timeout_milliseconds = 1000 }
 local action = wezterm.action
+local bottom_pane_size = 0.20
+local right_pane_size = 0.30
 
 local function toggle_alt_pane(role, direction, size)
   return wezterm.action_callback(function(_, pane)
@@ -109,6 +111,51 @@ local function toggle_alt_pane(role, direction, size)
   end)
 end
 
+local function reset_alt_pane_sizes()
+  return wezterm.action_callback(function(window, pane)
+    local tab = pane:tab()
+    local panes = tab:panes_with_info()
+    local main, right, bottom
+
+    for _, p in ipairs(panes) do
+      if p.left == 0 and p.top == 0 then main = p end
+      if p.left > 0 then right = p end
+      if p.top > 0 and p.left == 0 then bottom = p end
+    end
+
+    if not main then return end
+    if main.is_zoomed then tab:set_zoomed(false) end
+
+    if right then
+      local total_width = main.width + right.width
+      local target_width = math.floor((total_width * right_pane_size) + 0.5)
+      local delta = target_width - right.width
+      if delta > 0 then
+        window:perform_action(action.AdjustPaneSize({ "Left", delta }), right.pane)
+      elseif delta < 0 then
+        window:perform_action(action.AdjustPaneSize({ "Right", -delta }), main.pane)
+      end
+    end
+
+    panes = tab:panes_with_info()
+    for _, p in ipairs(panes) do
+      if p.left == 0 and p.top == 0 then main = p end
+      if p.top > 0 and p.left == 0 then bottom = p end
+    end
+
+    if bottom and main then
+      local total_height = main.height + bottom.height
+      local target_height = math.floor((total_height * bottom_pane_size) + 0.5)
+      local delta = target_height - bottom.height
+      if delta > 0 then
+        window:perform_action(action.AdjustPaneSize({ "Up", delta }), bottom.pane)
+      elseif delta < 0 then
+        window:perform_action(action.AdjustPaneSize({ "Down", -delta }), main.pane)
+      end
+    end
+  end)
+end
+
 config.keys = {
   { key = "Enter", mods = "SHIFT", action = wezterm.action({ SendString = "\x1b\r" }) }, -- for claude code shift+enter to go to next line \r\n
 
@@ -126,8 +173,9 @@ config.keys = {
     -- action = wezterm.action.ShowLauncherArgs({ flags = "FUZZY|TABS" }), -- to enter in fuzzy mode automatically
   },
   -- PANE MANAGEMENT
-  { key = ";", mods = "LEADER", action = toggle_alt_pane("bottom", "Bottom", 0.20) },
-  { key = "Space", mods = "LEADER", action = toggle_alt_pane("right", "Right", 0.30) },
+  { key = ";", mods = "LEADER", action = toggle_alt_pane("bottom", "Bottom", bottom_pane_size) },
+  { key = "Space", mods = "LEADER", action = toggle_alt_pane("right", "Right", right_pane_size) },
+  { key = "r", mods = "LEADER", action = reset_alt_pane_sizes() },
   { key = '"', mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Right" }) },
   { key = "%", mods = "LEADER", action = wezterm.action.SplitPane({ direction = "Down" }) },
   {
