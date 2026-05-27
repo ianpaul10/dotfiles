@@ -200,7 +200,14 @@ return { -- LSP Configuration & Plugins
       -- https://shopify.github.io/ruby-lsp/editors.html#mason
       -- https://github.com/williamboman/mason.nvim/issues/1292
       -- ruby_lsp = {}, -- NOTE: lets try with JUST sorbet for now
-      sorbet = {},
+      sorbet = {
+        cmd = { 'shadowenv', 'exec', '--', 'srb', 'tc', '--lsp' },
+        cmd_env = {
+          -- Tapioca projects already have gem RBIs checked in. Skipping Sorbet's
+          -- Gemfile.lock cache keeps LSP startup resilient to dependency churn.
+          SRB_SKIP_GEM_RBIS = '1',
+        },
+      },
 
       lua_ls = {
         -- cmd = {...},
