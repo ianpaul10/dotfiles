@@ -84,6 +84,7 @@ else
 fi
 
 alias gs="git status"
+alias gwb='gh browse --repo shop/world --branch "$(git branch --show-current)"'
 alias lmk="afplay /System/Library/Sounds/Submarine.aiff" # let me know
 alias rip="dev down && dev reset --all -n . && dev vitess cleanup && dev yugabyte cleanup && dev up"
 alias gtlgtm="gt modify -a && gt submit --stack --update-only"
