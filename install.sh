@@ -24,6 +24,9 @@ echo -e "${GREEN}Syncing wezterm configuration...${NC}"
 rm -rf ~/.wezterm.lua
 ln -sf "$PWD/wezterm/.wezterm.lua" ~/.wezterm.lua
 
+echo -e "${GREEN}Syncing irb configuration...${NC}"
+ln -sf "$PWD/.irbrc" ~/.irbrc
+
 echo -e "${GREEN}Syncing tmux configuration...${NC}"
 rm -rf ~/.tmux.conf
 ln -sf "$PWD/.tmux.conf" ~/.tmux.conf
