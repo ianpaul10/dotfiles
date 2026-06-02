@@ -83,3 +83,5 @@ vim.o.winborder = 'rounded'
 
 vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
+
+vim.g.github_enterprise_urls = { ['gitstream.shopify.io'] = 'https://github.com' }
