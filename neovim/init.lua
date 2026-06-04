@@ -95,6 +95,13 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+-- Ensure ~/.cargo/bin is on PATH so tools like rustc/rust-analyzer resolve,
+-- regardless of how nvim was launched (rust_analyzer's root_dir shells out to rustc).
+local cargo_bin = vim.fn.expand '~/.cargo/bin'
+if vim.fn.isdirectory(cargo_bin) == 1 and not string.find(vim.env.PATH or '', cargo_bin, 1, true) then
+  vim.env.PATH = cargo_bin .. ':' .. vim.env.PATH
+end
+
 require 'vim-options'
 
 require 'vim-keymaps'
