@@ -35,7 +35,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
       },
       -- File and buffer formatters
       files = {
-        formatter = 'path.filename_first',
+        -- formatter = 'path.filename_first', -- NOTE: removing for now as it messes up pasting full file paths
         git_icons = true,
         file_icons = vim.g.have_nerd_font,
         color_icons = true,
@@ -67,7 +67,8 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>ss', fzf.builtin, { desc = '[S]earch [S]elect FzfLua' })
     vim.keymap.set('n', '<leader>sw', fzf.grep_cword, { desc = '[S]earch current [W]ord' })
     vim.keymap.set('n', '<leader>sg', fzf.live_grep, { desc = '[S]earch by [G]rep' })
-    vim.keymap.set('n', '<leader>sd', fzf.diagnostics_workspace, { desc = '[S]earch [D]iagnostics' })
+    vim.keymap.set('n', '<leader>sD', fzf.diagnostics_workspace, { desc = '[S]earch [D]iagnostics' })
+    vim.keymap.set('n', '<leader>sd', fzf.git_status, { desc = '[S]earch git [d]iff' })
     vim.keymap.set('n', '<leader>sr', fzf.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', fzf.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader>so', fzf.buffers, { desc = '[ ] Find existing open buffers' })
@@ -107,5 +108,21 @@ return { -- Fuzzy Finder (files, lsp, etc)
     vim.keymap.set('n', '<leader>sn', function()
       fzf.files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
+
+    vim.keymap.set('n', '<leader>sR', function()
+      fzf.live_grep {
+        cwd = '/Users/ip_shopify/world/trees/root/src',
+        prompt = 'Ruby grep (no tests/gen)> ',
+        rg_opts = table.concat({
+          '--hidden --column --line-number --no-heading --color=always',
+          '--smart-case --max-columns=4096',
+          '--glob=!.git/ --glob=!node_modules/',
+          '--iglob=*.rb', -- whitelist: only ruby files
+          '--iglob=!*test.rb', -- drop tests
+          '--iglob=!**/gen/**', -- drop generated code
+          '-e',
+        }, ' '),
+      }
+    end, { desc = '[S]earch [R]uby (no tests/gen)' })
   end,
 }
