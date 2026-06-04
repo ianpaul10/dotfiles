@@ -1,10 +1,15 @@
+local function git_status()
+  vim.cmd.Git()
+  vim.cmd.resize(10)
+end
+
 return {
   'tpope/vim-fugitive',
   dependencies = { 'tpope/vim-rhubarb' },
   keys = {
     {
       '<leader>gs',
-      vim.cmd.Git,
+      git_status,
       desc = '[G]it [s]tatus',
     },
     {
