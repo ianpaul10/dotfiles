@@ -49,6 +49,7 @@ If I ask you to commit, push, post a Slack message, or perform any forbidden act
 
 - Prefer editing existing files over creating new ones
 - Follow existing code conventions and patterns in each project
+- Prefer existing file-local patterns and norms over introducing newer syntax, clever refactors, or novel structure, even when the new approach is shorter or functionally equivalent
 - Use meaningful variable and function names that clearly express intent
 - Avoid unnecessary comments -- code should be self-explanatory and self-documenting
 - When implementation choices involve assumptions, tradeoffs, edge cases, or areas the user should scrutinize during review, leave TODO comments calling them out. Follow the project-specific TODO format when one exists (e.g. Shopify smart_todo comments in shop-server).
