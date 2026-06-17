@@ -166,6 +166,41 @@ return { -- LSP Configuration & Plugins
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
+    local util = require 'lspconfig.util'
+
+    local function world_checkout_root(path)
+      local normalized = vim.fs.normalize(path)
+      return normalized:match '^(.-/world/trees/[^/]+/src)'
+    end
+
+    local function is_world_checkout_root(path)
+      local root = world_checkout_root(path)
+      return root ~= nil and vim.fs.normalize(path) == root
+    end
+
+    local function root_pattern_without_world_root(...)
+      local matcher = util.root_pattern(...)
+      return function(fname)
+        local root = matcher(fname)
+        if root and is_world_checkout_root(root) then
+          return nil
+        end
+        return root
+      end
+    end
+
+    local function root_pattern_or_world_zone(...)
+      local matcher = util.root_pattern(...)
+      local zone_matcher = util.root_pattern 'zone.nix'
+      return function(fname)
+        local root = matcher(fname)
+        if root and not is_world_checkout_root(root) then
+          return root
+        end
+        return zone_matcher(fname)
+      end
+    end
+
     -- Enable the following language servers
     --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
     --
@@ -180,20 +215,42 @@ return { -- LSP Configuration & Plugins
       -- gopls = {},
 
       -- Python
-      pyright = {},
+      pyright = {
+        root_dir = root_pattern_or_world_zone('pyrightconfig.json', 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile'),
+      },
       -- basedpyright = {}, -- NOTE: Need to figure out config for this (or another LSP like pylyzer), right now they're too noisy
-      ruff = {},
+      ruff = {
+        root_dir = root_pattern_or_world_zone('pyproject.toml', 'ruff.toml', '.ruff.toml'),
+      },
 
       dockerls = {},
-      eslint = {},
-      rust_analyzer = {},
+      eslint = {
+        cmd = { 'shadowenv', 'exec', '--', vim.fn.stdpath 'data' .. '/mason/bin/vscode-eslint-language-server', '--stdio' },
+        root_dir = root_pattern_without_world_root(
+          'eslint.config.js',
+          'eslint.config.mjs',
+          'eslint.config.cjs',
+          '.eslintrc',
+          '.eslintrc.js',
+          '.eslintrc.cjs',
+          '.eslintrc.yaml',
+          '.eslintrc.yml',
+          '.eslintrc.json',
+          'package.json'
+        ),
+      },
+      rust_analyzer = {
+        root_dir = root_pattern_without_world_root('Cargo.toml', 'rust-project.json'),
+      },
       -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
       --
       -- Some languages (like typescript) have entire language plugins that can be useful:
       --    https://github.com/pmizio/typescript-tools.nvim
       --
       -- But for many setups, the LSP `ts_ls` (prev `tsserver`) will work just fine
-      ts_ls = {},
+      ts_ls = {
+        root_dir = root_pattern_without_world_root('tsconfig.json', 'jsconfig.json', 'package.json'),
+      },
 
       -- ruby
       -- WARN: having multiple ruby versions seems to cause issues with Mason's mgmt of the LSPs. More info:
@@ -201,18 +258,25 @@ return { -- LSP Configuration & Plugins
       -- https://github.com/williamboman/mason.nvim/issues/1292
       -- ruby_lsp = {}, -- NOTE: lets try with JUST sorbet for now
       sorbet = {
-        cmd = { 'shadowenv', 'exec', '--', 'srb', 'tc', '--lsp' },
-        cmd_env = {
-          -- Tapioca projects already have gem RBIs checked in. Skipping Sorbet's
-          -- Gemfile.lock cache keeps LSP startup resilient to dependency churn.
-          SRB_SKIP_GEM_RBIS = '1',
-        },
+        root_dir = root_pattern_without_world_root 'sorbet/config',
+        on_new_config = function(new_config, root_dir)
+          -- Run shadowenv from the Sorbet project root, even when Neovim was opened
+          -- from the World checkout root.
+          new_config.cmd = {
+            'sh',
+            '-c',
+            'cd "$1" && export SRB_SKIP_GEM_RBIS=1 && exec shadowenv exec -- srb tc --lsp',
+            'sorbet-lsp',
+            root_dir,
+          }
+        end,
       },
 
       lua_ls = {
         -- cmd = {...},
         -- filetypes = { ...},
         -- capabilities = {},
+        root_dir = root_pattern_without_world_root('.luarc.json', '.luarc.jsonc', '.luacheckrc', '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml'),
         settings = {
           Lua = {
             completion = {
@@ -239,23 +303,23 @@ return { -- LSP Configuration & Plugins
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
     require('mason-lspconfig').setup {
-      handlers = {
-        function(server_name)
-          local server = servers[server_name] or {}
-          -- This handles overriding only values explicitly passed
-          -- by the server configuration above. Useful when disabling
-          -- certain features of an LSP (for example, turning off formatting for tsserver)
-          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-
-          if server_name == 'sorbet' then
-            server.root_dir = require('lspconfig.util').root_pattern 'sorbet/config'
-          end
-
-          require('lspconfig')[server_name].setup(server)
-        end,
-      },
       ensure_installed = ensure_installed,
-      automatic_installation = true,
+      automatic_enable = false,
     }
+
+    local original_deprecate = vim.deprecate
+    vim.deprecate = function() end
+    local setup_ok, setup_err = pcall(function()
+      for server_name, server in pairs(servers) do
+        -- This handles overriding only values explicitly passed by the server
+        -- configuration above. Useful when disabling certain features of an LSP.
+        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        require('lspconfig')[server_name].setup(server)
+      end
+    end)
+    vim.deprecate = original_deprecate
+    if not setup_ok then
+      error(setup_err)
+    end
   end,
 }
