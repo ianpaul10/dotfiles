@@ -109,9 +109,9 @@ return { -- Fuzzy Finder (files, lsp, etc)
       fzf.files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
 
-    vim.keymap.set('n', '<leader>sR', function()
+    vim.keymap.set('n', '<leader>sG', function()
       fzf.live_grep {
-        cwd = '/Users/ip_shopify/world/trees/root/src',
+        cwd = vim.fn.getcwd(),
         prompt = 'Ruby grep (no tests/gen)> ',
         rg_opts = table.concat({
           '--hidden --column --line-number --no-heading --color=always',
@@ -123,6 +123,6 @@ return { -- Fuzzy Finder (files, lsp, etc)
           '-e',
         }, ' '),
       }
-    end, { desc = '[S]earch [R]uby (no tests/gen)' })
+    end, { desc = '[S]earch [G]rep ruby (no tests/gen)' })
   end,
 }
