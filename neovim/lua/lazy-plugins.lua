@@ -57,6 +57,7 @@ require('lazy').setup({
   require 'custom.plugins.shadowenv',
   require 'custom.plugins.observe-log-query',
   require 'custom.plugins.ae',
+    require 'custom.plugins.review',
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
