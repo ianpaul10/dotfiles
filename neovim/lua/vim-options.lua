@@ -85,3 +85,6 @@ vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
 
 vim.g.github_enterprise_urls = { ['gitstream.shopify.io'] = 'https://github.com' }
+
+-- one global statusline at the bottom for all buffers
+vim.o.laststatus = 3
