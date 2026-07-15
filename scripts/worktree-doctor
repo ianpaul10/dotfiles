@@ -1,0 +1,239 @@
+#!/bin/bash
+# worktree-doctor — inspect git worktrees of a bare repo and classify which
+# are safe to prune vs. which have uncommitted changes or un-backed-up work.
+#
+# Usage:
+#   worktree-doctor [repo-path]            # report only (fast, no sizes)
+#   worktree-doctor [repo-path] --size     # include per-worktree disk usage (slow)
+#   worktree-doctor [repo-path] --remove-safe   # also remove SAFE worktrees
+#
+# repo-path defaults to ~/world/git
+# Sizes are off by default because `du` walks every file and is slow on big
+# trees (node_modules etc.). Pass --size when you want the SIZE column.
+#
+# Classification:
+#   KEEP     — the main/master working checkout; never touched
+#   SAFE     — clean (no uncommitted changes) AND work is backed up
+#              (merged into main, or pushed to origin and in sync)
+#   REVIEW   — has uncommitted changes, OR local commits not on origin/main
+#              (removing would lose work unless you stash/push first)
+#
+# Notes:
+# - "on origin" is determined from local remote-tracking refs (refs/remotes/origin/*),
+#   i.e. reflects your last `git fetch`. Fetch first for a fresh picture.
+# - Sizes are measured on the worktree path (du -sh), which may take a moment.
+# - --remove-safe runs `git worktree remove` (no --force) for SAFE worktrees only;
+#   it will refuse anything with uncommitted changes. Nothing is force-removed.
+
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+worktree-doctor — classify git worktrees as safe-to-prune vs. needs-review
+
+Usage:
+  worktree-doctor [repo-path] [options]
+
+Options:
+  --remove-safe   Remove all SAFE worktrees (git worktree remove, no --force)
+  --size          Include per-worktree disk usage in the SIZE column (slow)
+  --no-size       Skip disk usage (default)
+  -h, --help      Show this help and exit
+
+repo-path defaults to ~/world/git
+
+Verdicts:
+  KEEP    main/master working checkout; never touched
+  SAFE    clean AND backed up (merged into main, or on origin & in sync)
+  REVIEW  uncommitted changes, OR local commits not on origin/main
+
+After --remove-safe, reclaim space with:
+  cd <repo> && git worktree prune && git gc --prune=now
+EOF
+}
+
+# Parse args: first non-flag positional is the repo path.
+REPO=""
+REMOVE_SAFE=0
+SHOW_SIZE=0
+for arg in "$@"; do
+  case "$arg" in
+    -h|--help) usage; exit 0 ;;
+    --remove-safe) REMOVE_SAFE=1 ;;
+    --size)        SHOW_SIZE=1 ;;
+    --no-size)     SHOW_SIZE=0 ;;
+    -*) echo "unknown option: $arg" >&2; usage >&2; exit 2 ;;
+    *)  REPO="$arg" ;;
+  esac
+done
+REPO="${REPO:-$HOME/world/git}"
+
+if [[ ! -d "$REPO" ]]; then
+  echo "error: repo path not found: $REPO" >&2
+  exit 1
+fi
+
+cd "$REPO"
+
+# Resolve the main branch name (main or master).
+MAIN_BRANCH=""
+for cand in main master; do
+  if git rev-parse --verify --quiet "$cand" >/dev/null 2>&1; then
+    MAIN_BRANCH="$cand"
+    break
+  fi
+done
+if [[ -z "$MAIN_BRANCH" ]]; then
+  echo "warning: could not find main or master branch; merge checks skipped" >&2
+fi
+
+# Colors (skip if not a tty).
+if [[ -t 1 ]]; then
+  C_GREEN=$'\033[32m'; C_YELLOW=$'\033[33m'; C_RED=$'\033[31m'
+  C_CYAN=$'\033[36m'; C_DIM=$'\033[2m'; C_RESET=$'\033[0m'
+  C_BOLD=$'\033[1m'
+else
+  C_GREEN=""; C_YELLOW=""; C_RED=""; C_CYAN=""; C_DIM=""; C_RESET=""; C_BOLD=""
+fi
+
+printf "${C_BOLD}%-48s %-8s %-14s %-18s %-10s %s${C_RESET}\n" \
+  "WORKTREE" "VERDICT" "UNCOMMITTED" "BACKUP" "SIZE" "BRANCH"
+printf '%.0s-' {1..120}; echo
+
+safe_count=0
+review_count=0
+keep_count=0
+declare -a removed_parents
+safe_bytes=0
+
+# Parse `git worktree list --porcelain` blocks.
+# Each block: worktree <path> / HEAD <sha> / (branch refs/heads/<name> | detached)
+while IFS=$'\t' read -r wt_path branch_ref; do
+  # Skip the bare repo entry (no branch, or path == repo).
+  if [[ -z "$branch_ref" ]]; then
+    continue
+  fi
+  branch="${branch_ref#refs/heads/}"
+
+  # Size of the worktree directory (optional — slow on big trees).
+  if [[ $SHOW_SIZE -eq 1 ]]; then
+    size_str="$(du -sh "$wt_path" 2>/dev/null | awk '{print $1}')"
+    size_bytes="$(du -sk "$wt_path" 2>/dev/null | awk '{print $1*1024}')"
+  else
+    size_str="-"
+    size_bytes=0
+  fi
+
+  # Uncommitted changes.
+  dirty="$(git -C "$wt_path" status --porcelain 2>/dev/null || true)"
+  dirty_count="$(printf '%s' "$dirty" | grep -c . || true)"
+
+  # Is it the main working checkout?
+  is_main=0
+  if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+    is_main=1
+  fi
+
+  # Backup status: merged into main? on origin & in sync?
+  backup=""
+  merged=0
+  if [[ -n "$MAIN_BRANCH" ]]; then
+    if git merge-base --is-ancestor "$branch" "$MAIN_BRANCH" 2>/dev/null; then
+      merged=1
+      backup="merged-to-${MAIN_BRANCH}"
+    fi
+  fi
+  if [[ $merged -eq 0 ]]; then
+    origin_sha="$(git rev-parse --quiet --verify "refs/remotes/origin/${branch}" 2>/dev/null || true)"
+    if [[ -n "$origin_sha" ]]; then
+      local_sha="$(git rev-parse --verify "$branch" 2>/dev/null || true)"
+      if [[ "$origin_sha" == "$local_sha" ]]; then
+        backup="on-origin(synced)"
+      else
+        ahead="$(git rev-list --count "refs/remotes/origin/${branch}..${branch}" 2>/dev/null || echo 0)"
+        if [[ ${ahead:-0} -eq 0 ]]; then
+          # local is behind or diverged but origin has the tip; treat as backed up
+          backup="on-origin(synced)"
+        else
+          backup="origin+${ahead}-ahead"
+        fi
+      fi
+    else
+      backup="local-only"
+    fi
+  fi
+
+  # Verdict.
+  if [[ $is_main -eq 1 ]]; then
+    verdict="${C_CYAN}KEEP${C_RESET}"
+    keep_count=$((keep_count+1))
+  elif [[ $dirty_count -gt 0 ]]; then
+    verdict="${C_YELLOW}REVIEW${C_RESET}"
+    review_count=$((review_count+1))
+  elif [[ "$backup" == "local-only" || "$backup" == "origin+"* ]]; then
+    verdict="${C_YELLOW}REVIEW${C_RESET}"
+    review_count=$((review_count+1))
+  else
+    verdict="${C_GREEN}SAFE${C_RESET}"
+    safe_count=$((safe_count+1))
+    safe_bytes=$((safe_bytes+size_bytes))
+  fi
+
+  uncommitted_str="${dirty_count} files"
+  if [[ $dirty_count -eq 0 ]]; then
+    uncommitted_str="${C_DIM}clean${C_RESET}"
+  fi
+
+  # Trim the worktree path for display.
+  short_path="${wt_path/#$HOME/~}"
+
+  printf "%-48s %-18s %-14s %-18s %-10s %s\n" \
+    "$short_path" "$verdict" "$uncommitted_str" "$backup" "$size_str" "$branch"
+
+  # Optionally remove SAFE worktrees.
+  if [[ $REMOVE_SAFE -eq 1 && $is_main -eq 0 && $dirty_count -eq 0 && "$backup" != "local-only" && "$backup" != "origin+"* ]]; then
+    # Use the path relative to repo for `git worktree remove`.
+    rel="${wt_path/#$REPO\//}"
+    echo "    -> removing: git worktree remove $rel"
+    if git worktree remove "$rel" 2>/dev/null; then
+      echo "       removed ✓"
+      # Track the parent wrapper dir (e.g. trees/<name>/ -> trees/<name>) for
+      # post-removal cleanup. git removes the worktree dir it owns (e.g. src/)
+      # but leaves any parent wrapper dir it didn't create.
+      parent="$(dirname "$wt_path")"
+      removed_parents+=("$parent")
+    else
+      echo "       ${C_RED}remove failed (try: git worktree remove --force $rel)${C_RESET}"
+    fi
+  fi
+done < <(git worktree list --porcelain | awk '
+  /^worktree / { wt = $2 }
+  /^branch /   { br = $2 }
+  /^$/         { if (wt != "") { print wt "\t" br; wt=""; br="" } }
+  END          { if (wt != "") print wt "\t" br }
+')
+
+echo
+printf "${C_BOLD}Summary:${C_RESET}  ${C_GREEN}SAFE${C_RESET}=${safe_count}  ${C_YELLOW}REVIEW${C_RESET}=${review_count}  ${C_CYAN}KEEP${C_RESET}=${keep_count}\n"
+if [[ $safe_bytes -gt 0 ]]; then
+  human="$(echo "$safe_bytes" | awk '{ split("B KB MB GB TB",u); s=$1; for(i=1; s>=1024 && i<5; i++) s/=1024; printf "%.1f%s", s, u[i] }')"
+  printf "Reclaimable from SAFE worktrees: ~${C_BOLD}%s${C_RESET}\n" "$human"
+fi
+# After removing worktrees, clean up any empty parent wrapper dirs that git
+# left behind (e.g. trees/<name>/ when the worktree was trees/<name>/src).
+if [[ $REMOVE_SAFE -eq 1 && ${#removed_parents[@]} -gt 0 ]]; then
+  cleaned=0
+  for p in "${removed_parents[@]}"; do
+    # Only delete if empty and still exists — never force.
+    if [[ -d "$p" && -z "$(ls -A "$p" 2>/dev/null)" ]]; then
+      rmdir "$p" 2>/dev/null && cleaned=$((cleaned+1))
+    fi
+  done
+  if [[ $cleaned -gt 0 ]]; then
+    printf "Cleaned up ${C_BOLD}%d${C_RESET} empty wrapper dir(s).\n" "$cleaned"
+  fi
+fi
+
+if [[ $REMOVE_SAFE -eq 0 && $safe_count -gt 0 ]]; then
+  printf "${C_DIM}Run with --remove-safe to prune the SAFE worktrees, then: git worktree prune && git gc --prune=now${C_RESET}\n"
+fi
