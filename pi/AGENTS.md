@@ -34,7 +34,11 @@ pi/
 - **Write to external APIs** — `slack_post`, `curl -X POST/PUT/PATCH/DELETE` to external services, deploying dashboards, creating resources in GCP, posting to GitHub, etc. Read-only API calls are fine.
 - **Destructive filesystem operations** — `rm -rf ~`, `rm -rf /`, `rm -rf ~/world`, or any mass deletion outside the current project
 
-If I ask you to commit, push, post a Slack message, or perform any forbidden action, **do it** — the ask itself is explicit approval. The rule is: don't do these autonomously as part of a larger task without checking first.
+### Absolutely Forbidden — Never do these, even if explicitly asked
+
+- **Never reply to or perform any writes to GitHub** — This includes posting PR comments, replying to review comments, creating/updating issues, editing PR descriptions, resolving review threads, reacting to comments, and any other GitHub write operation via `gh`, the GitHub API, or any other method. **This rule has NO exceptions.** Even if the user explicitly asks you to do it, **do not do it** — instead, draft the text locally and let the user post it themselves. GitHub read operations (`gh pr view`, `gh pr list`, `gh api` GET requests, etc.) are fine.
+
+If I ask you to commit, push, post a Slack message, or perform any forbidden action (other than GitHub writes, which are absolutely forbidden), **do it** — the ask itself is explicit approval. The rule is: don't do these autonomously as part of a larger task without checking first.
 
 ## General Workflow Preferences
 
