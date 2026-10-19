@@ -1,3 +1,11 @@
+local function browse_file_on_github()
+  if vim.fn.FugitiveHead() == '.invalid' then
+    vim.cmd 'GBrowse main:%'
+  else
+    vim.cmd.GBrowse()
+  end
+end
+
 return {
   'tpope/vim-fugitive',
   dependencies = { 'tpope/vim-rhubarb' },
@@ -9,7 +17,7 @@ return {
     },
     {
       '<leader>go',
-      ':GBrowse<CR>',
+      browse_file_on_github,
       desc = '[G]it [o]pen file in GitHub',
     },
     {
