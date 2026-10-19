@@ -70,8 +70,14 @@ echo -e "${GREEN}Syncing ghostty configuration...${NC}"
 rm -rf ~/.config/ghostty/config
 ln -sf "$PWD/ghostty/config" ~/.config/ghostty/config
 
-echo -e "${GREEN}Syncing pi skills, extensions, and agent instructions...${NC}"
+echo -e "${GREEN}Syncing pi settings, skills, extensions, and agent instructions...${NC}"
 mkdir -p ~/.pi/agent
+rm -f ~/.pi/agent/settings.json
+ln -sf "$PWD/pi/settings.json" ~/.pi/agent/settings.json
+echo -e "  ${GREEN}Linked pi/settings.json → ~/.pi/agent/settings.json${NC}"
+rm -f ~/.pi/agent/keybindings.json
+ln -sf "$PWD/pi/keybindings.json" ~/.pi/agent/keybindings.json
+echo -e "  ${GREEN}Linked pi/keybindings.json → ~/.pi/agent/keybindings.json${NC}"
 rm -rf ~/.pi/agent/skills
 ln -sf "$PWD/pi/skills" ~/.pi/agent/skills
 echo -e "  ${GREEN}Linked pi/skills → ~/.pi/agent/skills${NC}"

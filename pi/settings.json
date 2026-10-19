@@ -1,0 +1,30 @@
+{
+  "defaultModel": "claude-opus-5",
+  "defaultProvider": "anthropic",
+  "defaultThinkingLevel": "medium",
+  "enabledModels": [
+    "claude-opus-5",
+    "gpt-5.6-sol",
+    "glm-5.2"
+  ],
+  "lastChangelogVersion": "1.2.0",
+  "npmCommand": [
+    "pnpm",
+    "--config.node-version=22.22.2"
+  ],
+  "packages": [
+    "https://github.com/shopify-playground/shop-pi-fy",
+    "git:github.com/obra/superpowers",
+    {
+      "source": "https://github.com/shopify-playground/joel.gerber.pi",
+      "autoload": false,
+      "extensions": [
+        "+extensions/shopify-mastery-workflow/index.ts"
+      ],
+      "skills": [
+        "+skills/shopify-mastery-guide/SKILL.md"
+      ]
+    }
+  ],
+  "theme": "dark"
+}
