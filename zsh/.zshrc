@@ -83,7 +83,7 @@ else
   export EDITOR='nvim'
 fi
 
-alias gs="git status"
+alias GS="git status"
 alias gwb='gh browse --repo shop/world --branch "$(git branch --show-current)"'
 alias lmk="afplay /System/Library/Sounds/Submarine.aiff" # let me know
 alias rip="dev down && dev reset --all -n . && dev vitess cleanup && dev yugabyte cleanup && dev up"
@@ -115,6 +115,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # local scripts setup
 export LOCAL_SCRIPTS_DIR="$HOME/code/dotfiles/scripts"
+alias gh-pr-at="$LOCAL_SCRIPTS_DIR/gh-pr-at"
 # NOTE: using the global pyenv version which should have the required depenencies, instead of the possible virtual env version which might not
 alias jarvis="$HOME/.pyenv/shims/python $LOCAL_SCRIPTS_DIR/ask_jarvis/ask_jarvis.py"
 
@@ -168,3 +169,11 @@ if $WORK_LAPPY; then
 fi
 
 echo "🫡"
+
+# pnpm
+export PNPM_HOME="/Users/ip_shopify/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
