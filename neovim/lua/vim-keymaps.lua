@@ -97,3 +97,8 @@ end
 vim.keymap.set('n', '<leader>cp', ':let @+=expand("%")<CR>', { desc = '[C]opy current buffer [p]ath from PWD' })
 vim.keymap.set('n', '<leader>cn', copy_current_buffer_path_with_line_number, { desc = '[C]opy current buffer path with li[n]e number' })
 vim.keymap.set('n', '<leader>cP', ':let @+=expand("%:p")<CR>', { desc = '[C]opy current buffer [P]ath from root' })
+
+-- NOTE: code review comments
+vim.keymap.set('n', '<leader>cra', ':Review note<CR>', { desc = '[C]ode [R]eview [A]dd comment' })
+vim.keymap.set('n', '<leader>crc', ':Review export<CR>', { desc = '[C]ode [R]eview [C]opy comments' })
+vim.keymap.set('n', '<leader>crd', ':Review clear<CR>', { desc = '[C]ode [R]eview [D]elete comments' })
