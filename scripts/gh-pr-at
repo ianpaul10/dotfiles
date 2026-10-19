@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -euo pipefail
+
+usage() {
+  echo "usage: gh-pr-at path/to/file:line [--web]" >&2
+}
+
+spec="${1:-}"
+file="${spec%:*}"
+line="${spec##*:}"
+open_in_browser="${2:-}"
+
+if [[ -z "$spec" || ! "$line" =~ ^[0-9]+$ || ( -n "$open_in_browser" && "$open_in_browser" != "--web" ) || $# -gt 2 ]]; then
+  usage
+  exit 2
+fi
+
+root="$(git rev-parse --show-toplevel)"
+
+if [[ "$file" == /* ]]; then
+  if [[ "$file" != "$root/"* ]]; then
+    echo "file is outside this repository: $file" >&2
+    exit 2
+  fi
+  file="${file#"$root/"}"
+fi
+
+sha="$(
+  git -C "$root" blame -L "$line,$line" --porcelain -- "$file" |
+    awk 'NR == 1 { print $1 }'
+)"
+
+if [[ -z "$sha" || "$sha" =~ ^0+$ ]]; then
+  echo "line $line does not belong to a committed change" >&2
+  exit 1
+fi
+
+number="$(
+  gh pr list \
+    --repo shop/world \
+    --state all \
+    --search "$sha" \
+    --limit 1 \
+    --json number \
+    --jq '.[0].number // empty' \
+    2>/dev/null || true
+)"
+
+if [[ -n "$number" ]]; then
+  provider="github"
+  url="https://github.com/shop/world/pull/$number"
+else
+  number="$(
+    gs api "repos/shop/world/commits/$sha/pulls" 2>/dev/null |
+      jq -r '.[0].number // empty' || true
+  )"
+
+  if [[ -n "$number" ]]; then
+    provider="gitstream"
+    url="https://meteorite.shopify.io/repos/shop/world/pulls/$number"
+  else
+    echo "No GitHub or Meteorite PR found for commit $sha" >&2
+    exit 1
+  fi
+fi
+
+printf '%s\n' "$url"
+
+if [[ "$open_in_browser" == "--web" ]]; then
+  case "$provider" in
+    github)
+      gh pr view "$number" --repo shop/world --web
+      ;;
+    gitstream)
+      gs pr view "$number" --web
+      ;;
+  esac
+fi
