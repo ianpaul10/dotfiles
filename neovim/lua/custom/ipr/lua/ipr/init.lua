@@ -20,6 +20,21 @@ M.subcommands = {
       require('ipr.quickfix').open(bang)
     end,
   },
+  walkthrough = {
+    desc = 'Write a review walkthrough with headless pi',
+    run = function()
+      local ctx = require('ipr.commands').ctx()
+      if ctx then
+        require('ipr.walkthrough').start(ctx)
+      end
+    end,
+  },
+  cancel = {
+    desc = 'Cancel the running walkthrough',
+    run = function()
+      require('ipr.walkthrough').cancel()
+    end,
+  },
 }
 
 local function notify(msg, level)
