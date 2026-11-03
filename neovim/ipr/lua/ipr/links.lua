@@ -116,7 +116,17 @@ function M.resolve(path, doc_buf, fallback_dir)
   end
   local root = frontmatter.read_buf(doc_buf).repo_root
   root = root and vim.fn.expand(root) or git.root(fallback_dir or vim.fn.getcwd()) or vim.fn.getcwd()
-  return root .. '/' .. path
+  local full = root .. '/' .. path
+  if vim.fn.filereadable(full) == 1 then
+    return full
+  end
+  -- LLMs sometimes shorten paths despite instructions; accept a unique suffix match.
+  local res = git.git({ 'ls-files', '--', '*/' .. path }, root)
+  local matches = vim.split(vim.trim(res.stdout), '\n', { trimempty = true })
+  if #matches == 1 then
+    return root .. '/' .. matches[1]
+  end
+  return full
 end
 
 ---Window to show code in: the remembered source window, else the window to
