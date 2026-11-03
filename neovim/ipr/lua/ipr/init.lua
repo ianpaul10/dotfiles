@@ -21,6 +21,12 @@ M.subcommands = {
       require('ipr.quickfix').open(bang)
     end,
   },
+  uncommitted = {
+    desc = 'Uncommitted changes (staged, unstaged, untracked) vs HEAD in quickfix',
+    run = function()
+      require('ipr.quickfix').open_uncommitted()
+    end,
+  },
   walkthrough = {
     desc = 'Write a review walkthrough with headless pi',
     run = function()
@@ -111,6 +117,7 @@ end
 local function set_keymaps(keys)
   map(keys.files, '<cmd>IPR files<CR>', 'changed [f]iles')
   map(keys.files_all, '<cmd>IPR files!<CR>', 'changed [F]iles incl. uncommitted')
+  map(keys.uncommitted, '<cmd>IPR uncommitted<CR>', '[u]ncommitted changes')
   map(keys.walkthrough, '<cmd>IPR walkthrough<CR>', '[w]alkthrough with pi')
   map(keys.open, '<cmd>IPR open<CR>', '[o]pen review')
   map(keys.base, '<cmd>IPR base<CR>', 'show [b]ase')

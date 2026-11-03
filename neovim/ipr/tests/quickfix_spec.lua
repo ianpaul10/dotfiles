@@ -88,3 +88,50 @@ describe('quickfix formatting', function()
     vim.cmd 'cclose'
   end)
 end)
+
+describe('quickfix uncommitted', function()
+  local function dirty_fixture()
+    local dir = fixture()
+    H.write(dir, 'keep.txt', H.lines(10):gsub('line 3\n', 'line three\n'):gsub('line 5\n', 'line five\n'))
+    H.write(dir, 'staged.txt', 'staged\n')
+    H.git(dir, 'add', 'staged.txt')
+    H.write(dir, 'scratch.txt', 'x\n')
+    H.git(dir, 'rm', '-q', 'added.txt')
+    return dir
+  end
+
+  it('lists only changes vs HEAD, including staged, deleted and untracked', function()
+    local dir = dirty_fixture()
+    local files = by_path(assert(qf.collect_range(dir, 'HEAD', nil)))
+    local paths = vim.tbl_keys(files)
+    table.sort(paths)
+    assert.same({ 'added.txt', 'keep.txt', 'scratch.txt', 'staged.txt' }, paths)
+    assert.equals('M', files['keep.txt'].status)
+    assert.equals(1, files['keep.txt'].changed)
+    assert.equals('A', files['staged.txt'].status)
+    assert.equals('D', files['added.txt'].status)
+    assert.equals('?', files['scratch.txt'].status)
+  end)
+
+  it('opens deleted files from HEAD', function()
+    local dir = dirty_fixture()
+    vim.cmd.cd(dir)
+    vim.cmd 'IPR uncommitted'
+    local list = vim.fn.getqflist { title = 1, items = 1 }
+    assert.matches('^iPR: uncommitted on feature · 4 files', list.title)
+    local head = H.git(dir, 'rev-parse', 'HEAD')
+    local deleted = vim.tbl_filter(function(i)
+      return i.user_data.path == 'added.txt'
+    end, list.items)[1]
+    assert.equals('ipr://' .. head .. '/added.txt', vim.api.nvim_buf_get_name(deleted.bufnr))
+    vim.cmd 'cclose'
+  end)
+
+  it('says so when the tree is clean', function()
+    local dir = fixture()
+    vim.cmd.cd(dir)
+    vim.cmd 'IPR uncommitted'
+    assert.equals('iPR: no uncommitted changes on feature', vim.fn.getqflist({ title = 1 }).title)
+    vim.cmd 'cclose'
+  end)
+end)

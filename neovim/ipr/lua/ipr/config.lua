@@ -15,6 +15,7 @@ M.defaults = {
   keys = {
     files = '<leader>ipf',
     files_all = '<leader>ipF',
+    uncommitted = '<leader>ipu',
     walkthrough = '<leader>ipw',
     open = '<leader>ipo',
     base = '<leader>ipb',
