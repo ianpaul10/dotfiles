@@ -150,6 +150,9 @@ local function on_exit(job, result)
   end
   vim.fn.delete(log_path)
   notify('walkthrough ready: ' .. vim.fn.fnamemodify(output_path, ':~') .. ' (:iPR open)')
+  if config.get().open_on_complete then
+    require('ipr.viewer').open(output_path, job.ctx)
+  end
 end
 
 ---@param ctx IprCtx

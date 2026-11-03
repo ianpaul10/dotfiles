@@ -35,6 +35,12 @@ M.subcommands = {
       require('ipr.walkthrough').cancel()
     end,
   },
+  open = {
+    desc = 'Open the latest review for this branch in a right split; `open <path>` opens a specific one',
+    run = function(args)
+      require('ipr.viewer').open_command(args)
+    end,
+  },
 }
 
 local function notify(msg, level)
