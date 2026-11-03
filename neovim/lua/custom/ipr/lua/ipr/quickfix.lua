@@ -64,11 +64,14 @@ function M.format(file)
   )
 end
 
----Filename to open for a quickfix entry.
+---Filename to open for a quickfix entry. Deleted files open from the base.
 ---@param ctx IprCtx
 ---@param file IprChangedFile
 ---@return string
 function M.filename(ctx, file)
+  if file.status == 'D' then
+    return require('ipr.gitbuf').uri(ctx.root, ctx.merge_base, file.path)
+  end
   return ctx.root .. '/' .. file.path
 end
 

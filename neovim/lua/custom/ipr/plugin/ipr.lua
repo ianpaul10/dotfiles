@@ -16,4 +16,12 @@ end, {
   end,
 })
 
+vim.api.nvim_create_autocmd('BufReadCmd', {
+  group = vim.api.nvim_create_augroup('ipr_gitbuf', { clear = true }),
+  pattern = 'ipr://*',
+  callback = function(ev)
+    require('ipr.gitbuf').read(ev.buf)
+  end,
+})
+
 vim.cmd [[cnoreabbrev <expr> iPR (getcmdtype() ==# ':' && getcmdline() ==# 'iPR') ? 'IPR' : 'iPR']]
