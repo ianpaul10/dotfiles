@@ -14,6 +14,12 @@ M.subcommands = {
       require('ipr.commands').base(args)
     end,
   },
+  files = {
+    desc = 'Changed files in quickfix; `files!` includes uncommitted changes',
+    run = function(_, bang)
+      require('ipr.quickfix').open(bang)
+    end,
+  },
 }
 
 local function notify(msg, level)
