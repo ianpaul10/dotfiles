@@ -57,6 +57,7 @@ function M.open(path, ctx)
     vim.api.nvim_win_set_width(0, math.floor(vim.o.columns / 2))
     vim.b.ipr_source_win = source_win
   end
+  require('ipr.links').attach(vim.api.nvim_get_current_buf())
   warn_if_stale(vim.api.nvim_get_current_buf(), ctx)
 end
 

@@ -41,6 +41,12 @@ M.subcommands = {
       require('ipr.viewer').open_command(args)
     end,
   },
+  links = {
+    desc = 'All links in the review into quickfix',
+    run = function()
+      require('ipr.links').to_quickfix()
+    end,
+  },
 }
 
 local function notify(msg, level)
@@ -94,9 +100,20 @@ local function set_keymaps(keys)
   map(keys.links, '<cmd>IPR links<CR>', 'review [l]inks to quickfix')
 end
 
+local function attach_reviews()
+  vim.api.nvim_create_autocmd({ 'BufReadPost', 'BufNewFile' }, {
+    group = vim.api.nvim_create_augroup('ipr_reviews', { clear = true }),
+    pattern = config.reviews_dir() .. '/*.md',
+    callback = function(ev)
+      require('ipr.links').attach(ev.buf)
+    end,
+  })
+end
+
 function M.setup(opts)
   local options = config.setup(opts)
   set_keymaps(options.keys)
+  attach_reviews()
 end
 
 return M
