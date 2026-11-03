@@ -9,6 +9,8 @@ M.defaults = {
   open_on_complete = false,
   -- nil | 'dt' | 'gh': opt-in network lookup of the PR's base branch
   forge = nil,
+  -- turn on PR gutter signs (gitsigns base = merge-base) whenever :iPR files runs
+  signs_on_files = false,
   -- set any key to false to disable it
   keys = {
     files = '<leader>ipf',
@@ -17,6 +19,7 @@ M.defaults = {
     open = '<leader>ipo',
     base = '<leader>ipb',
     links = '<leader>ipl',
+    signs = '<leader>ips',
     jump = { '<CR>', 'gd' },
     next_link = ']l',
     prev_link = '[l',

@@ -152,6 +152,9 @@ function M.open(include_worktree)
     quickfixtextfunc = M.textfunc,
   })
   vim.cmd 'botright copen'
+  if require('ipr.config').get().signs_on_files then
+    require('ipr.signs').on(ctx)
+  end
 end
 
 return M

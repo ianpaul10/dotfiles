@@ -5,6 +5,7 @@ local M = {}
 ---@class IprSubcommand
 ---@field run fun(args: string[], bang: boolean)
 ---@field desc string
+---@field args? string[] completion candidates for the first argument
 
 ---@type table<string, IprSubcommand>
 M.subcommands = {
@@ -47,6 +48,13 @@ M.subcommands = {
       require('ipr.links').to_quickfix()
     end,
   },
+  signs = {
+    desc = 'Gutter signs vs the PR base: `signs [on|off|toggle|status]` (default toggle)',
+    args = { 'on', 'off', 'toggle', 'status' },
+    run = function(args)
+      require('ipr.signs').command(args)
+    end,
+  },
 }
 
 local function notify(msg, level)
@@ -74,15 +82,24 @@ function M.dispatch(fargs, bang)
   sub.run(vim.list_slice(fargs, 2), bang)
 end
 
+local function starting_with(list, prefix)
+  return vim.tbl_filter(function(name)
+    return vim.startswith(name, prefix)
+  end, list)
+end
+
 function M.complete(arglead, cmdline)
   local words = vim.split(cmdline, '%s+', { trimempty = true })
   local completing_sub = #words < 2 or (#words == 2 and arglead ~= '')
-  if not completing_sub then
-    return {}
+  if completing_sub then
+    return starting_with(M.subcommand_names(), arglead)
   end
-  return vim.tbl_filter(function(name)
-    return vim.startswith(name, arglead)
-  end, M.subcommand_names())
+  local sub = M.subcommands[words[2]]
+  local completing_first_arg = #words == 2 or (#words == 3 and arglead ~= '')
+  if sub and sub.args and completing_first_arg then
+    return starting_with(sub.args, arglead)
+  end
+  return {}
 end
 
 local function map(lhs, rhs, desc)
@@ -98,6 +115,7 @@ local function set_keymaps(keys)
   map(keys.open, '<cmd>IPR open<CR>', '[o]pen review')
   map(keys.base, '<cmd>IPR base<CR>', 'show [b]ase')
   map(keys.links, '<cmd>IPR links<CR>', 'review [l]inks to quickfix')
+  map(keys.signs, '<cmd>IPR signs toggle<CR>', 'toggle PR gutter [s]igns')
 end
 
 local function attach_reviews()
