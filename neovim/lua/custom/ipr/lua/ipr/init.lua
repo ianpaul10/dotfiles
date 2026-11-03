@@ -7,7 +7,14 @@ local M = {}
 ---@field desc string
 
 ---@type table<string, IprSubcommand>
-M.subcommands = {}
+M.subcommands = {
+  base = {
+    desc = 'Show the resolved base; `base <ref>` saves an override, `base --clear` removes it',
+    run = function(args)
+      require('ipr.commands').base(args)
+    end,
+  },
+}
 
 local function notify(msg, level)
   vim.notify('iPR: ' .. msg, level or vim.log.levels.INFO)
