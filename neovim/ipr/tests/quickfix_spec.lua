@@ -82,7 +82,7 @@ describe('quickfix formatting', function()
     vim.cmd.cd(dir)
     qf.open(false)
     local title = vim.fn.getqflist({ title = 1 }).title
-    assert.matches('^iPR: feature ← main %(via ancestor%) · 4 files', title)
+    assert.matches('^iPR: feature ← main %(via default%) · 4 files', title)
     local lines = vim.api.nvim_buf_get_lines(vim.fn.getqflist({ qfbufnr = 1 }).qfbufnr, 0, -1, false)
     assert.equals('A      +5                added.txt', lines[1])
     vim.cmd 'cclose'

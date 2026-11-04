@@ -90,12 +90,16 @@ local function short_ref(full)
   return full:gsub('^refs/heads/', ''):gsub('^refs/remotes/', '')
 end
 
--- Nearest local branch (or the remote default branch) that HEAD is built on.
+-- Nearest local branch that HEAD is stacked on. Only commits that aren't on the
+-- default branch are walked, so stale branches behind trunk are never picked
+-- and the walk stays proportional to the branch, not the repo's history.
 function M.resolvers.ancestor(info)
-  local remote_default = M.remote_default(info)
-  local args = {
+  local trunk = M.resolvers.default(info)
+  if not trunk then
+    return nil
+  end
+  local res = git.git({
     'log',
-    '--topo-order',
     '--simplify-by-decoration',
     '--decorate=full',
     '--decorate-refs=refs/heads/',
@@ -103,11 +107,9 @@ function M.resolvers.ancestor(info)
     '-n',
     '200',
     'HEAD',
-  }
-  if remote_default then
-    table.insert(args, 5, '--decorate-refs=refs/remotes/' .. remote_default)
-  end
-  local res = git.git(args, info.root)
+    '--not',
+    trunk,
+  }, info.root)
   if not res.ok then
     return nil
   end
@@ -123,12 +125,6 @@ function M.resolvers.ancestor(info)
       end
       if #candidates > 0 then
         table.sort(candidates)
-        local preferred = { remote_default, remote_default and (remote_default:gsub('^[^/]+/', '')) }
-        for _, name in ipairs(preferred) do
-          if vim.tbl_contains(candidates, name) then
-            return name
-          end
-        end
         return candidates[1]
       end
     end
