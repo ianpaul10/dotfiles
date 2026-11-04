@@ -81,6 +81,7 @@ describe('quickfix formatting', function()
     local dir = fixture()
     vim.cmd.cd(dir)
     qf.open(false)
+    H.wait_qf()
     local title = vim.fn.getqflist({ title = 1 }).title
     assert.matches('^iPR: feature ← main %(via default%) · 4 files', title)
     local lines = vim.api.nvim_buf_get_lines(vim.fn.getqflist({ qfbufnr = 1 }).qfbufnr, 0, -1, false)
@@ -117,6 +118,7 @@ describe('quickfix uncommitted', function()
     local dir = dirty_fixture()
     vim.cmd.cd(dir)
     vim.cmd 'IPR uncommitted'
+    H.wait_qf()
     local list = vim.fn.getqflist { title = 1, items = 1 }
     assert.matches('^iPR: uncommitted on feature · 4 files', list.title)
     local head = H.git(dir, 'rev-parse', 'HEAD')
@@ -131,6 +133,7 @@ describe('quickfix uncommitted', function()
     local dir = fixture()
     vim.cmd.cd(dir)
     vim.cmd 'IPR uncommitted'
+    H.wait_qf()
     assert.equals('iPR: no uncommitted changes on feature', vim.fn.getqflist({ title = 1 }).title)
     vim.cmd 'cclose'
   end)

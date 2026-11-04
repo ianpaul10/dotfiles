@@ -57,6 +57,7 @@ describe('signs', function()
   it('turns on with :iPR files when signs_on_files is set', function()
     config.setup { signs_on_files = true }
     vim.cmd 'IPR files'
+    H.wait_qf()
     vim.cmd 'cclose'
     assert.equals(ctx.merge_base, signs.base)
   end)

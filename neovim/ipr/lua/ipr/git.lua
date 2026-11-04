@@ -6,28 +6,107 @@ local M = {}
 ---@field stdout string
 ---@field stderr string
 
----Run a command synchronously. Never throws.
+---@type table<thread, function> resume functions for coroutines started by M.async
+local async_threads = setmetatable({}, { __mode = 'k' })
+
+local function normalize(res)
+  return { ok = res.code == 0, code = res.code, stdout = res.stdout or '', stderr = res.stderr or '' }
+end
+
+local function failed(err)
+  return { ok = false, code = -1, stdout = '', stderr = tostring(err) }
+end
+
+---Run fn in a coroutine where M.run / M.run_all don't block the editor.
+---@param fn fun()
+---@param on_error? fun(err: string)
+function M.async(fn, on_error)
+  local co = coroutine.create(fn)
+  local function step(...)
+    local ok, err = coroutine.resume(co, ...)
+    if not ok then
+      local msg = debug.traceback(co, err)
+      if on_error then
+        on_error(msg)
+      else
+        vim.notify('iPR: ' .. msg, vim.log.levels.ERROR)
+      end
+    end
+  end
+  async_threads[co] = step
+  step()
+end
+
+local function current_async()
+  local co = coroutine.running()
+  return co and async_threads[co] or nil
+end
+
+---Run commands concurrently. Inside M.async the editor stays responsive;
+---elsewhere this blocks until all finish. Never throws.
+---@param cmds { cmd: string[], cwd?: string }[]
+---@return IprRunResult[]
+function M.run_all(cmds)
+  local results, procs, pending = {}, {}, #cmds
+  local step = current_async()
+  for i, c in ipairs(cmds) do
+    local on_exit = step and function(res)
+      results[i] = normalize(res)
+      pending = pending - 1
+      if pending == 0 then
+        vim.schedule(step)
+      end
+    end or nil
+    local ok, proc = pcall(vim.system, c.cmd, { cwd = c.cwd, text = true }, on_exit)
+    if ok then
+      procs[i] = proc
+    else
+      results[i] = failed(proc)
+      pending = pending - 1
+    end
+  end
+  if step then
+    if pending > 0 then
+      coroutine.yield()
+    end
+  else
+    for i, proc in pairs(procs) do
+      results[i] = normalize(proc:wait())
+    end
+  end
+  return results
+end
+
+---Run one command. Non-blocking inside M.async. Never throws.
 ---@param cmd string[]
 ---@param opts? { cwd?: string }
 ---@return IprRunResult
 function M.run(cmd, opts)
-  opts = opts or {}
-  local ok, res = pcall(function()
-    return vim.system(cmd, { cwd = opts.cwd, text = true }):wait()
-  end)
-  if not ok then
-    return { ok = false, code = -1, stdout = '', stderr = tostring(res) }
-  end
-  return { ok = res.code == 0, code = res.code, stdout = res.stdout or '', stderr = res.stderr or '' }
+  return M.run_all({ { cmd = cmd, cwd = (opts or {}).cwd } })[1]
+end
+
+---@param args string[]
+local function git_cmd(args)
+  local cmd = { 'git', '-c', 'core.quotepath=off' }
+  vim.list_extend(cmd, args)
+  return cmd
+end
+
+---Run several git commands concurrently in one repo.
+---@param arg_lists string[][]
+---@param cwd? string
+---@return IprRunResult[]
+function M.git_all(arg_lists, cwd)
+  return M.run_all(vim.tbl_map(function(args)
+    return { cmd = git_cmd(args), cwd = cwd }
+  end, arg_lists))
 end
 
 ---@param args string[]
 ---@param cwd? string
 ---@return IprRunResult
 function M.git(args, cwd)
-  local cmd = { 'git', '-c', 'core.quotepath=off' }
-  vim.list_extend(cmd, args)
-  return M.run(cmd, { cwd = cwd })
+  return M.run(git_cmd(args), { cwd = cwd })
 end
 
 ---Trimmed stdout of a git command, or nil on failure / empty output.

@@ -45,4 +45,11 @@ function H.lines(n, prefix)
   return table.concat(out, '\n') .. '\n'
 end
 
+---Wait for a background :iPR files / uncommitted build to finish.
+function H.wait_qf()
+  assert(vim.wait(10000, function()
+    return not require('ipr.quickfix').is_loading()
+  end, 10), 'quickfix build did not finish')
+end
+
 return H

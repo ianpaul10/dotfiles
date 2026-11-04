@@ -15,16 +15,18 @@ local M = {}
 ---@return IprChangedFile[]?, string?
 function M.collect_range(root, from, to)
   local range = { from, to }
-
-  local ns_args = { 'diff', '--no-ext-diff', '--name-status', '-z', '-M' }
-  local ns = git.git(vim.list_extend(ns_args, range), root)
-  if not ns.ok then
-    return nil, ns.stderr
+  local cmds = {
+    vim.list_extend({ 'diff', '--no-ext-diff', '--name-status', '-z', '-M' }, range),
+    vim.list_extend({ 'diff', '--no-ext-diff', '--no-color', '-U0', '-M', '--src-prefix=a/', '--dst-prefix=b/' }, range),
+  }
+  if not to then
+    table.insert(cmds, { 'ls-files', '--others', '--exclude-standard', '-z' })
   end
-  local hunk_args = { 'diff', '--no-ext-diff', '--no-color', '-U0', '-M', '--src-prefix=a/', '--dst-prefix=b/' }
-  local diff = git.git(vim.list_extend(hunk_args, range), root)
-  if not diff.ok then
-    return nil, diff.stderr
+  local ns, diff, untracked = unpack(git.git_all(cmds, root))
+  for _, res in ipairs { ns, diff, untracked } do
+    if not res.ok then
+      return nil, res.stderr
+    end
   end
 
   local hunks = git.parse_hunks(diff.stdout)
@@ -35,8 +37,7 @@ function M.collect_range(root, from, to)
     file.added, file.removed, file.changed = stats.added, stats.removed, stats.changed
   end
 
-  if not to then
-    local untracked = git.git({ 'ls-files', '--others', '--exclude-standard', '-z' }, root)
+  if untracked then
     for _, path in ipairs(vim.split(untracked.stdout, '\0', { plain = true, trimempty = true })) do
       table.insert(files, { status = '?', path = path, hunks = {} })
     end
@@ -161,8 +162,49 @@ function M.textfunc(info)
   return lines
 end
 
+local loading = false
+
+---Run a quickfix builder in the background; ignore repeats while one is running.
+---@param label string
+---@param fn fun()
+local function in_background(label, fn)
+  if loading then
+    return require('ipr').notify('still collecting ' .. label .. '…')
+  end
+  loading = true
+  local done = false
+  vim.defer_fn(function()
+    if not done then
+      require('ipr').notify('collecting ' .. label .. '…')
+    end
+  end, 400)
+  git.async(function()
+    fn()
+    done, loading = true, false
+  end, function(err)
+    done, loading = true, false
+    require('ipr').notify(err, vim.log.levels.ERROR)
+  end)
+end
+
+---True while a background quickfix build is running (for tests).
+function M.is_loading()
+  return loading
+end
+
 ---@param include_worktree boolean
 function M.open(include_worktree)
+  in_background(include_worktree and 'PR + uncommitted changes' or 'PR changes', function()
+    M.open_sync(include_worktree)
+  end)
+end
+
+function M.open_uncommitted()
+  in_background('uncommitted changes', M.open_uncommitted_sync)
+end
+
+---@param include_worktree boolean
+function M.open_sync(include_worktree)
   local ctx = require('ipr.commands').ctx()
   if not ctx then
     return
@@ -178,7 +220,7 @@ function M.open(include_worktree)
 end
 
 ---Staged, unstaged and untracked changes vs HEAD. Doesn't need a PR base.
-function M.open_uncommitted()
+function M.open_uncommitted_sync()
   local info, err = require('ipr.ctx').repo_info()
   if not info then
     return require('ipr').notify(err, vim.log.levels.ERROR)

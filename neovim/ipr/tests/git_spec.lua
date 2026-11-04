@@ -13,6 +13,42 @@ describe('git.run', function()
   end)
 end)
 
+describe('git.async', function()
+  it('runs commands concurrently without blocking, then resumes', function()
+    local results, finished
+    local started = vim.uv.hrtime()
+    git.async(function()
+      results = git.run_all {
+        { cmd = { 'sh', '-c', 'sleep 0.3; echo a' } },
+        { cmd = { 'sh', '-c', 'sleep 0.3; echo b' } },
+        { cmd = { 'definitely-not-a-real-binary-ipr' } },
+      }
+      finished = (vim.uv.hrtime() - started) / 1e9
+    end)
+    assert.is_nil(results, 'async run must not block the caller')
+    assert.is_true(vim.wait(3000, function()
+      return finished ~= nil
+    end, 10))
+    assert.same({ 'a\n', 'b\n' }, { results[1].stdout, results[2].stdout })
+    assert.is_false(results[3].ok)
+    assert.is_true(finished < 0.55, 'commands should run in parallel, took ' .. finished)
+  end)
+
+  it('reports errors raised inside the coroutine', function()
+    local err
+    git.async(function()
+      git.run { 'true' }
+      error 'boom'
+    end, function(e)
+      err = e
+    end)
+    assert.is_true(vim.wait(2000, function()
+      return err ~= nil
+    end, 10))
+    assert.matches('boom', err)
+  end)
+end)
+
 describe('git.parse_name_status', function()
   it('parses -z output including renames', function()
     local text = table.concat({ 'M', 'src/a.ts', 'A', 'src/new file.ts', 'R087', 'old.ts', 'new.ts', 'D', 'gone.ts', '' }, '\0')
