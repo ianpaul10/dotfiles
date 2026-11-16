@@ -44,11 +44,16 @@ return { -- Autoformat
       html = { 'prettier' },
       json = { 'prettier' },
       yaml = { 'prettier' },
-      markdown = { 'prettier' },
+      markdown = { 'prettier', 'markdown_tables' },
       graphql = { 'prettier' },
       ruby = { 'rubocop' },
       -- Use the "_" filetype to run formatters on filetypes that don't have other formatters configured.
       ['_'] = { 'trim_whitespace' },
+    },
+    formatters = {
+      markdown_tables = function()
+        return require('custom.markdown_tables').conform_formatter
+      end,
     },
   },
 }

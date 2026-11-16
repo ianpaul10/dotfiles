@@ -83,11 +83,10 @@ else
   export EDITOR='nvim'
 fi
 
-alias GS="git status"
+alias gs="git status"
 alias gwb='gh browse --repo shop/world --branch "$(git branch --show-current)"'
 alias lmk="afplay /System/Library/Sounds/Submarine.aiff" # let me know
 alias rip="dev down && dev reset --all -n . && dev vitess cleanup && dev yugabyte cleanup && dev up"
-alias gtlgtm="gt modify -a && gt submit --stack --update-only"
 alias scratch='cd ~/code/brain_dump/scratch && nvim $(date +%Y_%m_%d).md'
 alias devlog="$LOCAL_SCRIPTS_DIR/devlog"
 
