@@ -1,13 +1,13 @@
 {
   "cacheWarming": "idle",
-  "defaultModel": "shopify/auto",
-  "defaultProvider": "shopify-router-anthropic",
+  "defaultModel": "fireworks:accounts/fireworks/models/glm-5p3-flash",
+  "defaultProvider": "fireworks",
   "defaultThinkingLevel": "medium",
   "enabledModels": [
+    "fireworks:accounts/fireworks/models/glm-5p3-flash",
     "shopify/auto",
     "claude-opus-5-5",
-    "gpt-6.1-sol",
-    "fireworks:accounts/fireworks/models/glm-5p3-flash"
+    "gpt-6.1-sol"
   ],
   "extensionChangelogVersions": {
     "{\"source\":\"https://github.com/shopify-playground/shop-pi-fy\",\"scope\":\"user\"}": "4.5.0"
