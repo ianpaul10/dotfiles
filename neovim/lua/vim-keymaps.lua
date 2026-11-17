@@ -91,10 +91,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.keymap.set('n', '<leader>bd', ':e ~/code/brain_dump/notes.md <CR>', { desc = 'Brain dump' })
 
 local function copy_current_buffer_path_with_line_number()
-  vim.fn.setreg('+', vim.fn.expand('%') .. ':' .. vim.fn.line('.'))
+  vim.fn.setreg('+', vim.fn.expand('%:.') .. ':' .. vim.fn.line('.'))
 end
 
-vim.keymap.set('n', '<leader>cp', ':let @+=expand("%")<CR>', { desc = '[C]opy current buffer [p]ath from PWD' })
+vim.keymap.set('n', '<leader>cp', ':let @+=expand("%:.")<CR>', { desc = '[C]opy current buffer [p]ath from PWD' })
 vim.keymap.set('n', '<leader>cn', copy_current_buffer_path_with_line_number, { desc = '[C]opy current buffer path with li[n]e number' })
 vim.keymap.set('n', '<leader>cP', ':let @+=expand("%:p")<CR>', { desc = '[C]opy current buffer [P]ath from root' })
 
