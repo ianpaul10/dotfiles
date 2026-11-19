@@ -1,0 +1,163 @@
+#!/bin/bash
+# gs: fast, informative git status — worktree state, position vs origin/main
+# and local main, dt stack tracking, and a suggested next action.
+# Read-only and offline: never fetches, reports fetch staleness instead.
+# `gs --fresh` fetches origin first, so counts are exact.
+
+set -u -o pipefail
+
+if [ "${1:-}" = "--fresh" ]; then
+  echo "fetching origin…"
+  git fetch origin || exit 1
+fi
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  exec git status
+fi
+
+if ! branch=$(git symbolic-ref --quiet --short HEAD); then
+  echo "detached HEAD at $(git rev-parse --short HEAD 2>/dev/null || echo '?')"
+  echo
+  exec git status
+fi
+
+tmp=$(mktemp -d) || exit 1
+trap 'rm -rf "$tmp"' EXIT
+
+# branch + upstream sync state (single cheap ref walk); the sync token is
+# always present so "empty" is never ambiguous
+ref_info=$(git for-each-ref --format='%(upstream:short)%09%(upstream:track)' "refs/heads/$branch")
+upstream=${ref_info%%$'\t'*}
+track=${ref_info#*$'\t'}
+[ "$track" = "$ref_info" ] && track=''
+# trim surrounding whitespace only (tokens like "[ahead 1]" keep inner spaces)
+track=${track#"${track%%[! ]*}"}
+track=${track%"${track##*[! ]}"}
+if [ -z "$upstream" ]; then
+  sync_token='no upstream'
+elif [ -z "$track" ]; then
+  sync_token='synced'
+else
+  sync_token="$track"
+fi
+
+# expensive probes in parallel; each writes its result to a file
+git status --porcelain >"$tmp/status" 2>/dev/null &
+if git rev-list --left-right --count "HEAD...origin/main" >"$tmp/vs_omain" 2>/dev/null; then :; fi &
+(
+  if git show-ref --verify --quiet refs/heads/main; then
+    git rev-list --left-right --count "HEAD...main" >"$tmp/vs_main" 2>/dev/null
+  else
+    : >"$tmp/vs_main"
+  fi
+) &
+(
+  git merge-base HEAD origin/main >"$tmp/base" 2>/dev/null
+) &
+(
+  wgh=$(git config --get "branch.$branch.wgh-parent" 2>/dev/null || :)
+  ipr=$(git config --get "branch.$branch.iprBase" 2>/dev/null || :)
+  printf '%s\n%s\n' "$wgh" "$ipr" >"$tmp/dt"
+) &
+wait
+
+# counts: staged (index) vs modified (worktree) vs untracked
+staged=0 modified=0 untracked=0
+while IFS= read -r line; do
+  case "$line" in
+    '??'*)
+      untracked=$((untracked + 1))
+      ;;
+    ??*)
+      x=${line:0:1}
+      y=${line:1:1}
+      [ "$x" != " " ] && staged=$((staged + 1))
+      [ "$y" != " " ] && modified=$((modified + 1))
+      ;;
+  esac
+done <"$tmp/status"
+
+vs_omain=$(cat "$tmp/vs_omain" 2>/dev/null || :)
+vs_main=$(cat "$tmp/vs_main" 2>/dev/null || :)
+base=$(cat "$tmp/base" 2>/dev/null || :)
+wgh_parent=$(sed -n '1p' "$tmp/dt")
+ipr_base=$(sed -n '2p' "$tmp/dt")
+
+read -r a_omain b_omain <<<"${vs_omain:-0 0}"
+read -r a_main b_main <<<"${vs_main:-0 0}"
+
+# label rendering helpers
+ahead_behind() {
+  local a=$1 b=$2 out=''
+  [ "$a" != "0" ] && out="↑${a}"
+  [ "$b" != "0" ] && out="${out:+$out }↓${b}"
+  [ -z "$out" ] && out='in sync'
+  printf '%s' "$out"
+}
+
+dirty_count=$((staged + modified + untracked))
+if [ "$dirty_count" -eq 0 ]; then
+  worktree_line='clean'
+else
+  parts=''
+  [ "$staged" -gt 0 ] && parts="$staged staged"
+  [ "$modified" -gt 0 ] && parts="$parts${parts:+ · }$modified modified"
+  [ "$untracked" -gt 0 ] && parts="$parts${parts:+ · }$untracked untracked"
+  worktree_line="$parts"
+fi
+
+if [ -z "$upstream" ]; then
+  branch_line="$branch [no upstream]"
+else
+  branch_line="$branch → $upstream [$sync_token]"
+fi
+echo "branch    $branch_line"
+echo "worktree  $worktree_line"
+
+if [ -n "$vs_omain" ]; then
+  line="vs origin/main   $(ahead_behind "$a_omain" "$b_omain")"
+  [ -n "$base" ] && line="$line · base $(git rev-parse --short "$base" 2>/dev/null || echo "$base")"
+  echo "$line"
+fi
+if [ -n "$vs_main" ]; then
+  echo "vs main          $(ahead_behind "$a_main" "$b_main")"
+fi
+
+if [ -n "$wgh_parent" ]; then
+  echo "dt        in a dt stack (parent: $wgh_parent)"
+else
+  echo "dt        not in a dt stack (dt sync won't restack this)"
+fi
+[ -n "$ipr_base" ] && echo "dt        iPR base override: $ipr_base"
+
+# fetch staleness, so ↓ counts come with context
+gitdir=$(git rev-parse --git-dir 2>/dev/null || echo .git)
+if [ -f "$gitdir/FETCH_HEAD" ]; then
+  if fetch_mtime=$(stat -f %m "$gitdir/FETCH_HEAD" 2>/dev/null || stat -c %Y "$gitdir/FETCH_HEAD" 2>/dev/null); then
+    age=$(( $(date +%s) - fetch_mtime ))
+    if [ "$age" -ge 86400 ]; then
+      echo "fetch     origin fetched $((age / 86400))d ago — run 'git fetch origin' for fresh ↓ counts"
+    elif [ "$age" -ge 3600 ]; then
+      echo "fetch     origin fetched $((age / 3600))h ago"
+    fi
+  fi
+fi
+
+# suggested next action
+suggestion=''
+if [ "$b_omain" != "0" ] 2>/dev/null; then
+  if [ "$dirty_count" -gt 0 ]; then
+    suggestion="commit or stash, then git rebase origin/main ($a_omain local commits)"
+  else
+    suggestion="git rebase origin/main ($a_omain local commits)"
+  fi
+elif [ "$a_omain" != "0" ] 2>/dev/null; then
+  suggestion='git push'
+elif [ "$dirty_count" -gt 0 ]; then
+  suggestion='commit your work'
+elif [ -z "$wgh_parent" ]; then
+  suggestion="consider 'dt track' so dt sync maintains this branch"
+else
+  suggestion='all good'
+fi
+[ -n "$suggestion" ] && echo "suggest   $suggestion"
