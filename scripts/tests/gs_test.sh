@@ -55,7 +55,7 @@ case "$*" in
     printf '%s\n' "$IPR_BASE"
     ;;
   "rev-parse --git-dir")
-    printf '/repo/.git\n'
+    printf '%s\n' "${GIT_DIR_PATH:-/repo/.git}"
     ;;
   "status")
     printf 'FALLBACK_STATUS\n'
@@ -68,6 +68,19 @@ esac
 EOF
 
 chmod +x "$TEST_TMPDIR/bin/git"
+
+# simulate the GNU-stat dev-shell environment that broke gs: -f %m prints
+# filesystem garbage (including the literal text "File:") and exits 1
+mkdir -p "$TEST_TMPDIR/repo/.git"
+touch "$TEST_TMPDIR/repo/.git/FETCH_HEAD"
+cat > "$TEST_TMPDIR/bin/stat" <<'EOF'
+#!/bin/bash
+case "$1" in
+  -c) printf '1000000000\n' ;;          # GNU form: clean epoch
+  -f) printf '  File: "/repo/.git/FETCH_HEAD"\nFS junk...\n1000000000\n' ;; # BSD form: garbage
+esac
+EOF
+chmod +x "$TEST_TMPDIR/bin/stat"
 
 run_gs() {
   (cd "$TEST_TMPDIR" && PATH="$TEST_TMPDIR/bin:$PATH" "$SCRIPT" "$@")
@@ -138,6 +151,10 @@ UPSTREAM= expect "[no upstream]"
 # 6d. --fresh fetches origin first, then shows the normal output
 expect_fresh "fetching origin"
 expect_fresh "branch    feature/x → origin/feature/x [synced]"
+
+# 6e. GNU stat present in PATH → fetch line renders instead of crashing on
+# the "File:" garbage (regression for the birch unbound-variable crash)
+GIT_DIR_PATH="$TEST_TMPDIR/repo/.git" expect "d ago — run 'git fetch origin'"
 
 # 7. no local main → section skipped
 HAS_LOCAL_MAIN=0 expect_not "vs main          in sync"

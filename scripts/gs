@@ -131,16 +131,22 @@ fi
 [ -n "$ipr_base" ] && echo "dt        iPR base override: $ipr_base"
 
 # fetch staleness, so ↓ counts come with context
+# stat differs between BSD (-f %m) and GNU (-c %Y), and an unsupported flag can
+# still print junk to stdout — so try GNU form first and only trust digits.
 gitdir=$(git rev-parse --git-dir 2>/dev/null || echo .git)
 if [ -f "$gitdir/FETCH_HEAD" ]; then
-  if fetch_mtime=$(stat -f %m "$gitdir/FETCH_HEAD" 2>/dev/null || stat -c %Y "$gitdir/FETCH_HEAD" 2>/dev/null); then
-    age=$(( $(date +%s) - fetch_mtime ))
-    if [ "$age" -ge 86400 ]; then
-      echo "fetch     origin fetched $((age / 86400))d ago — run 'git fetch origin' for fresh ↓ counts"
-    elif [ "$age" -ge 3600 ]; then
-      echo "fetch     origin fetched $((age / 3600))h ago"
-    fi
-  fi
+  fetch_mtime=$(stat -c %Y "$gitdir/FETCH_HEAD" 2>/dev/null || stat -f %m "$gitdir/FETCH_HEAD" 2>/dev/null)
+  case $fetch_mtime in
+    ''|*[!0-9]*) : ;;
+    *)
+      age=$(( $(date +%s) - fetch_mtime ))
+      if [ "$age" -ge 86400 ]; then
+        echo "fetch     origin fetched $((age / 86400))d ago — run 'git fetch origin' for fresh ↓ counts"
+      elif [ "$age" -ge 3600 ]; then
+        echo "fetch     origin fetched $((age / 3600))h ago"
+      fi
+      ;;
+  esac
 fi
 
 # suggested next action
